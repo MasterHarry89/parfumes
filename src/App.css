@@ -66,6 +66,39 @@ em { color: var(--bronze); font-style: italic; }
 .category-sun { background: linear-gradient(135deg, #e0c883 0%, #c49c59 100%); color: var(--ink); }
 .category-plum { background: linear-gradient(135deg, #967c7b 0%, #69535c 100%); color: #fff; }
 .category-fog { background: linear-gradient(135deg, #c4c9c4 0%, #909a9a 100%); color: var(--ink); }
+.entry-strip { max-width: 1240px; margin: 0 auto; padding: 62px 5vw 54px; display: grid; grid-template-columns: 1.15fr .9fr .9fr; gap: 12px; }
+.entry-card { min-height: 250px; padding: 24px; text-align: left; display: flex; flex-direction: column; color: #fff; transition: transform .2s, box-shadow .2s; }
+.entry-card:hover, .family-tile:hover, .discovery-tile:hover { transform: translateY(-4px); box-shadow: 0 18px 32px rgba(34,23,18,.13); }
+.entry-card > span, .entry-card small { font-size: 10px; letter-spacing: .12em; opacity: .76; }
+.entry-card strong { margin-top: auto; font: 600 43px/1 'Cormorant Garamond', serif; }
+.entry-card small { margin-top: 10px; line-height: 1.5; letter-spacing: .02em; }
+.entry-card b { margin-top: 24px; font-size: 11px; font-weight: 500; }
+.entry-men { background: linear-gradient(135deg, #654536, #a47457); }
+.entry-women { background: linear-gradient(135deg, #b97e78, #d0a18f); }
+.entry-new { background: linear-gradient(135deg, #24201d, #716257); }
+.secondary-heading { max-width: 1240px; margin: 15px auto 30px; padding: 0 5vw; }
+.family-track { max-width: 1240px; margin: 0 auto 80px; padding: 0 5vw; display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; }
+.family-track::-webkit-scrollbar { display: none; }
+.family-tile { flex: 0 0 220px; min-height: 205px; padding: 18px; text-align: left; display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s; }
+.family-tile strong, .discovery-tile strong { margin-top: auto; font: 600 29px 'Cormorant Garamond', serif; }
+.family-tile small, .discovery-tile small { margin-top: 6px; font-size: 10px; opacity: .75; }
+.family-tile b { align-self: end; margin-top: 14px; font-weight: 400; }
+.discovery-layout { max-width: 1240px; margin: 0 auto 80px; padding: 0 5vw; display: grid; grid-template-columns: .8fr 1.2fr; gap: 12px; }
+.discovery-season { min-height: 390px; padding: 38px; background: var(--ink); color: #f7f3ee; display: flex; flex-direction: column; justify-content: center; }
+.discovery-season h2 { font: 48px/1 'Cormorant Garamond', serif; margin: 20px 0; }
+.discovery-season p { max-width: 270px; color: rgba(247,243,238,.7); font-size: 12px; line-height: 1.6; }
+.discovery-season .eyebrow { color: var(--gold); }
+.text-button { color: var(--gold); font-size: 11px; text-align: left; text-transform: uppercase; letter-spacing: .1em; }
+.discovery-tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.discovery-tile { min-height: 189px; padding: 20px; display: flex; flex-direction: column; text-align: left; transition: transform .2s, box-shadow .2s; }
+.occasion-strip { max-width: 1240px; margin: 0 auto 85px; padding: 0 5vw; display: grid; grid-template-columns: .75fr 1.25fr; gap: 55px; align-items: start; }
+.occasion-strip h2 { font: 43px 'Cormorant Garamond', serif; margin: 15px 0 0; }
+.occasion-list { border-top: 1px solid var(--line); }
+.occasion-list button { width: 100%; display: grid; grid-template-columns: 35px 1fr 1.4fr 20px; gap: 12px; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--line); text-align: left; }
+.occasion-list button > span { color: var(--bronze); font-size: 10px; }
+.occasion-list strong { font: 24px 'Cormorant Garamond', serif; }
+.occasion-list small { color: var(--muted); font-size: 10px; }
+.occasion-list b { color: var(--bronze); font-weight: 400; }
 .trust-strip { max-width: 1240px; margin: auto; padding: 24px 5vw; display: grid; grid-template-columns: repeat(4, 1fr); background: rgba(234, 223, 206, .95); border: 1px solid rgba(23,21,19,.04); }
 .trust-strip div { border-left: 1px solid #d5c7ae; padding-left: 23px; display: grid; gap: 4px; }
 .trust-strip div:first-child { border-left: 0; padding-left: 0; }
@@ -177,6 +210,21 @@ footer p { margin-bottom: 22px; }
 	.sun-disc { width: 350px; height: 350px; left: 15%; top: 16px; }
 	.hero-bottle { transform: scale(.75) rotate(7deg); left: 34%; top: 98px; }
 	.hero-orbit { top: 50px; right: 4%; transform: scale(.8) rotate(-11deg); }
+	.entry-strip { grid-template-columns: 1fr; padding: 40px 20px; gap: 10px; }
+	.entry-card { min-height: 190px; }
+	.entry-card strong { font-size: 36px; }
+	.secondary-heading { padding: 0 20px; margin-top: 15px; }
+	.family-track { padding: 0 20px; margin-bottom: 55px; }
+	.family-tile { flex-basis: 190px; min-height: 175px; }
+	.discovery-layout { grid-template-columns: 1fr; padding: 0 20px; margin-bottom: 55px; }
+	.discovery-season { min-height: 300px; padding: 28px; }
+	.discovery-season h2 { font-size: 40px; }
+	.discovery-tile { min-height: 145px; }
+	.occasion-strip { display: block; padding: 0 20px; margin-bottom: 60px; }
+	.occasion-strip h2 { font-size: 38px; margin-bottom: 28px; }
+	.occasion-list button { grid-template-columns: 28px 1fr 20px; }
+	.occasion-list small { grid-column: 2; grid-row: 2; }
+	.occasion-list b { grid-column: 3; grid-row: 1 / span 2; }
 	.intro-strip { grid-template-columns: 1fr; gap: 25px; padding: 35px 25px; }
 	.intro-strip > div, .intro-strip > div:first-child { border-left: 0; border-top: 1px solid var(--line); padding: 20px 0 0; }
 	.category-grid { grid-template-columns: repeat(2, 1fr); }.category-card { min-height: 165px; }.trust-strip { grid-template-columns: repeat(2, 1fr); gap: 20px; }.trust-strip div:nth-child(3) { border-left: 0; padding-left: 0; }.editorial-band { grid-template-columns: 1fr; padding-top: 55px; padding-bottom: 55px; gap: 35px; }.editorial-band h2 { font-size: 44px; }.editorial-orb { width: 190px; height: 190px; }.editorial-orb span { font-size: 29px; }.faq-band .page-shell { display: block; }.faq-list { margin-top: 35px; }
