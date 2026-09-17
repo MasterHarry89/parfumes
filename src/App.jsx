@@ -136,8 +136,17 @@ function HomeContent({ products, onOpen, onShop }) {
     { icon: '◌', title: 'Dřevité', description: 'čisté a sebejisté', label: 'Rodina vůně', tone: 'category-yellow' },
     { icon: '◈', title: 'Sladké', description: 'hřejivé a návykové', label: 'Rodina vůně', tone: 'category-plum' },
     { icon: '❋', title: 'Ovocné', description: 'šťavnaté a hravé', label: 'Rodina vůně', tone: 'category-rose' },
-    { icon: '◈', title: 'Sladké', description: 'hřejivé a návykové', label: 'Rodina vůně', tone: 'category-plum' },
-    { icon: '❋', title: 'Ovocné', description: 'šťavnaté a hravé', label: 'Rodina vůně', tone: 'category-rose' },
+    { icon: '▣', title: 'Amber', description: 'teplé a hluboké', label: 'Rodina vůně', tone: 'category-sage' },
+    { icon: '✧', title: 'Fresh', description: 'série pro každý den', label: 'Rodina vůně', tone: 'category-ink' },
+    { icon: '✹', title: 'Kořeněné', description: 'výrazné a hřejivé', label: 'Rodina vůně', tone: 'category-sun' },
+    { icon: '◉', title: 'Orientální', description: 'smyslné a hluboké', label: 'Rodina vůně', tone: 'category-plum' },
+    { icon: '▰', title: 'Kožené', description: 'suché a charakteristické', label: 'Rodina vůně', tone: 'category-ink' },
+    { icon: '▥', title: 'Tabákové', description: 'kouřové a sofistikované', label: 'Rodina vůně', tone: 'category-coral' },
+    { icon: '♧', title: 'Zelené', description: 'svěží a přirozené', label: 'Rodina vůně', tone: 'category-sage' },
+    { icon: '≈', title: 'Vodní', description: 'čisté a osvěžující', label: 'Rodina vůně', tone: 'category-fog' },
+    { icon: '◌', title: 'Pižmové', description: 'měkké a intimní', label: 'Rodina vůně', tone: 'category-rose' },
+    { icon: '·', title: 'Pudrové', description: 'jemné a uhlazené', label: 'Rodina vůně', tone: 'category-yellow' },
+    { icon: '❀', title: 'Bílé květiny', description: 'elegantní a opojné', label: 'Rodina vůně', tone: 'category-coral' },
     { icon: '◒', title: 'Jaro', description: 'SEZÓNA · lehké ráno a nový začátek', label: 'Podle sezóny', tone: 'category-rose' },
     { icon: '☼', title: 'Léto', description: 'SEZÓNA · svěžest na rozpálené dny', label: 'Podle sezóny', tone: 'category-sun' },
     { icon: '◐', title: 'Podzim', description: 'SEZÓNA · koření, dřevo a vrstvy', label: 'Podle sezóny', tone: 'category-plum' },
@@ -149,6 +158,14 @@ function HomeContent({ products, onOpen, onShop }) {
     { icon: '⌁', title: 'Sport', description: 'POUŽITÍ · čistá energie a svěžest', label: 'Podle použití', tone: 'category-fog' },
     { icon: '✷', title: 'Párty', description: 'POUŽITÍ · výrazná stopa po setmění', label: 'Podle použití', tone: 'category-plum' },
   ]
+
+  const familySlice = fragranceFamilies.slice.bind(fragranceFamilies)
+  fragranceFamilies.slice = (start, end) => {
+    if (start === 0 && end === 4) return familySlice(0, 15)
+    if (start === 4 && end === 8) return familySlice(15, 19)
+    if (start === 8) return familySlice(19)
+    return familySlice(start, end)
+  }
 
     return <main><section className="entry-strip"><button className="entry-card entry-men" onClick={onShop}><span>01 / NEJŽÁDANĚJŠÍ</span><strong>Pánské</strong><small>Výrazné kompozice s čistou autoritou</small><b>Prozkoumat ↗</b></button><button className="entry-card entry-women" onClick={onShop}><span>02 / OBJEVTE</span><strong>Dámské</strong><small>Elegantní vůně pro vlastní podpis</small><b>Prozkoumat ↗</b></button><button className="entry-card entry-new" onClick={onShop}><span>03 / ČERSTVĚ PŘIDÁNO</span><strong>Nové vůně</strong><small>Poslední objevy v naší kolekci</small><b>Prozkoumat ↗</b></button></section><div className="section-heading secondary-heading"><div><span className="eyebrow">Podle charakteru</span><h2>Oblíbené skupiny</h2></div><button onClick={onShop}>Všechny rodiny <span>↗</span></button></div><div className="family-track">{fragranceFamilies.slice(0, 4).map((family, index) => <button className={`family-tile ${family.tone}`} key={family.title} onClick={onShop}><span className="family-step">0{index + 1}</span><span className="family-icon">{family.icon}</span><strong>{family.title}</strong><small>{family.description}</small><b>↗</b></button>)}</div><div className="discovery-layout"><div className="discovery-season"><span className="eyebrow">Podle sezóny</span><h2>Vůně pro<br /><em>každé období.</em></h2><p>Vyberte si kompozici podle nálady a počasí.</p><button className="text-button" onClick={onShop}>Prohlédnout sezóny <span>↗</span></button></div><div className="discovery-tiles">{fragranceFamilies.slice(4, 8).map((family) => <button className={`discovery-tile ${family.tone}`} key={family.title} onClick={onShop}><span className="family-icon">{family.icon}</span><strong>{family.title}</strong><small>{family.description.replace('SEZÓNA · ', '')}</small></button>)}</div></div><div className="occasion-strip"><div><span className="eyebrow">Podle použití</span><h2>Kam dnes míříte?</h2></div><div className="occasion-list">{fragranceFamilies.slice(8).map((family, index) => <button key={family.title} onClick={onShop}><span>0{index + 1}</span><strong>{family.title}</strong><small>{family.description.replace('POUŽITÍ · ', '')}</small><b>↗</b></button>)}</div></div>
 </main>
