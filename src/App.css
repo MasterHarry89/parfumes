@@ -62,6 +62,10 @@ em { color: var(--bronze); font-style: italic; }
 .category-yellow { background: linear-gradient(135deg, #d7c4a7 0%, #bbb09a 100%); color: var(--ink); }
 .category-sage { background: linear-gradient(135deg, #b7b7a5 0%, #9ea88d 100%); color: var(--ink); }
 .category-ink { background: var(--ink); color: #fff; }
+.category-rose { background: linear-gradient(135deg, #c99383 0%, #a96e68 100%); color: #fff; }
+.category-sun { background: linear-gradient(135deg, #e0c883 0%, #c49c59 100%); color: var(--ink); }
+.category-plum { background: linear-gradient(135deg, #967c7b 0%, #69535c 100%); color: #fff; }
+.category-fog { background: linear-gradient(135deg, #c4c9c4 0%, #909a9a 100%); color: var(--ink); }
 .trust-strip { max-width: 1240px; margin: auto; padding: 24px 5vw; display: grid; grid-template-columns: repeat(4, 1fr); background: rgba(234, 223, 206, .95); border: 1px solid rgba(23,21,19,.04); }
 .trust-strip div { border-left: 1px solid #d5c7ae; padding-left: 23px; display: grid; gap: 4px; }
 .trust-strip div:first-child { border-left: 0; padding-left: 0; }
