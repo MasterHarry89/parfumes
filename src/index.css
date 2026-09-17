@@ -1,6 +1,7 @@
-:root { font-family: 'DM Sans', sans-serif; color: #171411; background: #f4efe9; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; --ink: #171411; --espresso: #2b241f; --muted: #70675f; --line: #d8cab8; --paper: #f4efe9; --sand: #e8dfd2; --bronze: #9d7555; --moss: #a0a98f; --gold: #c7a067; --rose: #dfa98c; }
+:root { font-family: 'Manrope', 'DM Sans', sans-serif; color: #171411; background: #f4efe9; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; --ink: #171411; --espresso: #2b241f; --muted: #625a54; --line: #d8cab8; --paper: #f7f3ee; --paper-strong: #efe6dc; --sand: #e9dfd1; --bronze: #8c5c46; --burgundy: #5b212d; --moss: #8e9881; --gold: #cfaa77; --rose: #dfa98c; }
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; background: linear-gradient(180deg, #f8f4f0 0%, #f0e8df 100%); }
+body { margin: 0; min-width: 320px; background: linear-gradient(180deg, #f8f4f0 0%, #f0e8df 100%); color: var(--ink); }
 button, input, select { font: inherit; }
 button { border: 0; background: none; color: inherit; cursor: pointer; }
 img { display: block; max-width: 100%; }
+html { scroll-behavior: smooth; }
