@@ -2,49 +2,90 @@ import './App.css'
 import './admin.css'
 
 import { useEffect, useMemo, useState } from 'react'
-
-const products = [
-  { id: 'santal-33', name: 'Santal 33', brand: 'Le Labo', family: 'Dřevitá', price: 89, image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=700&q=85', note: 'suché dřevo · kardamom · kůže', tag: 'Bestseller' },
-  { id: 'lazy-sunday', name: 'Lazy Sunday Morning', brand: 'Maison Margiela', family: 'Čistá', price: 74, image: 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=700&q=85', note: 'konvalinka · pižmo · hruška', tag: 'Oblíbené' },
-  { id: 'wood-sage', name: 'Wood Sage & Sea Salt', brand: 'Jo Malone', family: 'Svěží', price: 69, image: 'https://images.unsplash.com/photo-1615634260167-c8cdede054de?auto=format&fit=crop&w=700&q=85', note: 'mořská sůl · šalvěj · grapefruit', tag: 'Novinka' },
-  { id: 'bal-dafrique', name: 'Bal d’Afrique', brand: 'Byredo', family: 'Citrusová', price: 109, image: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=700&q=85', note: 'neroli · cedr · ambra', tag: 'Editor’s pick' },
-  { id: 'another-13', name: 'Another 13', brand: 'Le Labo', family: 'Pižmová', price: 99, image: 'https://images.unsplash.com/photo-1590736704728-f4730bb30770?auto=format&fit=crop&w=700&q=85', note: 'ambrette · mech · jasmín', tag: 'Bestseller' },
-  { id: 'molecule-01', name: 'Molecule 01', brand: 'Escentric Molecules', family: 'Dřevitá', price: 59, image: 'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=700&q=85', note: 'iso e super · čistá kůže', tag: 'Minimalistická' },
-]
+import { supabase } from './lib/supabase'
 
 const volumes = [{ value: 1, label: '1 ml', price: 0 }, { value: 2, label: '2 ml', price: 30 }, { value: 3, label: '3 ml', price: 55 }, { value: 5, label: '5 ml', price: 90, future: true }, { value: 10, label: '10 ml', price: 150, future: true }]
 const money = (value) => `${(value / 10).toFixed(2).replace('.', ',')} Kč`
 const navigate = (path) => { window.history.pushState({}, '', path); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo({ top: 0, behavior: 'smooth' }) }
 
-const inventorySeed = products.map((product, index) => ({
-  ...product,
-  stockMl: [142, 86, 210, 64, 118, 175][index],
-  costPerMl: [18, 14, 12, 22, 20, 9][index],
-  prices: { 1: product.price, 2: product.price + 30, 3: product.price + 55, 5: product.price + 90, 10: product.price + 150 },
-}))
+const loadProducts = async () => {
+  const { data, error } = await supabase.from('products').select('*').eq('active', true)
 
-const sampleOrders = [
-  { id: 'EP-1048', customer: 'Tereza Nováková', date: '15. 9. 2026', status: 'K výrobě', total: 387, items: 3 },
-  { id: 'EP-1047', customer: 'Matěj Dvořák', date: '15. 9. 2026', status: 'Odesláno', total: 219, items: 2 },
-  { id: 'EP-1046', customer: 'Anna Jelínková', date: '14. 9. 2026', status: 'Dokončeno', total: 495, items: 4 },
-  { id: 'EP-1045', customer: 'Filip Král', date: '14. 9. 2026', status: 'Zaplaceno', total: 179, items: 1 },
-]
+  if (error) {
+    console.error('loadProducts error:', error)
+    return []
+  }
 
-function AdminApp({ path }) {
-  const [inventory, setInventory] = useState(inventorySeed)
-  const active = path === '/admin/sklad' ? 'sklad' : path === '/admin/objednavky' ? 'objednavky' : path === '/admin/finance' ? 'finance' : 'prehled'
-  const totalMl = inventory.reduce((sum, item) => sum + item.stockMl, 0)
-  const possibleSamples = inventory.reduce((sum, item) => sum + Math.floor(item.stockMl / 1), 0)
-  const revenue = sampleOrders.reduce((sum, order) => sum + order.total, 0)
-  const costs = inventory.reduce((sum, item) => sum + (item.stockMl * item.costPerMl), 0)
-  const updateStock = (id, value) => setInventory((items) => items.map((item) => item.id === id ? { ...item, stockMl: Math.max(0, Number(value) || 0) } : item))
-  return <div className="admin-app"><aside className="admin-sidebar"><button className="admin-logo" onClick={() => navigate('/admin')}>ÉP<span>ADMIN</span></button><div className="admin-account"><span className="admin-avatar">JD</span><div><strong>Jan Dvořák</strong><small>Administrátor</small></div></div><nav><span>ŘÍZENÍ OBCHODU</span><button className={active === 'prehled' ? 'active' : ''} onClick={() => navigate('/admin')}>⌂ Přehled</button><button className={active === 'sklad' ? 'active' : ''} onClick={() => navigate('/admin/sklad')}>◫ Sklad a ceny</button><button className={active === 'objednavky' ? 'active' : ''} onClick={() => navigate('/admin/objednavky')}>▤ Objednávky <i>4</i></button><span>ANALYTIKA</span><button className={active === 'finance' ? 'active' : ''} onClick={() => navigate('/admin/finance')}>◒ Finance a marže</button><button>⌁ Přehled vůní</button></nav><button className="back-shop" onClick={() => navigate('/')}>← Zpět do e-shopu</button></aside><main className="admin-main"><header className="admin-header"><div><span className="eyebrow">Éparfumes / Admin</span><h1>{active === 'sklad' ? 'Sklad a ceny' : active === 'objednavky' ? 'Objednávky' : active === 'finance' ? 'Finance a marže' : 'Dobrý den, Jane.'}</h1></div><div className="admin-header-actions"><span className="admin-live"><b /> Systém online</span><button className="admin-bell">♧</button></div></header>{active === 'sklad' ? <InventoryView inventory={inventory} updateStock={updateStock} /> : active === 'objednavky' ? <OrdersView /> : active === 'finance' ? <FinanceView inventory={inventory} revenue={revenue} costs={costs} /> : <DashboardView totalMl={totalMl} possibleSamples={possibleSamples} revenue={revenue} inventory={inventory} />}</main></div>
+  return (data ?? []).map((product) => ({
+    ...product,
+    id: product.id,
+    name: product.name,
+    brand: product.brand || 'Presence',
+    family: product.family || 'Dřevitá',
+    price: Number(product.price || 0),
+    image: product.image || 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=700&q=85',
+    note: product.note || 'Premium scent',
+    tag: product.tag || 'Bestseller',
+  }))
 }
 
-function DashboardView({ totalMl, possibleSamples, revenue, inventory }) { return <div className="admin-content"><div className="admin-actions-row"><p className="admin-muted">Úterý 15. září 2026 <span>·</span> poslední aktualizace právě teď</p><button className="admin-primary" onClick={() => navigate('/admin/sklad')}>+ Naskladnit vůni</button></div><div className="metric-grid"><Metric label="Objem ve skladu" value={`${totalMl} ml`} note="napříč 6 vůněmi" tone="sage" /><Metric label="Dostupné vzorky" value={possibleSamples.toLocaleString('cs-CZ')} note="při výrobě 1 ml" tone="yellow" /><Metric label="Tržby tento měsíc" value={money(revenue)} note="+18,4 % oproti srpnu" tone="coral" /><Metric label="Objednávky ke zpracování" value="4" note="2 čekají na výrobu" tone="ink" /></div><div className="admin-grid-two"><section className="admin-panel"><div className="panel-heading"><div><span className="eyebrow">Stav zásob</span><h2>Vůně, které hlídat</h2></div><button onClick={() => navigate('/admin/sklad')}>Celý sklad →</button></div>{inventory.slice(0, 4).map((item) => <div className="stock-line" key={item.id}><img src={item.image} alt="" /><div><strong>{item.name}</strong><small>{item.brand}</small></div><div className="stock-bar"><span style={{ width: `${Math.min(100, item.stockMl / 2)}%` }} /></div><b>{item.stockMl} ml</b></div>)}</section><section className="admin-panel"><div className="panel-heading"><div><span className="eyebrow">Poslední aktivita</span><h2>Objednávky</h2></div><button onClick={() => navigate('/admin/objednavky')}>Všechny →</button></div>{sampleOrders.slice(0, 3).map((order) => <div className="order-line" key={order.id}><span className="order-dot" /><div><strong>{order.id}</strong><small>{order.customer}</small></div><span className={`status status-${order.status.replace(' ', '-').toLowerCase()}`}>{order.status}</span><b>{money(order.total)}</b></div>)}</section></div></div> }
+const loadInventory = async () => {
+  const { data, error } = await supabase.from('inventory').select('*')
+
+  if (error) {
+    console.error('loadInventory error:', error)
+    return []
+  }
+
+  return (data ?? []).map((item) => ({
+    ...item,
+    id: item.id,
+    product_id: item.product_id,
+    stockMl: Number(item.stock_ml || 0),
+    costPerMl: Number(item.cost_per_ml || 0),
+    prices: { 1: Number(item.cost_per_ml || 0), 2: Number(item.cost_per_ml || 0) + 30, 3: Number(item.cost_per_ml || 0) + 55, 5: Number(item.cost_per_ml || 0) + 90, 10: Number(item.cost_per_ml || 0) + 150 },
+  }))
+}
+
+const loadOrders = async () => {
+  const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('loadOrders error:', error)
+    return []
+  }
+
+  return (data ?? []).map((order) => ({
+    ...order,
+    id: order.id,
+    customer: order.customer_name || 'Zákazník',
+    date: new Date(order.created_at).toLocaleDateString('cs-CZ'),
+    status: order.status || 'pending',
+    total: Number(order.total || 0),
+    items: 1,
+  }))
+}
+
+function AdminApp({ path, inventoryData, ordersData }) {
+  const [inventory, setInventory] = useState(inventoryData)
+  const active = path === '/admin/sklad' ? 'sklad' : path === '/admin/objednavky' ? 'objednavky' : path === '/admin/finance' ? 'finance' : 'prehled'
+
+  useEffect(() => {
+    setInventory(inventoryData)
+  }, [inventoryData])
+
+  const totalMl = inventory.reduce((sum, item) => sum + item.stockMl, 0)
+  const possibleSamples = inventory.reduce((sum, item) => sum + Math.floor(item.stockMl / 1), 0)
+  const revenue = ordersData.reduce((sum, order) => sum + order.total, 0)
+  const costs = inventory.reduce((sum, item) => sum + (item.stockMl * item.costPerMl), 0)
+  const updateStock = (id, value) => setInventory((items) => items.map((item) => item.id === id ? { ...item, stockMl: Math.max(0, Number(value) || 0) } : item))
+  return <div className="admin-app"><aside className="admin-sidebar"><button className="admin-logo" onClick={() => navigate('/admin')}>ÉP<span>ADMIN</span></button><div className="admin-account"><span className="admin-avatar">JD</span><div><strong>Jan Dvořák</strong><small>Administrátor</small></div></div><nav><span>ŘÍZENÍ OBCHODU</span><button className={active === 'prehled' ? 'active' : ''} onClick={() => navigate('/admin')}>⌂ Přehled</button><button className={active === 'sklad' ? 'active' : ''} onClick={() => navigate('/admin/sklad')}>◫ Sklad a ceny</button><button className={active === 'objednavky' ? 'active' : ''} onClick={() => navigate('/admin/objednavky')}>▤ Objednávky <i>{ordersData.length}</i></button><span>ANALYTIKA</span><button className={active === 'finance' ? 'active' : ''} onClick={() => navigate('/admin/finance')}>◒ Finance a marže</button><button>⌁ Přehled vůní</button></nav><button className="back-shop" onClick={() => navigate('/')}>← Zpět do e-shopu</button></aside><main className="admin-main"><header className="admin-header"><div><span className="eyebrow">Éparfumes / Admin</span><h1>{active === 'sklad' ? 'Sklad a ceny' : active === 'objednavky' ? 'Objednávky' : active === 'finance' ? 'Finance a marže' : 'Dobrý den, Jane.'}</h1></div><div className="admin-header-actions"><span className="admin-live"><b /> Systém online</span><button className="admin-bell">♧</button></div></header>{active === 'sklad' ? <InventoryView inventory={inventory} updateStock={updateStock} /> : active === 'objednavky' ? <OrdersView orders={ordersData} /> : active === 'finance' ? <FinanceView inventory={inventory} revenue={revenue} costs={costs} /> : <DashboardView totalMl={totalMl} possibleSamples={possibleSamples} revenue={revenue} inventory={inventory} orders={ordersData} />}</main></div>
+}
+
+function DashboardView({ totalMl, possibleSamples, revenue, inventory, orders }) { return <div className="admin-content"><div className="admin-actions-row"><p className="admin-muted">Úterý 15. září 2026 <span>·</span> poslední aktualizace právě teď</p><button className="admin-primary" onClick={() => navigate('/admin/sklad')}>+ Naskladnit vůni</button></div><div className="metric-grid"><Metric label="Objem ve skladu" value={`${totalMl} ml`} note="napříč 6 vůněmi" tone="sage" /><Metric label="Dostupné vzorky" value={possibleSamples.toLocaleString('cs-CZ')} note="při výrobě 1 ml" tone="yellow" /><Metric label="Tržby tento měsíc" value={money(revenue)} note="+18,4 % oproti srpnu" tone="coral" /><Metric label="Objednávky ke zpracování" value={orders.length.toString()} note="všechny aktivní objednávky" tone="ink" /></div><div className="admin-grid-two"><section className="admin-panel"><div className="panel-heading"><div><span className="eyebrow">Stav zásob</span><h2>Vůně, které hlídat</h2></div><button onClick={() => navigate('/admin/sklad')}>Celý sklad →</button></div>{inventory.slice(0, 4).map((item) => <div className="stock-line" key={item.id}><img src={item.image} alt="" /><div><strong>{item.name}</strong><small>{item.brand}</small></div><div className="stock-bar"><span style={{ width: `${Math.min(100, item.stockMl / 2)}%` }} /></div><b>{item.stockMl} ml</b></div>)}</section><section className="admin-panel"><div className="panel-heading"><div><span className="eyebrow">Poslední aktivita</span><h2>Objednávky</h2></div><button onClick={() => navigate('/admin/objednavky')}>Všechny →</button></div>{orders.slice(0, 3).map((order) => <div className="order-line" key={order.id}><span className="order-dot" /><div><strong>{order.id}</strong><small>{order.customer}</small></div><span className={`status status-${order.status.replace(' ', '-').toLowerCase()}`}>{order.status}</span><b>{money(order.total)}</b></div>)}</section></div></div> }
 function Metric({ label, value, note, tone }) { return <div className={`metric metric-${tone}`}><span>{label}</span><strong>{value}</strong><small>{note}</small></div> }
 function InventoryView({ inventory, updateStock }) { return <div className="admin-content"><div className="admin-actions-row"><p className="admin-muted">Naskladňujete základní parfém v mililitrech. Vzorky se odečtou až po zaplacení objednávky.</p><button className="admin-primary">+ Naskladnit vůni</button></div><div className="inventory-explainer"><span>i</span><p><strong>Jak to funguje?</strong> Zadejte množství originální vůně, které máte k dispozici. Systém automaticky hlídá, kolik 1 ml, 2 ml nebo 3 ml vzorků lze vyrobit. Při objednávce se odečte skutečně spotřebovaný objem.</p></div><section className="admin-panel inventory-panel"><div className="inventory-table-head"><span>Vůně</span><span>Dostupný objem</span><span>Náklad / ml</span><span>Prodejní ceny</span><span>Marže 1 ml</span></div>{inventory.map((item) => <div className="inventory-row" key={item.id}><div className="inventory-product"><img src={item.image} alt="" /><div><strong>{item.name}</strong><small>{item.brand} · {item.family}</small></div></div><div className="stock-input"><input type="number" value={item.stockMl} onChange={(event) => updateStock(item.id, event.target.value)} min="0" /><span>ml</span><small>{Math.floor(item.stockMl / 3)} × 3 ml vzorků</small></div><div className="cost-cell">{money(item.costPerMl)}<small>za 1 ml</small></div><div className="price-chips"><span>1 ml <b>{money(item.prices[1])}</b></span><span>2 ml <b>{money(item.prices[2])}</b></span><span>3 ml <b>{money(item.prices[3])}</b></span></div><div className="margin-cell"><strong>{Math.round(((item.prices[1] - item.costPerMl) / item.prices[1]) * 100)} %</strong><small>{money(item.prices[1] - item.costPerMl)} / vzorek</small></div></div>)}</section></div> }
-function OrdersView() { return <div className="admin-content"><div className="admin-actions-row"><p className="admin-muted">Objednávky se zde objeví po potvrzení platby přes Stripe.</p><select className="admin-select"><option>Všechny objednávky</option><option>Čekají na výrobu</option><option>Odeslané</option></select></div><section className="admin-panel orders-panel"><div className="orders-tabs"><button className="active">Všechny <b>24</b></button><button>Čekají na výrobu <b>2</b></button><button>Odeslané</button></div><div className="orders-table-head"><span>Objednávka</span><span>Zákazník</span><span>Datum</span><span>Stav</span><span>Celkem</span></div>{sampleOrders.map((order) => <div className="orders-row" key={order.id}><strong>{order.id}</strong><div><b>{order.customer}</b><small>{order.items} položky</small></div><span>{order.date}</span><span className={`status status-${order.status.replace(' ', '-').toLowerCase()}`}>{order.status}</span><strong>{money(order.total)}</strong><button>···</button></div>)}</section></div> }
+function OrdersView({ orders }) { return <div className="admin-content"><div className="admin-actions-row"><p className="admin-muted">Objednávky se zde objeví po potvrzení platby přes Stripe.</p><select className="admin-select"><option>Všechny objednávky</option><option>Čekají na výrobu</option><option>Odeslané</option></select></div><section className="admin-panel orders-panel"><div className="orders-tabs"><button className="active">Všechny <b>{orders.length}</b></button><button>Čekají na výrobu <b>{orders.filter((order) => order.status === 'pending').length}</b></button><button>Odeslané</button></div><div className="orders-table-head"><span>Objednávka</span><span>Zákazník</span><span>Datum</span><span>Stav</span><span>Celkem</span></div>{orders.map((order) => <div className="orders-row" key={order.id}><strong>{order.id}</strong><div><b>{order.customer}</b><small>{order.items} položky</small></div><span>{order.date}</span><span className={`status status-${order.status.replace(' ', '-').toLowerCase()}`}>{order.status}</span><strong>{money(order.total)}</strong><button>···</button></div>)}</section></div> }
 function FinanceView({ inventory, revenue, costs }) { const projected = inventory.reduce((sum, item) => sum + (item.stockMl * item.prices[1]), 0); return <div className="admin-content"><div className="admin-actions-row"><p className="admin-muted">Přehled ekonomiky podle prodejních cen a evidovaných nákladů.</p><select className="admin-select"><option>Září 2026</option><option>Srpen 2026</option></select></div><div className="metric-grid finance-metrics"><Metric label="Tržby celkem" value={money(revenue)} note="24 objednávek" tone="coral" /><Metric label="Náklady na vůně" value={money(costs)} note="spotřebovaný objem" tone="yellow" /><Metric label="Hrubý zisk" value={money(revenue - costs)} note="před dopravou a reklamou" tone="sage" /><Metric label="Průměrná marže" value="68,2 %" note="za všechny vůně" tone="ink" /></div><section className="admin-panel finance-panel"><div className="panel-heading"><div><span className="eyebrow">Ekonomika katalogu</span><h2>Výnosnost jednotlivých vůní</h2></div><span className="admin-period">Září 2026</span></div><div className="finance-table-head"><span>Vůně</span><span>Prodáno</span><span>Tržby</span><span>Náklady</span><span>Zisk</span><span>Marže</span></div>{inventory.map((item, index) => { const sold = [18, 12, 23, 7, 15, 10][index]; const sales = sold * item.prices[1]; const spend = sold * item.costPerMl; return <div className="finance-row" key={item.id}><div><strong>{item.name}</strong><small>{item.brand}</small></div><span>{sold} ks</span><span>{money(sales)}</span><span>{money(spend)}</span><strong>{money(sales - spend)}</strong><b>{Math.round(((sales - spend) / sales) * 100)} %</b></div>})}<div className="finance-total"><strong>Celkem</strong><strong>85 ks</strong><strong>{money(3275)}</strong><strong>{money(1280)}</strong><strong>{money(1995)}</strong><b>60,9 %</b></div></section><p className="admin-footnote">Výpočet je orientační prototyp. Produkce musí rozlišovat náklad na parfém, obal, rozprašovač, etiketu, práci, dopravu, platební poplatky a reklamu.</p></div> }
 
 function App() {
@@ -52,11 +93,31 @@ function App() {
   const [cart, setCart] = useState([])
   const [search, setSearch] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
+  const [products, setProducts] = useState([])
+  const [inventory, setInventory] = useState([])
+  const [orders, setOrders] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [loadedProducts, loadedInventory, loadedOrders] = await Promise.all([
+        loadProducts(),
+        loadInventory(),
+        loadOrders(),
+      ])
+
+      setProducts(loadedProducts)
+      setInventory(loadedInventory)
+      setOrders(loadedOrders)
+    }
+
+    fetchData()
+  }, [])
+
   useEffect(() => { const onPopState = () => setPath(window.location.pathname); window.addEventListener('popstate', onPopState); return () => window.removeEventListener('popstate', onPopState) }, [])
   const addToCart = (product, volume = volumes[0]) => { if (volume.future) return; setCart((items) => [...items, { ...product, volume: volume.label, price: product.price + volume.price }]) }
-  const filtered = useMemo(() => products.filter((product) => `${product.name} ${product.brand} ${product.family}`.toLowerCase().includes(search.toLowerCase())), [search])
+  const filtered = useMemo(() => products.filter((product) => `${product.name} ${product.brand} ${product.family}`.toLowerCase().includes(search.toLowerCase())), [products, search])
   const currentProduct = products.find((product) => path.includes(product.id))
-  if (path.startsWith('/admin')) return <AdminApp path={path} />
+  if (path.startsWith('/admin')) return <AdminApp path={path} inventoryData={inventory} ordersData={orders} />
   const renderCatalog = () => <main className="catalog-page page-shell"><div className="breadcrumb"><button onClick={() => navigate('/')}>Domů</button><span>/</span><strong>Všechny vůně</strong></div><div className="catalog-heading"><div><p className="eyebrow">Objevte svůj podpis</p><h1>Vzorky parfémů</h1></div><p className="heading-note">Malé množství. Velký první dojem.<br />Vyberte si vůni bez závazků.</p></div><div className="catalog-toolbar"><span>{filtered.length} vůní</span><button className="filter-button">☷ &nbsp; Filtry</button><select aria-label="Řazení"><option>Doporučené</option><option>Nejnovější</option><option>Od nejlevnějších</option></select></div><div className="catalog-layout"><aside className="filters"><span className="eyebrow">Filtrovat</span><h3>Pro koho</h3><label><input type="checkbox" /> Ženy</label><label><input type="checkbox" /> Muži</label><label><input type="checkbox" /> Unisex</label><h3>Rodina vůně</h3>{['Svěží', 'Dřevitá', 'Čistá', 'Citrusová', 'Pižmová'].map((family) => <label key={family}><input type="checkbox" /> {family}</label>)}<h3>Velikost</h3><div className="size-pills">{volumes.slice(0, 3).map((volume) => <button key={volume.value}>{volume.label}</button>)}</div></aside><section className="product-grid">{filtered.map((product) => <ProductCard key={product.id} product={product} onOpen={() => navigate(`/produkt/${product.id}`)} onAdd={() => addToCart(product)} />)}</section></div></main>
   const renderProduct = () => currentProduct ? <ProductDetail product={currentProduct} onAdd={addToCart} onBack={() => navigate('/kolekce')} /> : renderCatalog()
   const renderCart = () => <main className="page-shell cart-page"><div className="breadcrumb"><button onClick={() => navigate('/')}>Domů</button><span>/</span><strong>Košík</strong></div><h1>Váš výběr</h1>{cart.length ? <><div className="cart-items">{cart.map((item, index) => <div className="cart-row" key={`${item.id}-${index}`}><img src={item.image} alt="" /><div><strong>{item.name}</strong><small>{item.brand} · {item.volume}</small></div><b>{money(item.price)}</b></div>)}</div><div className="cart-summary"><span>Mezisoučet</span><strong>{money(cart.reduce((sum, item) => sum + item.price, 0))}</strong><button className="primary-button" onClick={() => alert('Checkout bude napojený na Stripe.')}>Pokračovat k platbě <span>↗</span></button></div></> : <div className="empty-cart"><span className="empty-mark">✦</span><h2>Košík čeká na vaši první vůni</h2><button className="primary-button" onClick={() => navigate('/kolekce')}>Prozkoumat vzorky <span>↗</span></button></div>}</main>
