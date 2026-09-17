@@ -134,8 +134,10 @@ function HomeContent({ products, onOpen, onShop }) {
   const fragranceFamilies = [
     { icon: '✦', title: 'Citrus', description: 'čerstvé a lehké', label: 'Rodina vůně', tone: 'category-coral' },
     { icon: '◌', title: 'Dřevité', description: 'čisté a sebejisté', label: 'Rodina vůně', tone: 'category-yellow' },
-    { icon: '▣', title: 'Amber', description: 'teplé a hluboké', label: 'Rodina vůně', tone: 'category-sage' },
-    { icon: '✧', title: 'Fresh', description: 'série pro každý den', label: 'Rodina vůně', tone: 'category-ink' },
+    { icon: '◈', title: 'Sladké', description: 'hřejivé a návykové', label: 'Rodina vůně', tone: 'category-plum' },
+    { icon: '❋', title: 'Ovocné', description: 'šťavnaté a hravé', label: 'Rodina vůně', tone: 'category-rose' },
+    { icon: '◈', title: 'Sladké', description: 'hřejivé a návykové', label: 'Rodina vůně', tone: 'category-plum' },
+    { icon: '❋', title: 'Ovocné', description: 'šťavnaté a hravé', label: 'Rodina vůně', tone: 'category-rose' },
     { icon: '◒', title: 'Jaro', description: 'SEZÓNA · lehké ráno a nový začátek', label: 'Podle sezóny', tone: 'category-rose' },
     { icon: '☼', title: 'Léto', description: 'SEZÓNA · svěžest na rozpálené dny', label: 'Podle sezóny', tone: 'category-sun' },
     { icon: '◐', title: 'Podzim', description: 'SEZÓNA · koření, dřevo a vrstvy', label: 'Podle sezóny', tone: 'category-plum' },

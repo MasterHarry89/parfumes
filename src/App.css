@@ -94,6 +94,13 @@ em { color: var(--bronze); font-style: italic; }
 .occasion-strip { max-width: 1240px; margin: 0 auto 85px; padding: 0 5vw; display: grid; grid-template-columns: .75fr 1.25fr; gap: 55px; align-items: start; }
 .occasion-strip h2 { font: 43px 'Cormorant Garamond', serif; margin: 15px 0 0; }
 .occasion-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.occasion-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.occasion-list button { min-height: 190px; padding: 18px; display: flex; flex-direction: column; text-align: left; background: var(--paper-strong); border: 1px solid rgba(23,21,19,.06); transition: transform .2s, box-shadow .2s; }
+.occasion-list button:hover { transform: translateY(-4px); box-shadow: 0 18px 32px rgba(34,23,18,.13); }
+.occasion-list button > span { color: var(--bronze); font-size: 10px; letter-spacing: .14em; }
+.occasion-list strong { margin-top: auto; font: 600 29px 'Cormorant Garamond', serif; }
+.occasion-list small { margin-top: 6px; color: var(--muted); font-size: 10px; }
+.occasion-list b { align-self: end; margin-top: 14px; color: var(--bronze); font-size: 18px; font-weight: 400; }
 .occasion-card { min-height: 190px; padding: 18px; display: flex; flex-direction: column; text-align: left; transition: transform .2s, box-shadow .2s; }
 .occasion-card:hover { transform: translateY(-4px); box-shadow: 0 18px 32px rgba(34,23,18,.13); }
 .occasion-card .occasion-number { font-size: 10px; letter-spacing: .14em; opacity: .7; }
@@ -226,6 +233,8 @@ footer p { margin-bottom: 22px; }
 	.occasion-strip h2 { font-size: 38px; margin-bottom: 28px; }
 	.occasion-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
 	.occasion-card { min-height: 165px; }
+	.occasion-list { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+	.occasion-list button { min-height: 165px; }
 	.intro-strip { grid-template-columns: 1fr; gap: 25px; padding: 35px 25px; }
 	.intro-strip > div, .intro-strip > div:first-child { border-left: 0; border-top: 1px solid var(--line); padding: 20px 0 0; }
 	.category-grid { grid-template-columns: repeat(2, 1fr); }.category-card { min-height: 165px; }.trust-strip { grid-template-columns: repeat(2, 1fr); gap: 20px; }.trust-strip div:nth-child(3) { border-left: 0; padding-left: 0; }.editorial-band { grid-template-columns: 1fr; padding-top: 55px; padding-bottom: 55px; gap: 35px; }.editorial-band h2 { font-size: 44px; }.editorial-orb { width: 190px; height: 190px; }.editorial-orb span { font-size: 29px; }.faq-band .page-shell { display: block; }.faq-list { margin-top: 35px; }
