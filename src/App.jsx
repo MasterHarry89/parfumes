@@ -759,6 +759,13 @@ function App() {
         </button>
         <nav className={menuOpen ? "nav-open" : ""}>
           <button
+            className="nav-close"
+            onClick={() => setMenuOpen(false)}
+            aria-label="Zavřít menu"
+          >
+            ×
+          </button>
+          <button
             onClick={() => {
               setMenuOpen(false);
               navigate("/kolekce");
@@ -1003,6 +1010,11 @@ function Home({ products, onOpen, onShop }) {
   return (
     <>
       <section className="hero">
+        <img
+          className="hero-photo"
+          src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=1600&q=90"
+          alt="Flakón parfému"
+        />
         <div className="hero-copy">
           <span className="eyebrow">Contemporary fragrance house</span>
           <h1>
@@ -1018,21 +1030,6 @@ function Home({ products, onOpen, onShop }) {
             Prozkoumat kolekci <span>↗</span>
           </button>
         </div>
-        <div className="hero-visual">
-          <img
-            className="hero-photo"
-            src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=1200&q=85"
-            alt="Flakón parfému"
-          />
-          <div className="hero-orbit">
-            1 ml
-            <br />
-            <span>
-              silná osobnost
-              <br />v každé vrstvě
-            </span>
-          </div>
-        </div>
       </section>
       <HomeContent products={products} onOpen={onOpen} onShop={onShop} />
       <ProductCarousel
@@ -1042,17 +1039,16 @@ function Home({ products, onOpen, onShop }) {
         onOpen={onOpen}
         onAdd={() => {}}
       />
-      <ProductCarousel
-        eyebrow="Nejžádanější výběr"
-        title="Bestsellery"
-        products={bestsellerItems}
-        onOpen={onOpen}
-        onAdd={() => {}}
-      />
     </>
   );
 }
 function HomeContent({ products, onOpen, onShop }) {
+  const bestsellers = products.filter((product) =>
+    `${product.tag || ""} ${product.name || ""}`
+      .toLowerCase()
+      .includes("bestseller"),
+  );
+  const bestsellerItems = bestsellers.length ? bestsellers : products.slice(0, 6);
   const fragranceFamilies = [
     {
       icon: "✦",
@@ -1371,6 +1367,13 @@ function HomeContent({ products, onOpen, onShop }) {
           ))}
         </div>
       </div>
+      <ProductCarousel
+        eyebrow="Nejžádanější výběr"
+        title="Bestsellery"
+        products={bestsellerItems}
+        onOpen={onOpen}
+        onAdd={() => {}}
+      />
       <div className="occasion-strip">
         <div>
           <span className="eyebrow">Podle použití</span>
