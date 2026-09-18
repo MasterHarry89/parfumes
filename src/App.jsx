@@ -1264,44 +1264,44 @@ function HomeContent({ products, onOpen, onShop }) {
     <main>
       <section className="entry-strip">
         <button
-          className="entry-card entry-sets"
-          onClick={onShop}
-          style={{ backgroundImage: "url(https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85)" }}
-        >
-          <span>01 / PRO VÍCE VRSTEV</span>
-          <strong>Sety</strong>
-          <small>Pro více vůní v jednom výběru</small>
-          <b>Prozkoumat ↗</b>
-        </button>
-        <button
           className="entry-card entry-men"
           onClick={onShop}
           style={{ backgroundImage: "url(https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg)" }}
         >
-          <span>02 / NEJŽÁDANĚJŠÍ</span>
-          <strong>Pánské</strong>
+          <span>01 / NEJŽÁDANĚJŠÍ</span>
+          <strong>Pánské vůně</strong>
           <small>Výrazné kompozice s čistou autoritou</small>
-          <b>Prozkoumat ↗</b>
+          <b aria-hidden="true">↗</b>
         </button>
         <button
           className="entry-card entry-women"
           onClick={onShop}
           style={{ backgroundImage: "url(https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85)" }}
         >
-          <span>03 / OBJEVTE</span>
-          <strong>Dámské</strong>
+          <span>02 / OBJEVTE</span>
+          <strong>Dámské vůně</strong>
           <small>Elegantní vůně pro vlastní podpis</small>
-          <b>Prozkoumat ↗</b>
+          <b aria-hidden="true">↗</b>
         </button>
         <button
           className="entry-card entry-new"
           onClick={onShop}
           style={{ backgroundImage: "url(https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=900&q=85)" }}
         >
-          <span>04 / ČERSTVĚ PŘIDÁNO</span>
-          <strong>Nové vůně</strong>
+          <span>03 / ČERSTVĚ PŘIDÁNO</span>
+          <strong>Nové</strong>
           <small>Poslední objevy v naší kolekci</small>
-          <b>Prozkoumat ↗</b>
+          <b aria-hidden="true">↗</b>
+        </button>
+        <button
+          className="entry-card entry-sets"
+          onClick={onShop}
+          style={{ backgroundImage: "url(https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85)" }}
+        >
+          <span>04 / PRO VÍCE VRSTEV</span>
+          <strong>Sety</strong>
+          <small>Pro více vůní v jednom výběru</small>
+          <b aria-hidden="true">↗</b>
         </button>
         <button
           className="entry-card entry-sale"
@@ -1311,7 +1311,7 @@ function HomeContent({ products, onOpen, onShop }) {
           <span>05 / VÝHODNĚJI</span>
           <strong>Akce</strong>
           <small>Výhodnější výběr vůní</small>
-          <b>Prozkoumat ↗</b>
+          <b aria-hidden="true">↗</b>
         </button>
       </section>
       <div className="section-heading secondary-heading">
