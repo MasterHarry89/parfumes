@@ -66,7 +66,7 @@ em { color: var(--bronze); font-style: italic; }
 .category-sun { background: linear-gradient(135deg, #e0c883 0%, #c49c59 100%); color: var(--ink); }
 .category-plum { background: linear-gradient(135deg, #967c7b 0%, #69535c 100%); color: #fff; }
 .category-fog { background: linear-gradient(135deg, #c4c9c4 0%, #909a9a 100%); color: var(--ink); }
-.entry-strip { max-width: 1240px; margin: 0 auto; padding: 62px 5vw 54px; display: grid; grid-template-columns: 1.15fr .9fr .9fr; gap: 12px; }
+.entry-strip { max-width: 1240px; margin: 0 auto; padding: 62px 5vw 54px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
 .entry-card { min-height: 250px; padding: 24px; text-align: left; display: flex; flex-direction: column; color: #fff; transition: transform .2s, box-shadow .2s; }
 .entry-card:hover, .family-tile:hover, .discovery-tile:hover { transform: translateY(-4px); box-shadow: 0 18px 32px rgba(34,23,18,.13); }
 .entry-card > span, .entry-card small { font-size: 10px; letter-spacing: .12em; opacity: .76; }
@@ -76,6 +76,10 @@ em { color: var(--bronze); font-style: italic; }
 .entry-men { background: linear-gradient(135deg, #654536, #a47457); }
 .entry-women { background: linear-gradient(135deg, #b97e78, #d0a18f); }
 .entry-new { background: linear-gradient(135deg, #24201d, #716257); }
+.entry-strip::before, .entry-strip::after { min-height: 250px; padding: 24px; display: flex; flex-direction: column; justify-content: flex-end; color: #fff; white-space: pre-line; font: 600 30px/1 'Cormorant Garamond', serif; transition: transform .2s, box-shadow .2s; }
+.entry-strip::before { content: 'Sety\A\APro více vůní ↗'; background: linear-gradient(135deg, #7f8879, #aeb8a4); }
+.entry-strip::after { content: 'Akce\A\AVýhodnější výběr ↗'; background: linear-gradient(135deg, #b1815c, #d1aa7a); }
+.entry-strip::before:hover, .entry-strip::after:hover { transform: translateY(-4px); box-shadow: 0 18px 32px rgba(34,23,18,.13); }
 .secondary-heading { max-width: 1240px; margin: 15px auto 30px; padding: 0 5vw; }
 .family-track { max-width: 1240px; margin: 0 auto 80px; padding: 0 5vw; display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; }
 .family-track::-webkit-scrollbar { display: none; }
@@ -222,6 +226,7 @@ footer p { margin-bottom: 22px; }
 	.entry-strip { grid-template-columns: 1fr; padding: 40px 20px; gap: 10px; }
 	.entry-card { min-height: 190px; }
 	.entry-card strong { font-size: 36px; }
+	.entry-strip::before, .entry-strip::after { min-height: 190px; padding: 20px; font-size: 36px; }
 	.secondary-heading { padding: 0 20px; margin-top: 15px; }
 	.family-track { padding: 0 20px; margin-bottom: 55px; }
 	.family-tile { flex-basis: 190px; min-height: 175px; }
