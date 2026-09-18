@@ -1060,7 +1060,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "čerstvé a lehké",
       label: "Rodina vůně",
       tone: "category-coral",
-      image: "https://images.unsplash.com/photo-1557800636-894a64c1696f?auto=format&fit=crop&w=700&q=85",
+      image: "https://images.unsplash.com/photo-1547514701-42782101795e?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "◌",
@@ -1068,7 +1068,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "čisté a sebejisté",
       label: "Rodina vůně",
       tone: "category-yellow",
-      image: "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=700&q=85",
+      image: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "◈",
@@ -1076,7 +1076,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "hřejivé a návykové",
       label: "Rodina vůně",
       tone: "category-plum",
-      image: "https://images.unsplash.com/photo-1572449043416-55f4685c9bb7?auto=format&fit=crop&w=700&q=85",
+      image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "❋",
@@ -1084,7 +1084,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "šťavnaté a hravé",
       label: "Rodina vůně",
       tone: "category-rose",
-      image: "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=700&q=85",
+      image: "https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "▣",
@@ -1092,7 +1092,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "teplé a hluboké",
       label: "Rodina vůně",
       tone: "category-sage",
-      image: "https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=700&q=85",
+      image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "✧",
@@ -1100,7 +1100,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "série pro každý den",
       label: "Rodina vůně",
       tone: "category-ink",
-      image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=700&q=85",
+      image: "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "✹",
