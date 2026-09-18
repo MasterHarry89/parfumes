@@ -789,7 +789,7 @@ function App() {
               navigate("/kolekce");
             }}
           >
-            <span className="nav-icon">◌</span>Vzorky
+            Vzorky
           </button>
           <button
             onClick={() => {
@@ -797,7 +797,7 @@ function App() {
               navigate("/kolekce");
             }}
           >
-            <span className="nav-icon">✦</span>Ženy
+            Ženy
           </button>
           <button
             onClick={() => {
@@ -805,7 +805,7 @@ function App() {
               navigate("/kolekce");
             }}
           >
-            <span className="nav-icon">▣</span>Muži
+            Muži
           </button>
           <button
             onClick={() => {
@@ -813,7 +813,7 @@ function App() {
               navigate("/znacky");
             }}
           >
-            <span className="nav-icon">◍</span>Značky
+            Značky
           </button>
           <button
             onClick={() => {
@@ -821,7 +821,7 @@ function App() {
               navigate("/kolekce");
             }}
           >
-            <span className="nav-icon">✧</span>Novinky
+            Novinky
           </button>
         </nav>
         <div className="header-actions">
@@ -983,7 +983,9 @@ function ProductDetail({ product, onAdd, onBack }) {
 function ProductCarousel({ title, eyebrow, products, onOpen, onAdd }) {
   if (!products.length) return null;
   return (
-    <section className="product-carousel page-shell">
+    <section
+      className={`product-carousel page-shell ${title === "Bestsellery" ? "bestseller-carousel" : ""}`}
+    >
       <div className="carousel-heading">
         <div>
           <span className="eyebrow">{eyebrow}</span>
@@ -1349,11 +1351,8 @@ function HomeContent({ products, onOpen, onShop }) {
             onClick={onShop}
             style={{ backgroundImage: `url(${family.image})` }}
           >
-            <span className="family-step">0{index + 1}</span>
-            <span className="family-icon">{family.icon}</span>
             <strong>{family.title}</strong>
             <small>{family.description}</small>
-            <b>↗</b>
           </button>
         ))}
       </div>
@@ -1378,7 +1377,6 @@ function HomeContent({ products, onOpen, onShop }) {
               onClick={onShop}
               style={{ backgroundImage: `url(${family.image})` }}
             >
-              <span className="family-icon">{family.icon}</span>
               <strong>{family.title}</strong>
               <small>{family.description.replace("SEZÓNA · ", "")}</small>
             </button>
@@ -1404,10 +1402,8 @@ function HomeContent({ products, onOpen, onShop }) {
               onClick={onShop}
               style={{ backgroundImage: `url(${family.image})` }}
             >
-              <span>0{index + 1}</span>
               <strong>{family.title}</strong>
               <small>{family.description.replace("POUŽITÍ · ", "")}</small>
-              <b>↗</b>
             </button>
           ))}
         </div>

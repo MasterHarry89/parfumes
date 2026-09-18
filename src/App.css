@@ -92,17 +92,17 @@ em { color: var(--bronze); font-style: italic; }
 .family-tile strong, .discovery-tile strong { margin-top: auto; font: 600 29px 'Cormorant Garamond', serif; }
 .family-tile small, .discovery-tile small { margin-top: 6px; font-size: 10px; opacity: .75; }
 .family-tile b { align-self: end; margin-top: 14px; font-weight: 400; }
-.discovery-layout { max-width: 1240px; margin: 0 auto 80px; padding: 0 5vw; display: grid; grid-template-columns: .8fr 1.2fr; gap: 12px; }
+.discovery-layout { max-width: 1240px; margin: 0 auto 28px; padding: 0 5vw; display: grid; grid-template-columns: .8fr 1.2fr; gap: 12px; }
 .discovery-season { min-height: 390px; padding: 38px; background: var(--ink); color: #f7f3ee; display: flex; flex-direction: column; justify-content: center; }
 .discovery-season h2 { font: 48px/1 'Cormorant Garamond', serif; margin: 20px 0; }
 .discovery-season p { max-width: 270px; color: rgba(247,243,238,.7); font-size: 12px; line-height: 1.6; }
 .discovery-season .eyebrow { color: var(--gold); }
 .text-button { color: var(--gold); font-size: 11px; text-align: left; text-transform: uppercase; letter-spacing: .1em; }
 .discovery-tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-.discovery-tile { min-height: 189px; padding: 20px; display: flex; flex-direction: column; text-align: left; transition: transform .2s, box-shadow .2s; position: relative; overflow: hidden; background-position: center; background-size: cover; color: #fff; }
+.discovery-tile { min-height: 189px; padding: 20px; display: flex; flex-direction: column; justify-content: flex-end; text-align: left; transition: transform .2s, box-shadow .2s; position: relative; overflow: hidden; background-position: center; background-size: cover; color: #fff; }
 .discovery-tile::before, .occasion-list button::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20, 16, 13, .12), rgba(20, 16, 13, .82)); }
 .discovery-tile > *, .occasion-list button > * { position: relative; z-index: 1; color: #fff; }
-.occasion-strip { max-width: 1240px; margin: 0 auto 85px; padding: 0 5vw; display: grid; grid-template-columns: .75fr 1.25fr; gap: 55px; align-items: start; }
+.occasion-strip { max-width: 1240px; margin: 0 auto 55px; padding: 0 5vw; display: grid; grid-template-columns: .75fr 1.25fr; gap: 55px; align-items: start; }
 .occasion-strip h2 { font: 43px 'Cormorant Garamond', serif; margin: 15px 0 0; }
 .occasion-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .occasion-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -112,6 +112,7 @@ em { color: var(--bronze); font-style: italic; }
 .occasion-list strong { margin-top: auto; font: 600 29px 'Cormorant Garamond', serif; }
 .occasion-list small { margin-top: 6px; color: rgba(255,255,255,.78); font-size: 10px; }
 .occasion-list b { align-self: end; margin-top: 14px; color: #fff; font-size: 18px; font-weight: 400; }
+.bestseller-carousel { padding-top: 24px; padding-bottom: 28px; }
 .occasion-card { min-height: 190px; padding: 18px; display: flex; flex-direction: column; text-align: left; transition: transform .2s, box-shadow .2s; }
 .occasion-card:hover { transform: translateY(-4px); box-shadow: 0 18px 32px rgba(34,23,18,.13); }
 .occasion-card .occasion-number { font-size: 10px; letter-spacing: .14em; opacity: .7; }
@@ -245,19 +246,20 @@ footer p { margin-bottom: 22px; }
 	.entry-card small { display: none; }
 	.entry-card b { grid-column: 2; grid-row: 1; align-self: center; justify-self: end; margin: 0; width: 28px; height: 28px; font-size: 17px; background: #fff; color: var(--ink); }
 	.secondary-heading { padding: 0 20px; margin-top: 15px; }
-	.family-track { padding: 0 20px; margin-bottom: 55px; }
+	.family-track { padding: 0 20px; margin-bottom: 28px; }
 	.family-tile { flex-basis: 190px; min-height: 175px; }
-	.discovery-layout { grid-template-columns: 1fr; padding: 0 20px; margin-bottom: 55px; }
+	.discovery-layout { grid-template-columns: 1fr; padding: 0 20px; margin-bottom: 24px; }
 	.discovery-season { min-height: 300px; padding: 28px; }
 	.discovery-season h2 { font-size: 40px; }
 	.discovery-tile { min-height: 145px; }
-	.occasion-strip { display: block; padding: 0 20px; margin-bottom: 60px; }
+	.occasion-strip { display: block; padding: 0 20px; margin-bottom: 40px; }
 	.occasion-strip h2 { font-size: 38px; margin-bottom: 28px; }
 	.occasion-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
 	.occasion-card { min-height: 165px; }
 	.occasion-list { grid-template-columns: repeat(2, 1fr); gap: 10px; }
 	.occasion-list button { min-height: 165px; }
 	.product-carousel { padding-top: 55px; padding-bottom: 15px; }
+	.bestseller-carousel { padding-top: 20px; padding-bottom: 20px; }
 	.product-carousel + .product-carousel { padding-top: 35px; padding-bottom: 60px; }
 	.carousel-heading { display: block; margin-bottom: 25px; }
 	.carousel-heading h2 { font-size: 36px; }
