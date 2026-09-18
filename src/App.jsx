@@ -1060,6 +1060,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "čerstvé a lehké",
       label: "Rodina vůně",
       tone: "category-coral",
+      image: "https://images.unsplash.com/photo-1557800636-894a64c1696f?auto=format&fit=crop&w=700&q=85",
     },
     {
       icon: "◌",
@@ -1067,6 +1068,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "čisté a sebejisté",
       label: "Rodina vůně",
       tone: "category-yellow",
+      image: "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=700&q=85",
     },
     {
       icon: "◈",
@@ -1074,6 +1076,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "hřejivé a návykové",
       label: "Rodina vůně",
       tone: "category-plum",
+      image: "https://images.unsplash.com/photo-1572449043416-55f4685c9bb7?auto=format&fit=crop&w=700&q=85",
     },
     {
       icon: "❋",
@@ -1081,6 +1084,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "šťavnaté a hravé",
       label: "Rodina vůně",
       tone: "category-rose",
+      image: "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=700&q=85",
     },
     {
       icon: "▣",
@@ -1088,6 +1092,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "teplé a hluboké",
       label: "Rodina vůně",
       tone: "category-sage",
+      image: "https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=700&q=85",
     },
     {
       icon: "✧",
@@ -1095,6 +1100,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "série pro každý den",
       label: "Rodina vůně",
       tone: "category-ink",
+      image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=700&q=85",
     },
     {
       icon: "✹",
@@ -1242,22 +1248,34 @@ function HomeContent({ products, onOpen, onShop }) {
   return (
     <main>
       <section className="entry-strip">
+        <button className="entry-card entry-sets" onClick={onShop}>
+          <span>01 / PRO VÍCE VRSTEV</span>
+          <strong>Sety</strong>
+          <small>Pro více vůní v jednom výběru</small>
+          <b>Prozkoumat ↗</b>
+        </button>
         <button className="entry-card entry-men" onClick={onShop}>
-          <span>01 / NEJŽÁDANĚJŠÍ</span>
+          <span>02 / NEJŽÁDANĚJŠÍ</span>
           <strong>Pánské</strong>
           <small>Výrazné kompozice s čistou autoritou</small>
           <b>Prozkoumat ↗</b>
         </button>
         <button className="entry-card entry-women" onClick={onShop}>
-          <span>02 / OBJEVTE</span>
+          <span>03 / OBJEVTE</span>
           <strong>Dámské</strong>
           <small>Elegantní vůně pro vlastní podpis</small>
           <b>Prozkoumat ↗</b>
         </button>
         <button className="entry-card entry-new" onClick={onShop}>
-          <span>03 / ČERSTVĚ PŘIDÁNO</span>
+          <span>04 / ČERSTVĚ PŘIDÁNO</span>
           <strong>Nové vůně</strong>
           <small>Poslední objevy v naší kolekci</small>
+          <b>Prozkoumat ↗</b>
+        </button>
+        <button className="entry-card entry-sale" onClick={onShop}>
+          <span>05 / VÝHODNĚJI</span>
+          <strong>Akce</strong>
+          <small>Výhodnější výběr vůní</small>
           <b>Prozkoumat ↗</b>
         </button>
       </section>
@@ -1276,6 +1294,7 @@ function HomeContent({ products, onOpen, onShop }) {
             className={`family-tile ${family.tone}`}
             key={family.title}
             onClick={onShop}
+            style={{ backgroundImage: `url(${family.image})` }}
           >
             <span className="family-step">0{index + 1}</span>
             <span className="family-icon">{family.icon}</span>
