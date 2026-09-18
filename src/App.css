@@ -1,9 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 
-.app { overflow: hidden; }
+.app { overflow-x: hidden; }
 .announcement { background: var(--espresso); color: #f7f2ed; text-align: center; font-size: 11px; letter-spacing: .08em; padding: 10px 20px; text-transform: uppercase; }
 .announcement span { color: var(--gold); margin: 0 10px; }
-.site-header { height: 82px; max-width: 1440px; margin: auto; padding: 0 5vw; display: flex; align-items: center; gap: 42px; border-bottom: 1px solid rgba(23, 21, 19, .12); background: rgba(247, 243, 238, .96); backdrop-filter: blur(8px); }
+.site-header { height: 82px; max-width: 1440px; margin: auto; padding: 0 5vw; position: sticky; top: 0; z-index: 15; display: flex; align-items: center; gap: 42px; border-bottom: 1px solid rgba(23, 21, 19, .12); background: rgba(247, 243, 238, .96); backdrop-filter: blur(8px); transition: transform .28s ease, box-shadow .28s ease; }
+.site-header.header-hidden { transform: translateY(-100%); box-shadow: none; }
 .wordmark { font: 700 20px/1 'Cormorant Garamond', serif; letter-spacing: .06em; white-space: nowrap; }
 .wordmark span { font: 700 9px 'Manrope', sans-serif; vertical-align: top; margin-left: 3px; }
 .site-header nav { display: flex; gap: 27px; align-items: center; flex: 1; }
@@ -223,8 +224,8 @@ footer p { margin-bottom: 22px; }
 @media (max-width: 800px) {
 	.site-header { height: 67px; padding: 0 20px; gap: 15px; justify-content: space-between; }
 	.menu-toggle { display: block; order: -1; }
-	.site-header nav { display: flex; position: fixed; z-index: 20; inset: 0 auto 0 0; width: min(320px, 86vw); height: 100vh; transform: translateX(-105%); transition: transform .34s cubic-bezier(.22, .61, .36, 1); background: #fff; box-shadow: 16px 0 38px rgba(23,21,19,.14); padding: 86px 24px 28px; flex-direction: column; align-items: stretch; gap: 0; color: var(--ink); }
-	.site-header nav.nav-open { transform: translateX(0); }
+	.site-header nav { display: flex; position: fixed; z-index: 30; top: 0; bottom: 0; left: 0; width: min(320px, 86vw); height: 100dvh; transform: translate3d(-105%, 0, 0); transition: transform .34s cubic-bezier(.22, .61, .36, 1), visibility 0s linear .34s; background: #fff; box-shadow: 16px 0 38px rgba(23,21,19,.14); padding: 86px 24px 28px; flex-direction: column; align-items: stretch; gap: 0; color: var(--ink); visibility: hidden; }
+	.site-header nav.nav-open { transform: translate3d(0, 0, 0); visibility: visible; transition-delay: 0s; }
 	.site-header nav button { color: var(--ink); display: flex; align-items: center; gap: 12px; width: 100%; padding: 17px 4px; border-bottom: 1px solid var(--line); background: transparent; text-align: left; }
 	.site-header nav button:hover { color: var(--bronze); background: transparent; }
 	.site-header nav .nav-close { display: block; position: absolute; top: 18px; right: 20px; width: auto; padding: 0 4px; border: 0; font-size: 30px; line-height: 1; }
@@ -242,7 +243,7 @@ footer p { margin-bottom: 22px; }
 	.entry-card > span { display: none; }
 	.entry-card strong { grid-column: 1; grid-row: 1; margin: 0; font: 600 24px/1 'Cormorant Garamond', serif; }
 	.entry-card small { display: none; }
-	.entry-card b { grid-column: 3; grid-row: 1; margin: 0; width: 28px; height: 28px; font-size: 17px; background: #fff; color: var(--ink); }
+	.entry-card b { grid-column: 2; grid-row: 1; align-self: center; justify-self: end; margin: 0; width: 28px; height: 28px; font-size: 17px; background: #fff; color: var(--ink); }
 	.secondary-heading { padding: 0 20px; margin-top: 15px; }
 	.family-track { padding: 0 20px; margin-bottom: 55px; }
 	.family-tile { flex-basis: 190px; min-height: 175px; }

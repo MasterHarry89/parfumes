@@ -553,6 +553,7 @@ function App() {
   const [cart, setCart] = useState([]);
   const [search, setSearch] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [headerHidden, setHeaderHidden] = useState(false);
   const [products, setProducts] = useState([]);
   const [inventory, setInventory] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -575,6 +576,23 @@ function App() {
     const onPopState = () => setPath(window.location.pathname);
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  useEffect(() => {
+    let previousScrollY = window.scrollY;
+    const onScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY < previousScrollY) {
+        setHeaderHidden(false);
+      } else if (currentScrollY > previousScrollY && currentScrollY > 80) {
+        setHeaderHidden(true);
+        setMenuOpen(false);
+      }
+      previousScrollY = currentScrollY;
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
   const addToCart = (product, volume = volumes[0]) => {
     if (volume.future) return;
@@ -746,7 +764,7 @@ function App() {
         Doprava zdarma od 900 Kč <span>·</span> Vzorky, které vás dostanou blíž
         k vaší vůni
       </div>
-      <header className="site-header">
+      <header className={`site-header ${headerHidden ? "header-hidden" : ""}`}>
         <button
           className="menu-toggle"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -1271,7 +1289,7 @@ function HomeContent({ products, onOpen, onShop }) {
           <span>01 / NEJŽÁDANĚJŠÍ</span>
           <strong>Pánské vůně</strong>
           <small>Výrazné kompozice s čistou autoritou</small>
-          <b aria-hidden="true">↗</b>
+          <b aria-hidden="true">→</b>
         </button>
         <button
           className="entry-card entry-women"
@@ -1281,7 +1299,7 @@ function HomeContent({ products, onOpen, onShop }) {
           <span>02 / OBJEVTE</span>
           <strong>Dámské vůně</strong>
           <small>Elegantní vůně pro vlastní podpis</small>
-          <b aria-hidden="true">↗</b>
+          <b aria-hidden="true">→</b>
         </button>
         <button
           className="entry-card entry-new"
@@ -1291,7 +1309,7 @@ function HomeContent({ products, onOpen, onShop }) {
           <span>03 / ČERSTVĚ PŘIDÁNO</span>
           <strong>Nové</strong>
           <small>Poslední objevy v naší kolekci</small>
-          <b aria-hidden="true">↗</b>
+          <b aria-hidden="true">→</b>
         </button>
         <button
           className="entry-card entry-sets"
@@ -1301,7 +1319,7 @@ function HomeContent({ products, onOpen, onShop }) {
           <span>04 / PRO VÍCE VRSTEV</span>
           <strong>Sety</strong>
           <small>Pro více vůní v jednom výběru</small>
-          <b aria-hidden="true">↗</b>
+          <b aria-hidden="true">→</b>
         </button>
         <button
           className="entry-card entry-sale"
@@ -1311,7 +1329,7 @@ function HomeContent({ products, onOpen, onShop }) {
           <span>05 / VÝHODNĚJI</span>
           <strong>Akce</strong>
           <small>Výhodnější výběr vůní</small>
-          <b aria-hidden="true">↗</b>
+          <b aria-hidden="true">→</b>
         </button>
       </section>
       <div className="section-heading secondary-heading">
