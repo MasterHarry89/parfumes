@@ -246,6 +246,7 @@ footer p { margin-bottom: 22px; }
 	.entry-card small { display: none; }
 	.entry-card b { grid-column: 2; grid-row: 1; align-self: center; justify-self: end; margin: 0; width: 28px; height: 28px; font-size: 17px; background: #fff; color: var(--ink); }
 	.secondary-heading { padding: 0 20px; margin-top: 15px; }
+	.secondary-heading { margin-bottom: 18px; }
 	.family-track { padding: 0 20px; margin-bottom: 28px; }
 	.family-tile { flex-basis: 190px; min-height: 175px; }
 	.discovery-layout { grid-template-columns: 1fr; padding: 0 20px; margin-bottom: 24px; }
@@ -258,8 +259,8 @@ footer p { margin-bottom: 22px; }
 	.occasion-card { min-height: 165px; }
 	.occasion-list { grid-template-columns: repeat(2, 1fr); gap: 10px; }
 	.occasion-list button { min-height: 165px; }
-	.product-carousel { padding-top: 55px; padding-bottom: 15px; }
-	.bestseller-carousel { padding-top: 20px; padding-bottom: 20px; }
+	.product-carousel { padding-top: 36px; padding-bottom: 15px; }
+	.product-carousel.bestseller-carousel { padding-top: 12px; padding-bottom: 10px; }
 	.product-carousel + .product-carousel { padding-top: 35px; padding-bottom: 60px; }
 	.carousel-heading { display: block; margin-bottom: 25px; }
 	.carousel-heading h2 { font-size: 36px; }
