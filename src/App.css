@@ -112,6 +112,15 @@ em { color: var(--bronze); font-style: italic; }
 .occasion-card strong { margin-top: auto; font: 600 29px 'Cormorant Garamond', serif; }
 .occasion-card small { margin-top: 6px; font-size: 10px; opacity: .75; }
 .occasion-card b { align-self: end; margin-top: 14px; font-size: 18px; font-weight: 400; }
+.product-carousel { padding-top: 76px; padding-bottom: 30px; }
+.product-carousel + .product-carousel { padding-top: 45px; padding-bottom: 85px; }
+.carousel-heading { display: flex; justify-content: space-between; align-items: end; margin-bottom: 34px; }
+.carousel-heading h2 { font: 600 43px/1.1 'Cormorant Garamond', serif; letter-spacing: -.02em; margin: 14px 0 0; }
+.carousel-heading button { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; }
+.carousel-heading button span { color: var(--bronze); font-size: 17px; padding-left: 12px; }
+.carousel-track { display: flex; gap: 21px; overflow-x: auto; padding: 2px 0 18px; scrollbar-width: none; }
+.carousel-track::-webkit-scrollbar { display: none; }
+.carousel-track .product-card { flex: 0 0 258px; }
 .trust-strip { max-width: 1240px; margin: auto; padding: 24px 5vw; display: grid; grid-template-columns: repeat(4, 1fr); background: rgba(234, 223, 206, .95); border: 1px solid rgba(23,21,19,.04); }
 .trust-strip div { border-left: 1px solid #d5c7ae; padding-left: 23px; display: grid; gap: 4px; }
 .trust-strip div:first-child { border-left: 0; padding-left: 0; }
@@ -240,6 +249,13 @@ footer p { margin-bottom: 22px; }
 	.occasion-card { min-height: 165px; }
 	.occasion-list { grid-template-columns: repeat(2, 1fr); gap: 10px; }
 	.occasion-list button { min-height: 165px; }
+	.product-carousel { padding-top: 55px; padding-bottom: 15px; }
+	.product-carousel + .product-carousel { padding-top: 35px; padding-bottom: 60px; }
+	.carousel-heading { display: block; margin-bottom: 25px; }
+	.carousel-heading h2 { font-size: 36px; }
+	.carousel-heading button { margin-top: 17px; }
+	.carousel-track { gap: 12px; margin-right: -20px; padding-right: 20px; }
+	.carousel-track .product-card { flex-basis: 190px; }
 	.intro-strip { grid-template-columns: 1fr; gap: 25px; padding: 35px 25px; }
 	.intro-strip > div, .intro-strip > div:first-child { border-left: 0; border-top: 1px solid var(--line); padding: 20px 0 0; }
 	.category-grid { grid-template-columns: repeat(2, 1fr); }.category-card { min-height: 165px; }.trust-strip { grid-template-columns: repeat(2, 1fr); gap: 20px; }.trust-strip div:nth-child(3) { border-left: 0; padding-left: 0; }.editorial-band { grid-template-columns: 1fr; padding-top: 55px; padding-bottom: 55px; gap: 35px; }.editorial-band h2 { font-size: 44px; }.editorial-orb { width: 190px; height: 190px; }.editorial-orb span { font-size: 29px; }.faq-band .page-shell { display: block; }.faq-list { margin-top: 35px; }
