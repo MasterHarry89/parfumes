@@ -1019,11 +1019,11 @@ function Home({ products, onOpen, onShop }) {
           </button>
         </div>
         <div className="hero-visual">
-          <div className="sun-disc" />
-          <div className="hero-bottle">
-            <span>PR</span>
-            <small>sample / 03</small>
-          </div>
+          <img
+            className="hero-photo"
+            src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=1200&q=85"
+            alt="Flakón parfému"
+          />
           <div className="hero-orbit">
             1 ml
             <br />
@@ -1060,7 +1060,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "čerstvé a lehké",
       label: "Rodina vůně",
       tone: "category-coral",
-      image: "https://images.unsplash.com/photo-1547514701-42782101795e?auto=format&fit=crop&w=900&q=85",
+      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Citrus_slices-1002778.jpeg/960px-Citrus_slices-1002778.jpeg",
     },
     {
       icon: "◌",
@@ -1068,7 +1068,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "čisté a sebejisté",
       label: "Rodina vůně",
       tone: "category-yellow",
-      image: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=900&q=85",
+      image: "https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg",
     },
     {
       icon: "◈",
@@ -1108,6 +1108,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "výrazné a hřejivé",
       label: "Rodina vůně",
       tone: "category-sun",
+      image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "◉",
@@ -1115,6 +1116,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "smyslné a hluboké",
       label: "Rodina vůně",
       tone: "category-plum",
+      image: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "▰",
@@ -1122,6 +1124,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "suché a charakteristické",
       label: "Rodina vůně",
       tone: "category-ink",
+      image: "https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg",
     },
     {
       icon: "▥",
@@ -1129,6 +1132,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "kouřové a sofistikované",
       label: "Rodina vůně",
       tone: "category-coral",
+      image: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "♧",
@@ -1136,6 +1140,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "svěží a přirozené",
       label: "Rodina vůně",
       tone: "category-sage",
+      image: "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "≈",
@@ -1143,6 +1148,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "čisté a osvěžující",
       label: "Rodina vůně",
       tone: "category-fog",
+      image: "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "◌",
@@ -1150,6 +1156,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "měkké a intimní",
       label: "Rodina vůně",
       tone: "category-rose",
+      image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "·",
@@ -1157,6 +1164,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "jemné a uhlazené",
       label: "Rodina vůně",
       tone: "category-yellow",
+      image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "❀",
@@ -1164,6 +1172,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "elegantní a opojné",
       label: "Rodina vůně",
       tone: "category-coral",
+      image: "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "◒",
@@ -1171,6 +1180,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "SEZÓNA · lehké ráno a nový začátek",
       label: "Podle sezóny",
       tone: "category-rose",
+      image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "☼",
@@ -1178,6 +1188,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "SEZÓNA · svěžest na rozpálené dny",
       label: "Podle sezóny",
       tone: "category-sun",
+      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Citrus_slices-1002778.jpeg/960px-Citrus_slices-1002778.jpeg",
     },
     {
       icon: "◐",
@@ -1185,6 +1196,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "SEZÓNA · koření, dřevo a vrstvy",
       label: "Podle sezóny",
       tone: "category-plum",
+      image: "https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg",
     },
     {
       icon: "❄",
@@ -1192,6 +1204,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "SEZÓNA · výrazná stopa a teplo",
       label: "Podle sezóny",
       tone: "category-fog",
+      image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "♡",
@@ -1199,6 +1212,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · blízko, ale s charakterem",
       label: "Podle použití",
       tone: "category-coral",
+      image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "▤",
@@ -1206,6 +1220,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · čistá autorita bez hluku",
       label: "Podle použití",
       tone: "category-yellow",
+      image: "https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg",
     },
     {
       icon: "✦",
@@ -1213,6 +1228,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · když má být přítomnost cítit",
       label: "Podle použití",
       tone: "category-sage",
+      image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "↗",
@@ -1220,6 +1236,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · podpis, ke kterému se vrátíte",
       label: "Podle použití",
       tone: "category-ink",
+      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Citrus_slices-1002778.jpeg/960px-Citrus_slices-1002778.jpeg",
     },
     {
       icon: "⌁",
@@ -1227,6 +1244,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · čistá energie a svěžest",
       label: "Podle použití",
       tone: "category-fog",
+      image: "https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "✷",
@@ -1234,6 +1252,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · výrazná stopa po setmění",
       label: "Podle použití",
       tone: "category-plum",
+      image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85",
     },
   ];
 
@@ -1248,31 +1267,51 @@ function HomeContent({ products, onOpen, onShop }) {
   return (
     <main>
       <section className="entry-strip">
-        <button className="entry-card entry-sets" onClick={onShop}>
+        <button
+          className="entry-card entry-sets"
+          onClick={onShop}
+          style={{ backgroundImage: "url(https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85)" }}
+        >
           <span>01 / PRO VÍCE VRSTEV</span>
           <strong>Sety</strong>
           <small>Pro více vůní v jednom výběru</small>
           <b>Prozkoumat ↗</b>
         </button>
-        <button className="entry-card entry-men" onClick={onShop}>
+        <button
+          className="entry-card entry-men"
+          onClick={onShop}
+          style={{ backgroundImage: "url(https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg)" }}
+        >
           <span>02 / NEJŽÁDANĚJŠÍ</span>
           <strong>Pánské</strong>
           <small>Výrazné kompozice s čistou autoritou</small>
           <b>Prozkoumat ↗</b>
         </button>
-        <button className="entry-card entry-women" onClick={onShop}>
+        <button
+          className="entry-card entry-women"
+          onClick={onShop}
+          style={{ backgroundImage: "url(https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85)" }}
+        >
           <span>03 / OBJEVTE</span>
           <strong>Dámské</strong>
           <small>Elegantní vůně pro vlastní podpis</small>
           <b>Prozkoumat ↗</b>
         </button>
-        <button className="entry-card entry-new" onClick={onShop}>
+        <button
+          className="entry-card entry-new"
+          onClick={onShop}
+          style={{ backgroundImage: "url(https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=900&q=85)" }}
+        >
           <span>04 / ČERSTVĚ PŘIDÁNO</span>
           <strong>Nové vůně</strong>
           <small>Poslední objevy v naší kolekci</small>
           <b>Prozkoumat ↗</b>
         </button>
-        <button className="entry-card entry-sale" onClick={onShop}>
+        <button
+          className="entry-card entry-sale"
+          onClick={onShop}
+          style={{ backgroundImage: "url(https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85)" }}
+        >
           <span>05 / VÝHODNĚJI</span>
           <strong>Akce</strong>
           <small>Výhodnější výběr vůní</small>
@@ -1291,7 +1330,7 @@ function HomeContent({ products, onOpen, onShop }) {
       <div className="family-track">
         {fragranceFamilies.slice(0, 4).map((family, index) => (
           <button
-            className={`family-tile ${family.tone}`}
+            className={`family-tile ${family.tone} ${family.title === "Dřevité" ? "family-wood" : ""}`}
             key={family.title}
             onClick={onShop}
             style={{ backgroundImage: `url(${family.image})` }}
@@ -1323,6 +1362,7 @@ function HomeContent({ products, onOpen, onShop }) {
               className={`discovery-tile ${family.tone}`}
               key={family.title}
               onClick={onShop}
+              style={{ backgroundImage: `url(${family.image})` }}
             >
               <span className="family-icon">{family.icon}</span>
               <strong>{family.title}</strong>
@@ -1338,7 +1378,11 @@ function HomeContent({ products, onOpen, onShop }) {
         </div>
         <div className="occasion-list">
           {fragranceFamilies.slice(8).map((family, index) => (
-            <button key={family.title} onClick={onShop}>
+            <button
+              key={family.title}
+              onClick={onShop}
+              style={{ backgroundImage: `url(${family.image})` }}
+            >
               <span>0{index + 1}</span>
               <strong>{family.title}</strong>
               <small>{family.description.replace("POUŽITÍ · ", "")}</small>
