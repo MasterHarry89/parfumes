@@ -759,7 +759,7 @@ function App() {
       />
     );
   return (
-    <div className="app">
+    <div className={`app ${path === "/" ? "home-app" : ""}`}>
       <div className="announcement">
         Doprava zdarma od 900 Kč <span>·</span> Vzorky, které vás dostanou blíž
         k vaší vůni
@@ -1028,7 +1028,7 @@ function Home({ products, onOpen, onShop }) {
     ? bestsellers
     : products.slice(0, 6);
   return (
-    <>
+    <div className="home-page">
       <section className="hero">
         <img
           className="hero-photo"
@@ -1036,11 +1036,13 @@ function Home({ products, onOpen, onShop }) {
           alt="Flakón parfému"
         />
         <div className="hero-copy">
-          <span className="eyebrow">Contemporary fragrance house</span>
-          <h1>
-            Presence
+          <span className="eyebrow">Vybrané vůně s charakterem</span>
+          <h1 className="hero-title">
+            Objevte svou
             <br />
-            <em>for men.</em>
+            <em>signature</em>
+            <br />
+            vůni.
           </h1>
           <p>
             Vybrané pánské vůně pro muže, kteří chtějí mít vynikající styl,
@@ -1059,7 +1061,7 @@ function Home({ products, onOpen, onShop }) {
         onOpen={onOpen}
         onAdd={() => {}}
       />
-    </>
+    </div>
   );
 }
 function HomeContent({ products, onOpen, onShop }) {
@@ -1291,7 +1293,7 @@ function HomeContent({ products, onOpen, onShop }) {
           <span>01 / NEJŽÁDANĚJŠÍ</span>
           <strong>Pánské vůně</strong>
           <small>Výrazné kompozice s čistou autoritou</small>
-          <b aria-hidden="true">→</b>
+          <b aria-hidden="true">&gt;</b>
         </button>
         <button
           className="entry-card entry-women"
@@ -1301,7 +1303,7 @@ function HomeContent({ products, onOpen, onShop }) {
           <span>02 / OBJEVTE</span>
           <strong>Dámské vůně</strong>
           <small>Elegantní vůně pro vlastní podpis</small>
-          <b aria-hidden="true">→</b>
+          <b aria-hidden="true">&gt;</b>
         </button>
         <button
           className="entry-card entry-new"
@@ -1311,7 +1313,7 @@ function HomeContent({ products, onOpen, onShop }) {
           <span>03 / ČERSTVĚ PŘIDÁNO</span>
           <strong>Nové</strong>
           <small>Poslední objevy v naší kolekci</small>
-          <b aria-hidden="true">→</b>
+          <b aria-hidden="true">&gt;</b>
         </button>
         <button
           className="entry-card entry-sets"
@@ -1321,7 +1323,7 @@ function HomeContent({ products, onOpen, onShop }) {
           <span>04 / PRO VÍCE VRSTEV</span>
           <strong>Sety</strong>
           <small>Pro více vůní v jednom výběru</small>
-          <b aria-hidden="true">→</b>
+          <b aria-hidden="true">&gt;</b>
         </button>
         <button
           className="entry-card entry-sale"
@@ -1331,8 +1333,26 @@ function HomeContent({ products, onOpen, onShop }) {
           <span>05 / VÝHODNĚJI</span>
           <strong>Akce</strong>
           <small>Výhodnější výběr vůní</small>
-          <b aria-hidden="true">→</b>
+          <b aria-hidden="true">&gt;</b>
         </button>
+      </section>
+      <section className="trust-strip" aria-label="Výhody nákupu">
+        <div>
+          <strong>100% originální</strong>
+          <span>ověřené vůně</span>
+        </div>
+        <div>
+          <strong>Vzorky od 1 ml</strong>
+          <span>vyzkoušíte bez závazku</span>
+        </div>
+        <div>
+          <strong>Expedice z ČR</strong>
+          <span>rychle k vám domů</span>
+        </div>
+        <div>
+          <strong>Doprava zdarma</strong>
+          <span>při nákupu od 900 Kč</span>
+        </div>
       </section>
       <div className="section-heading secondary-heading">
         <div>

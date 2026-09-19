@@ -1,6 +1,59 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 .app { overflow-x: hidden; }
+.home-page { background: #f7f9fc; color: #151a24; }
+.home-app,
+.home-app button,
+.home-app input { font-family: 'Space Grotesk', 'Manrope', sans-serif; }
+.home-app .home-page *,
+.home-app .site-header * { font-family: 'Space Grotesk', 'Manrope', sans-serif !important; }
+.home-app .announcement,
+.home-app .site-header,
+.home-app .wordmark,
+.home-app .site-header nav,
+.home-app .header-actions { font-family: 'Space Grotesk', 'Manrope', sans-serif; }
+.home-app .wordmark { font-size: 18px; font-weight: 700; letter-spacing: .02em; }
+.home-app .site-header nav button,
+.home-app .header-actions button,
+.home-app .search input { font-family: 'Space Grotesk', 'Manrope', sans-serif; }
+.home-page .hero,
+.home-page .entry-strip,
+.home-page .secondary-heading,
+.home-page .family-track,
+.home-page .discovery-layout,
+.home-page .product-carousel,
+.home-page .occasion-strip { font-family: 'Space Grotesk', 'Manrope', sans-serif; }
+.home-page .hero { border-radius: 0 0 24px 24px; box-shadow: 0 18px 40px rgba(30, 44, 72, .10); }
+.home-page .hero h1,
+.home-page .carousel-heading h2,
+.home-page .section-heading h2,
+.home-page .discovery-season h2,
+.home-page .occasion-strip h2 { font-family: 'Space Grotesk', 'Manrope', sans-serif; font-weight: 700; letter-spacing: -.045em; }
+.home-page .entry-card strong,
+.home-page .family-tile strong,
+.home-page .discovery-tile strong,
+.home-page .occasion-list strong,
+.home-page .product-info h3 { font-family: 'Space Grotesk', 'Manrope', sans-serif; font-weight: 700; letter-spacing: -.025em; }
+.home-page .hero h1 { line-height: .94; }
+.home-page .hero h1 em { color: #9b4dff; }
+.home-page .hero::after { background: linear-gradient(90deg, rgba(18, 23, 35, .72), rgba(18, 23, 35, .22) 68%, rgba(18, 23, 35, .04)); }
+.home-page .eyebrow { color: #8b42ee; }
+.home-page .primary-button { background: #8b27f5; border-radius: 999px; min-width: 205px; box-shadow: 0 10px 20px rgba(139, 39, 245, .22); }
+.home-page .primary-button:hover { background: #7117d6; }
+.home-page .entry-card,
+.home-page .family-tile,
+.home-page .discovery-tile,
+.home-page .occasion-list button { border-radius: 14px; }
+.home-page .entry-strip { padding-top: 48px; padding-bottom: 42px; }
+.home-page .entry-card b { background: #8b27f5; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 21px; font-weight: 700; line-height: .8; padding-bottom: 2px; }
+.home-page .secondary-heading { margin-top: 0; }
+.home-page .section-heading button,
+.home-page .carousel-heading button { color: #8b27f5; }
+.home-page .discovery-season { border-radius: 18px; background: #18202d; }
+.home-page .bestseller-carousel { background: transparent; }
+.home-page .product-image { border-radius: 16px; box-shadow: 0 10px 24px rgba(35, 49, 78, .08); }
+.home-page .product-tag { border-radius: 999px; }
+.home-page .occasion-list button { background-color: #e9edf4; }
 .announcement { background: var(--espresso); color: #f7f2ed; text-align: center; font-size: 11px; letter-spacing: .08em; padding: 10px 20px; text-transform: uppercase; }
 .announcement span { color: var(--gold); margin: 0 10px; }
 .site-header { height: 82px; max-width: 1440px; margin: auto; padding: 0 5vw; position: sticky; top: 0; z-index: 15; display: flex; align-items: center; gap: 42px; border-bottom: 1px solid rgba(23, 21, 19, .12); background: rgba(247, 243, 238, .96); backdrop-filter: blur(8px); transition: transform .28s ease, box-shadow .28s ease; }
@@ -291,4 +344,346 @@ footer p { margin-bottom: 22px; }
 	.detail-image, .detail-image img { min-height: 450px; height: 450px; }
 	.detail-copy { padding: 45px 25px 55px; }
 	.detail-copy h1 { font-size: 55px; }
+}
+
+/* Home refresh — an editorial, contemporary fragrance palette. */
+.home-app {
+  --ink: #152321;
+  --espresso: #10201d;
+  --muted: #67716c;
+  --line: #d9dfd7;
+  --paper: #f8f8f5;
+  --paper-strong: #edf0ea;
+  --sand: #e5e8dd;
+  --bronze: #4d7869;
+  --burgundy: #2e5148;
+  --moss: #a3bd7c;
+  --gold: #d9f06f;
+  --rose: #efc6b5;
+  background: var(--paper);
+}
+.home-page { background: var(--paper); color: var(--ink); }
+.home-app .home-page *,
+.home-app .site-header * { font-family: 'Manrope', sans-serif !important; }
+.home-app .hero h1,
+.home-app .carousel-heading h2,
+.home-app .section-heading h2,
+.home-app .discovery-season h2,
+.home-app .occasion-strip h2,
+.home-app .entry-card strong,
+.home-app .family-tile strong,
+.home-app .discovery-tile strong,
+.home-app .occasion-list strong,
+.home-app .product-info h3 { font-family: 'Cormorant Garamond', Georgia, serif !important; }
+.home-app .announcement {
+  background: #12221f;
+  color: #f4f7f0;
+  font-weight: 700;
+  letter-spacing: .14em;
+  padding: 9px 20px;
+}
+.home-app .announcement span { color: var(--gold); }
+.home-app .site-header {
+  height: 76px;
+  max-width: none;
+  padding: 0 max(5vw, 28px);
+  background: rgba(248, 248, 245, .91);
+  border-bottom-color: rgba(21, 35, 33, .1);
+  gap: 54px;
+}
+.home-app .wordmark { font-family: 'Manrope', sans-serif !important; font-size: 16px; letter-spacing: .1em; }
+.home-app .site-header nav button { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+.home-app .header-actions { gap: 17px; }
+.home-app .search { border-bottom-color: #aab4ab; }
+.home-app .cart-button span { background: var(--ink); }
+.home-page .hero {
+  max-width: none;
+  min-height: min(680px, calc(100vh - 110px));
+  border-radius: 0;
+  box-shadow: none;
+}
+.home-page .hero::after { background: linear-gradient(90deg, rgba(10, 25, 22, .82), rgba(10, 25, 22, .42) 51%, rgba(10, 25, 22, .04) 86%); }
+.home-page .hero-photo { filter: saturate(.68) contrast(1.08) brightness(.86); }
+.home-page .hero-copy { padding-left: max(8vw, 40px); padding-top: clamp(100px, 12vw, 155px); }
+.home-page .hero h1 { font-size: clamp(72px, 9.3vw, 134px); font-weight: 500; letter-spacing: -.065em; }
+.home-page .hero h1 em { color: var(--gold); }
+.home-page .hero-copy .eyebrow { color: var(--gold); font-weight: 700; }
+.home-page .hero-copy p { max-width: 395px; font-size: 14px; }
+.home-page .primary-button {
+  border-radius: 5px;
+  background: var(--gold);
+  color: #14211f;
+  box-shadow: none;
+  font-weight: 800;
+}
+.home-page .primary-button span { color: #14211f; }
+.home-page .primary-button:hover { background: #efffa8; }
+.home-page .entry-strip { max-width: 1400px; padding-top: 64px; padding-bottom: 70px; gap: 14px; }
+.home-page .entry-card,
+.home-page .family-tile,
+.home-page .discovery-tile,
+.home-page .occasion-list button { border-radius: 4px; }
+.home-page .entry-card { min-height: 278px; padding: 22px; }
+.home-page .entry-card::before { background: linear-gradient(180deg, rgba(8, 22, 19, .12), rgba(8, 22, 19, .88)); }
+.home-page .entry-card strong { font-size: clamp(28px, 2.6vw, 38px); line-height: .88; }
+.home-page .entry-card b { background: var(--gold); color: var(--ink); border-radius: 3px; }
+.home-page .eyebrow { color: #4f7468; font-weight: 800; letter-spacing: .17em; }
+.home-page .secondary-heading { max-width: 1400px; margin-bottom: 28px; }
+.home-page .section-heading h2,
+.home-page .carousel-heading h2 { font-size: clamp(43px, 4vw, 62px); font-weight: 600; letter-spacing: -.055em; }
+.home-page .section-heading button,
+.home-page .carousel-heading button { color: var(--ink); font-weight: 800; }
+.home-page .family-track { max-width: 1400px; margin-bottom: 92px; gap: 14px; }
+.home-page .family-tile { flex-basis: 250px; min-height: 230px; padding: 22px; }
+.home-page .family-tile strong,
+.home-page .discovery-tile strong,
+.home-page .occasion-list strong { font-size: 34px; font-weight: 600; letter-spacing: -.04em; }
+.home-page .discovery-layout { max-width: 1400px; gap: 14px; }
+.home-page .discovery-season { background: #18312b; border-radius: 4px; }
+.home-page .discovery-season .eyebrow { color: var(--gold); }
+.home-page .discovery-season h2 { font-size: 60px; font-weight: 500; letter-spacing: -.055em; }
+.home-page .discovery-season h2 em { color: var(--gold); }
+.home-page .text-button { color: var(--gold); font-weight: 800; }
+.home-page .product-carousel { max-width: 1400px; padding-top: 102px; }
+.home-page .product-image { border-radius: 4px; background: #e7eae3; box-shadow: none; border-color: #d9ded6; }
+.home-page .product-tag { border-radius: 2px; background: var(--paper); color: var(--ink); font-weight: 800; }
+.home-page .quick-add { border-radius: 3px; background: var(--ink); }
+.home-page .product-info h3 { font-size: 27px; font-weight: 600; letter-spacing: -.035em; }
+.home-page .product-bottom { border-top-color: #dfe4dc; }
+.home-page .occasion-strip { max-width: 1400px; padding-top: 46px; padding-bottom: 58px; }
+.home-page .occasion-strip h2 { font-size: 58px; font-weight: 600; letter-spacing: -.055em; }
+.home-app footer { background: #10201d; padding-top: 76px; }
+.home-app footer .eyebrow,
+.home-app .newsletter button { color: var(--gold); }
+.home-app footer button:hover { color: var(--gold); }
+.home-app .footer-bottom { border-top-color: rgba(244, 247, 240, .17); color: #9faaa2; }
+
+@media (max-width: 800px) {
+  .home-app .site-header { padding: 0 20px; }
+  .home-page .hero { min-height: 620px; }
+  .home-page .hero-copy { padding-left: 25px; padding-top: 255px; }
+  .home-page .hero h1 { font-size: 76px; }
+  .home-page .entry-strip { padding-top: 30px; padding-bottom: 38px; }
+  .home-page .entry-card { min-height: 66px; }
+  .home-page .entry-card b { border-radius: 3px; }
+  .home-page .discovery-season h2,
+  .home-page .occasion-strip h2 { font-size: 46px; }
+}
+
+/* Bright, energetic shop direction: white canvas, charcoal ink, electric violet. */
+.home-app {
+  --ink: #252525;
+  --espresso: #252525;
+  --muted: #737373;
+  --line: #e7e7e7;
+  --paper: #ffffff;
+  --paper-strong: #f5f5f5;
+  --sand: #f5f5f5;
+  --bronze: #587300;
+  --burgundy: #93bd00;
+  --moss: #c8ff00;
+  --gold: #c8ff00;
+  --rose: #e4ff8a;
+}
+.home-page { background: #fff; color: #252525; }
+.home-app .home-page *,
+.home-app .site-header *,
+.home-app .home-page .hero h1,
+.home-app .home-page .carousel-heading h2,
+.home-app .home-page .section-heading h2,
+.home-app .home-page .discovery-season h2,
+.home-app .home-page .occasion-strip h2,
+.home-app .home-page .entry-card strong,
+.home-app .home-page .family-tile strong,
+.home-app .home-page .discovery-tile strong,
+.home-app .home-page .occasion-list strong,
+.home-app .home-page .product-info h3 {
+  font-family: 'Space Grotesk', 'Manrope', sans-serif !important;
+}
+.home-app .announcement { background: #252525; padding: 10px 20px; }
+.home-app .announcement span,
+.home-app .hero h1 em,
+.home-app .hero-copy .eyebrow,
+.home-app .discovery-season .eyebrow,
+.home-app .discovery-season h2 em,
+.home-app .text-button,
+.home-app footer .eyebrow,
+.home-app .newsletter button { color: #c8ff00; }
+.home-app .site-header { background: rgba(255, 255, 255, .94); border-bottom-color: #ededed; }
+.home-app .wordmark { font-size: 17px; font-weight: 800; letter-spacing: -.04em; }
+.home-app .site-header nav button { text-transform: none; font-size: 12px; font-weight: 500; letter-spacing: -.02em; }
+.home-app .site-header nav button:hover { color: #587300; }
+.home-app .hero::after { background: linear-gradient(90deg, rgba(19, 19, 23, .82), rgba(19, 19, 23, .40) 53%, rgba(19, 19, 23, .03) 88%); }
+.home-app .hero-photo { filter: saturate(.85) contrast(1.06) brightness(.84); }
+.home-app .hero h1,
+.home-app .carousel-heading h2,
+.home-app .section-heading h2,
+.home-app .discovery-season h2,
+.home-app .occasion-strip h2 { font-weight: 700; letter-spacing: -.065em; }
+.home-app .hero h1 { font-size: clamp(68px, 8.5vw, 126px); line-height: .84; }
+.home-app .hero h1.hero-title {
+  max-width: 560px;
+  font-size: clamp(58px, 5.15vw, 82px);
+  line-height: .9;
+}
+.home-app .hero-copy .eyebrow { font-size: 11px; }
+.home-app .primary-button { background: #c8ff00; color: #1d2600; border-radius: 999px; padding: 15px 22px; box-shadow: 0 9px 22px rgba(200, 255, 0, .28); }
+.home-app .primary-button span { color: #fff; }
+.home-app .primary-button:hover { background: #b2e600; }
+.home-app .entry-card,
+.home-app .family-tile,
+.home-app .discovery-tile,
+.home-app .occasion-list button,
+.home-app .product-image,
+.home-app .discovery-season { border-radius: 14px; }
+.home-app .entry-card strong { font-size: clamp(25px, 2.35vw, 34px); font-weight: 700; letter-spacing: -.055em; }
+.home-app .entry-card b { background: #c8ff00; color: #1d2600; border-radius: 50%; }
+.home-app .eyebrow { color: #587300; }
+.home-app .section-heading h2,
+.home-app .carousel-heading h2 { font-size: clamp(38px, 3.25vw, 52px); }
+.home-app .section-heading button,
+.home-app .carousel-heading button { color: #587300; }
+.home-app .family-tile strong,
+.home-app .discovery-tile strong,
+.home-app .occasion-list strong { font-size: 26px; font-weight: 700; letter-spacing: -.05em; }
+.home-app .discovery-season { background: #252525; }
+.home-app .discovery-season h2 { font-size: 52px; }
+.home-app .product-image { background: #f4f4f4; border-color: transparent; }
+.home-app .product-tag { border-radius: 5px; color: #252525; }
+.home-app .quick-add { background: #252525; border-radius: 7px; }
+.home-app .product-info h3 { font-size: 17px; font-weight: 700; line-height: 1.25; letter-spacing: -.045em; }
+.home-app .product-info p { font-size: 10px; }
+.home-app .product-bottom strong { font-size: 12px; }
+.home-app .product-bottom button { color: #587300; }
+.home-app .occasion-strip h2 { font-size: 48px; }
+.home-app footer { background: #252525; }
+.home-app footer button:hover { color: #e4ff8a; }
+
+@media (max-width: 800px) {
+  .home-app .hero h1 { font-size: 62px; }
+  .home-app .hero h1.hero-title { font-size: 56px; }
+  .home-app .section-heading h2,
+  .home-app .carousel-heading h2,
+  .home-app .discovery-season h2,
+  .home-app .occasion-strip h2 { font-size: 38px; }
+  .home-app .product-info h3 { font-size: 16px; }
+}
+
+/* MrRizz-inspired layout cues: a roomy content rail, scrolling promotions and
+   compact commerce cards. Kept scoped to the front page. */
+.home-app .site-header { max-width: 1440px; }
+.home-page .entry-strip {
+  max-width: 1440px;
+  display: flex;
+  overflow-x: auto;
+  padding-left: max(5vw, 28px);
+  padding-right: max(5vw, 28px);
+  scrollbar-width: none;
+}
+.home-page .entry-strip::-webkit-scrollbar { display: none; }
+.home-page .entry-card { flex: 0 0 min(315px, 25vw); min-height: 288px; }
+.home-page .entry-card small { font-size: 12px; line-height: 1.4; letter-spacing: 0; }
+.home-page .entry-card > span { font-weight: 700; }
+.home-page .trust-strip {
+  max-width: 1344px;
+  margin: 0 auto 78px;
+  padding: 26px 30px;
+  border: 0;
+  border-radius: 14px;
+  background: #252525;
+  color: #fff;
+}
+.home-page .trust-strip div { border-left-color: rgba(255, 255, 255, .12); padding-left: 28px; }
+.home-page .trust-strip strong { font-family: 'Space Grotesk', 'Manrope', sans-serif; font-size: 15px; font-weight: 700; }
+.home-page .trust-strip span { color: #c3c3c3; font-family: 'Manrope', sans-serif; font-size: 10px; letter-spacing: .03em; text-transform: none; }
+.home-page .secondary-heading { margin-bottom: 22px; }
+.home-page .family-track { margin-bottom: 78px; }
+.home-page .family-tile {
+  flex-basis: 210px;
+  min-height: 205px;
+  justify-content: flex-end;
+}
+.home-page .family-tile::before { background: linear-gradient(180deg, rgba(20, 20, 20, .04) 26%, rgba(20, 20, 20, .82) 100%); }
+.home-page .carousel-track { gap: 14px; }
+.home-page .carousel-track .product-card { flex-basis: 230px; }
+.home-page .product-image { aspect-ratio: 1 / 1.08; }
+.home-page .product-image img { filter: saturate(.92) contrast(1.02); }
+.home-page .product-info { padding-top: 13px; }
+.home-page .product-info .brand { font-size: 9px; font-weight: 700; }
+.home-page .product-bottom { margin-top: 12px; }
+
+@media (max-width: 800px) {
+  .home-page .entry-strip { display: grid; overflow: visible; padding-left: 20px; padding-right: 20px; }
+  .home-page .entry-card { min-height: 66px; }
+  .home-page .trust-strip { margin: 0 20px 42px; padding: 21px 18px; grid-template-columns: repeat(2, 1fr); gap: 18px 10px; }
+  .home-page .trust-strip div,
+  .home-page .trust-strip div:nth-child(3) { border-left: 0; padding-left: 0; }
+  .home-page .trust-strip strong { font-size: 12px; }
+  .home-page .trust-strip span { font-size: 9px; }
+  .home-page .carousel-track .product-card { flex-basis: 190px; }
+}
+
+/* Quieter card actions and a precisely centered benefits panel. */
+.home-page .entry-card b {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  width: 34px;
+  height: 34px;
+  margin: 0;
+  border-radius: 50%;
+  background: #c8ff00;
+  color: #1d2600;
+  font-size: 0;
+  box-shadow: none;
+  transition: transform .2s ease, background .2s ease;
+}
+.home-page .entry-card b::after {
+  content: '›';
+  font-family: Arial, sans-serif;
+  font-size: 25px;
+  font-weight: 400;
+  line-height: .85;
+}
+.home-page .entry-card:hover b { transform: scale(1.08); background: #e3ff70; }
+.home-page .trust-strip {
+  /* Match the 1240px content rail used by headings and category cards. */
+  width: min(1240px, calc(100% - 56px));
+  margin-left: auto;
+  margin-right: auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: center;
+}
+.home-page .trust-strip div {
+  min-width: 0;
+  padding: 0 28px;
+  text-align: center;
+  justify-items: center;
+}
+.home-page .trust-strip div:first-child { padding-left: 0; }
+.home-page .trust-strip div:last-child { padding-right: 0; }
+
+@media (min-width: 801px) {
+  /* The promo rail starts on the content axis but deliberately runs farther
+     right. Let the benefits bar follow the same visual rail. */
+  .home-page .trust-strip {
+    width: min(1344px, calc(100% - 56px));
+    margin-left: max(28px, calc((100% - 1240px) / 2));
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 800px) {
+  .home-page .entry-card b {
+    position: static;
+    width: 30px;
+    height: 30px;
+    margin: 0;
+  }
+  .home-page .entry-card b::after { font-size: 22px; }
+  .home-page .trust-strip { width: auto; margin-left: 20px; margin-right: 20px; }
+  .home-page .trust-strip div,
+  .home-page .trust-strip div:first-child,
+  .home-page .trust-strip div:last-child { padding: 0; text-align: left; justify-items: start; }
 }
