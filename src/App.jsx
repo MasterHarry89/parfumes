@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 const hero = null;
 
 import { supabase } from "./lib/supabase";
+import { FiCheckCircle, FiDroplet, FiZap, FiTruck } from "react-icons/fi";
 
 const volumes = [
   { value: 1, label: "1 ml", price: 0 },
@@ -14,6 +15,39 @@ const volumes = [
   { value: 10, label: "10 ml", price: 150, future: true },
 ];
 const money = (value) => `${(value / 10).toFixed(2).replace(".", ",")} Kč`;
+
+const faqItems = [
+  {
+    question: "Jak rychle objednávku odešlete?",
+    answer:
+      "Objednávky expedujeme do 24 hodin z České republiky, obvykle je máte doma za 1–2 pracovní dny.",
+  },
+  {
+    question: "Prodáváte originální vůně?",
+    answer:
+      "Ano, 100 % originální parfémy — žádné repliky ani neautorizované kopie.",
+  },
+  {
+    question: "Proč zkoušet vzorky místo celého balení?",
+    answer:
+      "Vzorek vám umožní poznat vůni na vlastní kůži a v běžném nošení dřív, než investujete do plného balení.",
+  },
+  {
+    question: "Jak velký je vzorek a na kolik dní mi vydrží?",
+    answer:
+      "Vzorky začínají už od 1 ml, což při běžném dávkování vystačí na několik týdnů používání.",
+  },
+  {
+    question: "Jak funguje doprava zdarma?",
+    answer:
+      "Při nákupu nad 900 Kč je doprava po ČR zdarma, jinak účtujeme sazbu podle zvoleného přepravce.",
+  },
+  {
+    question: "Jak probíhá vrácení zboží?",
+    answer:
+      "Nepoužité vzorky můžete vrátit do 14 dnů od doručení podle standardních podmínek e-shopu.",
+  },
+];
 const navigate = (path) => {
   window.history.pushState({}, "", path);
   window.dispatchEvent(new PopStateEvent("popstate"));
@@ -617,14 +651,8 @@ function App() {
     );
   const renderCatalog = () => (
     <main className="catalog-page page-shell">
-      <div className="breadcrumb">
-        <button onClick={() => navigate("/")}>Domů</button>
-        <span>/</span>
-        <strong>Všechny vůně</strong>
-      </div>
       <div className="catalog-heading">
         <div>
-          <p className="eyebrow">Objevte svůj podpis</p>
           <h1>Vzorky parfémů</h1>
         </div>
         <p className="heading-note">
@@ -759,7 +787,7 @@ function App() {
       />
     );
   return (
-    <div className={`app ${path === "/" ? "home-app" : ""}`}>
+    <div className="app home-app">
       <div className="announcement">
         Doprava zdarma od 900 Kč <span>·</span> Vzorky, které vás dostanou blíž
         k vaší vůni
@@ -899,26 +927,40 @@ function App() {
   );
 }
 
-function ProductCard({ product, onOpen, onAdd }) {
+const badgeTone = (text) => {
+  const value = (text || "").toLowerCase();
+  if (value.includes("nov")) return "tag-new";
+  if (value.includes("bestsell")) return "tag-best";
+  if (value.includes("oblíb") || value.includes("oblib")) return "tag-fav";
+  if (value.includes("editor")) return "tag-editor";
+  return "";
+};
+
+function ProductCard({ product, onOpen, onAdd, tag }) {
+  const badge = tag || product.tag;
   return (
     <article className="product-card">
-      <button className="product-image" onClick={onOpen}>
+      <div className="product-image" onClick={onOpen}>
         <img src={product.image} alt={`${product.brand} ${product.name}`} />
-        <span className="product-tag">{product.tag}</span>
-        <span className="quick-add">+</span>
-      </button>
+        {badge && (
+          <span className={`product-tag ${badgeTone(badge)}`}>{badge}</span>
+        )}
+        <button
+          className="quick-add"
+          onClick={(event) => {
+            event.stopPropagation();
+            onAdd();
+          }}
+          aria-label={`Přidat ${product.name} do košíku`}
+        >
+          +
+        </button>
+      </div>
       <div className="product-info">
-        <div>
-          <span className="brand">{product.brand}</span>
-          <h3 onClick={onOpen}>{product.name}</h3>
-          <p>{product.note}</p>
-        </div>
-        <div className="product-bottom">
-          <strong>od {money(product.price)}</strong>
-          <button onClick={onAdd} aria-label={`Přidat ${product.name}`}>
-            +
-          </button>
-        </div>
+        <h3 className="product-title" onClick={onOpen}>
+          <span className="brand">{product.brand}</span> {product.name}
+        </h3>
+        <strong className="product-price">od {money(product.price)}</strong>
       </div>
     </article>
   );
@@ -980,26 +1022,24 @@ function ProductDetail({ product, onAdd, onBack }) {
     </main>
   );
 }
-function ProductCarousel({ title, eyebrow, products, onOpen, onAdd }) {
+function ProductCarousel({ title, eyebrow, products, onOpen, onAdd, badge }) {
   if (!products.length) return null;
   return (
     <section
+      onClick={() => navigate("/kolekce")}
       className={`product-carousel page-shell ${title === "Bestsellery" ? "bestseller-carousel" : ""}`}
     >
       <div className="carousel-heading">
         <div>
-          <span className="eyebrow">{eyebrow}</span>
           <h2>{title}</h2>
         </div>
-        <button onClick={() => navigate("/kolekce")}>
-          Zobrazit vše <span>↗</span>
-        </button>
       </div>
       <div className="carousel-track">
         {products.map((product) => (
           <ProductCard
             key={product.id}
             product={product}
+            tag={badge}
             onOpen={() => onOpen(product.id)}
             onAdd={() => onAdd(product)}
           />
@@ -1055,12 +1095,31 @@ function Home({ products, onOpen, onShop }) {
       </section>
       <HomeContent products={products} onOpen={onOpen} onShop={onShop} />
       <ProductCarousel
-        eyebrow="Právě dorazilo"
         title="Novinky"
+        badge="NOVINKA"
         products={newest}
         onOpen={onOpen}
         onAdd={() => {}}
       />
+      <section className="faq-band">
+        <div className="page-shell">
+          <div>
+            <span className="eyebrow">Máte otázku?</span>
+            <h2>Často kladené otázky</h2>
+            <p>
+              Vše, co potřebujete vědět o vzorcích, doručení a vůních.
+            </p>
+          </div>
+          <div className="faq-list">
+            {faqItems.map((item) => (
+              <details key={item.question}>
+                <summary>{item.question}</summary>
+                <p>{item.answer}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
@@ -1070,7 +1129,9 @@ function HomeContent({ products, onOpen, onShop }) {
       .toLowerCase()
       .includes("bestseller"),
   );
-  const bestsellerItems = bestsellers.length ? bestsellers : products.slice(0, 6);
+  const bestsellerItems = bestsellers.length
+    ? bestsellers
+    : products.slice(0, 6);
   const fragranceFamilies = [
     {
       icon: "✦",
@@ -1078,7 +1139,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "čerstvé a lehké",
       label: "Rodina vůně",
       tone: "category-coral",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Citrus_slices-1002778.jpeg/960px-Citrus_slices-1002778.jpeg",
+      image:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Citrus_slices-1002778.jpeg/960px-Citrus_slices-1002778.jpeg",
     },
     {
       icon: "◌",
@@ -1086,7 +1148,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "čisté a sebejisté",
       label: "Rodina vůně",
       tone: "category-yellow",
-      image: "https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg",
+      image:
+        "https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg",
     },
     {
       icon: "◈",
@@ -1094,7 +1157,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "hřejivé a návykové",
       label: "Rodina vůně",
       tone: "category-plum",
-      image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "❋",
@@ -1102,7 +1166,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "šťavnaté a hravé",
       label: "Rodina vůně",
       tone: "category-rose",
-      image: "https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "▣",
@@ -1110,7 +1175,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "teplé a hluboké",
       label: "Rodina vůně",
       tone: "category-sage",
-      image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "✧",
@@ -1118,7 +1184,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "série pro každý den",
       label: "Rodina vůně",
       tone: "category-ink",
-      image: "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "✹",
@@ -1126,7 +1193,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "výrazné a hřejivé",
       label: "Rodina vůně",
       tone: "category-sun",
-      image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "◉",
@@ -1134,7 +1202,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "smyslné a hluboké",
       label: "Rodina vůně",
       tone: "category-plum",
-      image: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "▰",
@@ -1142,7 +1211,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "suché a charakteristické",
       label: "Rodina vůně",
       tone: "category-ink",
-      image: "https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg",
+      image:
+        "https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg",
     },
     {
       icon: "▥",
@@ -1150,7 +1220,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "kouřové a sofistikované",
       label: "Rodina vůně",
       tone: "category-coral",
-      image: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "♧",
@@ -1158,7 +1229,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "svěží a přirozené",
       label: "Rodina vůně",
       tone: "category-sage",
-      image: "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "≈",
@@ -1166,7 +1238,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "čisté a osvěžující",
       label: "Rodina vůně",
       tone: "category-fog",
-      image: "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "◌",
@@ -1174,7 +1247,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "měkké a intimní",
       label: "Rodina vůně",
       tone: "category-rose",
-      image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "·",
@@ -1182,7 +1256,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "jemné a uhlazené",
       label: "Rodina vůně",
       tone: "category-yellow",
-      image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "❀",
@@ -1190,7 +1265,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "elegantní a opojné",
       label: "Rodina vůně",
       tone: "category-coral",
-      image: "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "◒",
@@ -1198,7 +1274,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "SEZÓNA · lehké ráno a nový začátek",
       label: "Podle sezóny",
       tone: "category-rose",
-      image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "☼",
@@ -1206,7 +1283,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "SEZÓNA · svěžest na rozpálené dny",
       label: "Podle sezóny",
       tone: "category-sun",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Citrus_slices-1002778.jpeg/960px-Citrus_slices-1002778.jpeg",
+      image:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Citrus_slices-1002778.jpeg/960px-Citrus_slices-1002778.jpeg",
     },
     {
       icon: "◐",
@@ -1214,7 +1292,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "SEZÓNA · koření, dřevo a vrstvy",
       label: "Podle sezóny",
       tone: "category-plum",
-      image: "https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg",
+      image:
+        "https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg",
     },
     {
       icon: "❄",
@@ -1222,7 +1301,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "SEZÓNA · výrazná stopa a teplo",
       label: "Podle sezóny",
       tone: "category-fog",
-      image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "♡",
@@ -1230,7 +1310,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · blízko, ale s charakterem",
       label: "Podle použití",
       tone: "category-coral",
-      image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "▤",
@@ -1238,7 +1319,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · čistá autorita bez hluku",
       label: "Podle použití",
       tone: "category-yellow",
-      image: "https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg",
+      image:
+        "https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg",
     },
     {
       icon: "✦",
@@ -1246,7 +1328,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · když má být přítomnost cítit",
       label: "Podle použití",
       tone: "category-sage",
-      image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "↗",
@@ -1254,7 +1337,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · podpis, ke kterému se vrátíte",
       label: "Podle použití",
       tone: "category-ink",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Citrus_slices-1002778.jpeg/960px-Citrus_slices-1002778.jpeg",
+      image:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Citrus_slices-1002778.jpeg/960px-Citrus_slices-1002778.jpeg",
     },
     {
       icon: "⌁",
@@ -1262,7 +1346,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · čistá energie a svěžest",
       label: "Podle použití",
       tone: "category-fog",
-      image: "https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=900&q=85",
     },
     {
       icon: "✷",
@@ -1270,7 +1355,8 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · výrazná stopa po setmění",
       label: "Podle použití",
       tone: "category-plum",
-      image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85",
+      image:
+        "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85",
     },
   ];
 
@@ -1282,13 +1368,33 @@ function HomeContent({ products, onOpen, onShop }) {
     return familySlice(start, end);
   };
 
+  const seasonTiles = fragranceFamilies.slice(4, 8);
+  const month = new Date().getMonth();
+  const currentSeasonName =
+    month === 11 || month <= 1
+      ? "Zima"
+      : month <= 4
+        ? "Jaro"
+        : month <= 7
+          ? "Léto"
+          : "Podzim";
+  const currentSeason =
+    seasonTiles.find((season) => season.title === currentSeasonName) ||
+    seasonTiles[0];
+  const otherSeasons = seasonTiles.filter(
+    (season) => season.title !== currentSeason.title,
+  );
+
   return (
     <main>
       <section className="entry-strip">
         <button
           className="entry-card entry-men"
           onClick={onShop}
-          style={{ backgroundImage: "url(https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg)" }}
+          style={{
+            backgroundImage:
+              "url(https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg)",
+          }}
         >
           <span>01 / NEJŽÁDANĚJŠÍ</span>
           <strong>Pánské vůně</strong>
@@ -1298,7 +1404,10 @@ function HomeContent({ products, onOpen, onShop }) {
         <button
           className="entry-card entry-women"
           onClick={onShop}
-          style={{ backgroundImage: "url(https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85)" }}
+          style={{
+            backgroundImage:
+              "url(https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85)",
+          }}
         >
           <span>02 / OBJEVTE</span>
           <strong>Dámské vůně</strong>
@@ -1308,9 +1417,11 @@ function HomeContent({ products, onOpen, onShop }) {
         <button
           className="entry-card entry-new"
           onClick={onShop}
-          style={{ backgroundImage: "url(https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=900&q=85)" }}
+          style={{
+            backgroundImage:
+              "url(https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=900&q=85)",
+          }}
         >
-          <span>03 / ČERSTVĚ PŘIDÁNO</span>
           <strong>Nové</strong>
           <small>Poslední objevy v naší kolekci</small>
           <b aria-hidden="true">&gt;</b>
@@ -1318,7 +1429,10 @@ function HomeContent({ products, onOpen, onShop }) {
         <button
           className="entry-card entry-sets"
           onClick={onShop}
-          style={{ backgroundImage: "url(https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85)" }}
+          style={{
+            backgroundImage:
+              "url(https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85)",
+          }}
         >
           <span>04 / PRO VÍCE VRSTEV</span>
           <strong>Sety</strong>
@@ -1328,7 +1442,10 @@ function HomeContent({ products, onOpen, onShop }) {
         <button
           className="entry-card entry-sale"
           onClick={onShop}
-          style={{ backgroundImage: "url(https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85)" }}
+          style={{
+            backgroundImage:
+              "url(https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85)",
+          }}
         >
           <span>05 / VÝHODNĚJI</span>
           <strong>Akce</strong>
@@ -1338,30 +1455,45 @@ function HomeContent({ products, onOpen, onShop }) {
       </section>
       <section className="trust-strip" aria-label="Výhody nákupu">
         <div>
-          <strong>100% originální</strong>
-          <span>ověřené vůně</span>
+          <FiCheckCircle className="trust-icon" aria-hidden="true" />
+          <div className="trust-copy">
+            <strong>100% originální</strong>
+            <span>ověřené vůně</span>
+          </div>
         </div>
         <div>
-          <strong>Vzorky od 1 ml</strong>
-          <span>vyzkoušíte bez závazku</span>
+          <FiDroplet className="trust-icon" aria-hidden="true" />
+          <div className="trust-copy">
+            <strong>Vzorky od 1 ml</strong>
+            <span>vyzkoušíte bez závazku</span>
+          </div>
         </div>
         <div>
-          <strong>Expedice z ČR</strong>
-          <span>rychle k vám domů</span>
+          <FiZap className="trust-icon" aria-hidden="true" />
+          <div className="trust-copy">
+            <strong>Expedice z ČR</strong>
+            <span>rychle k vám domů</span>
+          </div>
         </div>
         <div>
-          <strong>Doprava zdarma</strong>
-          <span>při nákupu od 900 Kč</span>
+          <FiTruck className="trust-icon" aria-hidden="true" />
+          <div className="trust-copy">
+            <strong>Doprava zdarma</strong>
+            <span>při nákupu od 900 Kč</span>
+          </div>
         </div>
       </section>
+      <ProductCarousel
+        title="Bestsellery"
+        badge="BESTSELLER"
+        products={bestsellerItems}
+        onOpen={onOpen}
+        onAdd={() => {}}
+      />
       <div className="section-heading secondary-heading">
-        <div>
-          <span className="eyebrow">Podle charakteru</span>
-          <h2>Oblíbené skupiny</h2>
+        <div onClick={onShop}>
+          <h2>Parfémové rodiny</h2>
         </div>
-        <button onClick={onShop}>
-          Všechny rodiny <span>↗</span>
-        </button>
       </div>
       <div className="family-track">
         {fragranceFamilies.slice(0, 4).map((family, index) => (
@@ -1376,44 +1508,37 @@ function HomeContent({ products, onOpen, onShop }) {
           </button>
         ))}
       </div>
-      <div className="discovery-layout">
-        <div className="discovery-season">
-          <span className="eyebrow">Podle sezóny</span>
-          <h2>
-            Vůně pro
-            <br />
-            <em>každé období.</em>
-          </h2>
-          <p>Vyberte si kompozici podle nálady a počasí.</p>
-          <button className="text-button" onClick={onShop}>
-            Prohlédnout sezóny <span>↗</span>
-          </button>
+      <div className="section-heading secondary-heading">
+        <div onClick={onShop}>
+          <h2>Podle sezóny</h2>
         </div>
-        <div className="discovery-tiles">
-          {fragranceFamilies.slice(4, 8).map((family) => (
+      </div>
+      <div className="season-layout">
+        <button
+          className={`discovery-tile season-current ${currentSeason.tone}`}
+          onClick={onShop}
+          style={{ backgroundImage: `url(${currentSeason.image})` }}
+        >
+          <strong>{currentSeason.title}</strong>
+          <small>{currentSeason.description.replace("SEZÓNA · ", "")}</small>
+        </button>
+        <div className="season-list">
+          {otherSeasons.map((season) => (
             <button
-              className={`discovery-tile ${family.tone}`}
-              key={family.title}
+              className={`discovery-tile ${season.tone}`}
+              key={season.title}
               onClick={onShop}
-              style={{ backgroundImage: `url(${family.image})` }}
+              style={{ backgroundImage: `url(${season.image})` }}
             >
-              <strong>{family.title}</strong>
-              <small>{family.description.replace("SEZÓNA · ", "")}</small>
+              <strong>{season.title}</strong>
+              <small>{season.description.replace("SEZÓNA · ", "")}</small>
             </button>
           ))}
         </div>
       </div>
-      <ProductCarousel
-        eyebrow="Nejžádanější výběr"
-        title="Bestsellery"
-        products={bestsellerItems}
-        onOpen={onOpen}
-        onAdd={() => {}}
-      />
       <div className="occasion-strip">
         <div>
-          <span className="eyebrow">Podle použití</span>
-          <h2>Kam dnes míříte?</h2>
+          <h2>Podle příležitosti</h2>
         </div>
         <div className="occasion-list">
           {fragranceFamilies.slice(8).map((family, index) => (

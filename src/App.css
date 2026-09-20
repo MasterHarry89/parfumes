@@ -152,11 +152,14 @@ em { color: var(--bronze); font-style: italic; }
 .discovery-season .eyebrow { color: var(--gold); }
 .text-button { color: var(--gold); font-size: 11px; text-align: left; text-transform: uppercase; letter-spacing: .1em; }
 .discovery-tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.season-layout { max-width: 1240px; margin: 0 auto 28px; padding: 0 5vw; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.season-list { display: grid; grid-template-rows: repeat(3, 1fr); gap: 12px; }
+.season-current .eyebrow { color: var(--gold); font-size: 10px; }
 .discovery-tile { min-height: 189px; padding: 20px; display: flex; flex-direction: column; justify-content: flex-end; text-align: left; transition: transform .2s, box-shadow .2s; position: relative; overflow: hidden; background-position: center; background-size: cover; color: #fff; }
 .discovery-tile::before, .occasion-list button::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20, 16, 13, .12), rgba(20, 16, 13, .82)); }
 .discovery-tile > *, .occasion-list button > * { position: relative; z-index: 1; color: #fff; }
-.occasion-strip { max-width: 1240px; margin: 0 auto 55px; padding: 0 5vw; display: grid; grid-template-columns: .75fr 1.25fr; gap: 55px; align-items: start; }
-.occasion-strip h2 { font: 43px 'Cormorant Garamond', serif; margin: 15px 0 0; }
+.occasion-strip { max-width: 1240px; margin: 0 auto; padding: 0 5vw 28px; }
+.occasion-strip h2 { font: 43px 'Cormorant Garamond', serif; margin: 0 0 30px; }
 .occasion-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .occasion-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .occasion-list button { min-height: 190px; padding: 18px; display: flex; flex-direction: column; text-align: left; background-color: var(--paper-strong); background-position: center; background-size: cover; border: 1px solid rgba(23,21,19,.06); transition: transform .2s, box-shadow .2s; position: relative; overflow: hidden; }
@@ -176,7 +179,7 @@ em { color: var(--bronze); font-style: italic; }
 .product-carousel { padding-top: 76px; padding-bottom: 30px; }
 .product-carousel + .product-carousel { padding-top: 45px; padding-bottom: 85px; }
 .carousel-heading { display: flex; justify-content: space-between; align-items: end; margin-bottom: 34px; }
-.carousel-heading h2 { font: 600 43px/1.1 'Cormorant Garamond', serif; letter-spacing: -.02em; margin: 14px 0 0; }
+.carousel-heading h2 { font: 600 43px/1.1 'Cormorant Garamond', serif; letter-spacing: -.02em; margin: 0; }
 .carousel-heading button { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; }
 .carousel-heading button span { color: var(--bronze); font-size: 17px; padding-left: 12px; }
 .carousel-track { display: flex; gap: 21px; overflow-x: auto; padding: 2px 0 18px; scrollbar-width: none; }
@@ -194,23 +197,20 @@ em { color: var(--bronze); font-style: italic; }
 .families { padding-top: 85px; padding-bottom: 88px; }.family-list { border-top: 1px solid var(--line); }.family-list button { width: 100%; display: grid; grid-template-columns: 45px 1fr auto; align-items: center; text-align: left; padding: 17px 0; border-bottom: 1px solid var(--line); font: 25px 'DM Serif Display', serif; }.family-list button span { color: var(--bronze); font: 10px 'DM Sans', sans-serif; }.family-list button b { color: var(--bronze); font: 20px 'DM Sans', sans-serif; font-weight: 400; }.family-list button:hover { padding-left: 8px; color: var(--bronze); }
 .faq-band { background: #e5ddd2; }.faq-band .page-shell { display: grid; grid-template-columns: 35% 65%; gap: 20px; }.faq-band h2 { font: 43px 'DM Serif Display', serif; margin: 15px 0 0; }.faq-list { grid-column: 2; margin-top: -60px; }.faq-list details { border-top: 1px solid #cfc4b6; padding: 19px 0; }.faq-list details:last-child { border-bottom: 1px solid #cfc4b6; }.faq-list summary { cursor: pointer; font: 19px 'DM Serif Display', serif; list-style: none; display: flex; justify-content: space-between; }.faq-list summary::after { content: '+'; font: 20px 'DM Sans', sans-serif; color: var(--bronze); }.faq-list details[open] summary::after { content: '−'; }.faq-list p { color: var(--muted); font-size: 12px; line-height: 1.6; max-width: 480px; margin: 14px 0 0; }
 .section-heading, .catalog-heading { display: flex; justify-content: space-between; align-items: end; margin-bottom: 43px; }
-.section-heading h2 { font: 600 43px/1.1 'Cormorant Garamond', serif; letter-spacing: -.02em; margin: 14px 0 0; }
+.section-heading h2 { font: 600 43px/1.1 'Cormorant Garamond', serif; letter-spacing: -.02em; margin: 0; }
 .section-heading button, .catalog-toolbar .filter-button { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; }
 .section-heading button span { color: var(--bronze); font-size: 17px; padding-left: 12px; }
 .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 21px; }
 .product-card { min-width: 0; }
-.product-image { width: 100%; padding: 0; position: relative; display: block; overflow: hidden; background: #ebe6df; aspect-ratio: .84; border: 1px solid rgba(23, 21, 19, .06); box-shadow: 0 12px 24px rgba(31, 23, 19, .03); }
+.product-image { width: 100%; padding: 0; position: relative; display: block; overflow: hidden; background: #ebe6df; aspect-ratio: .84; border: 1px solid rgba(23, 21, 19, .06); box-shadow: 0 12px 24px rgba(31, 23, 19, .03); cursor: pointer; }
 .product-image img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; filter: saturate(.82) contrast(1.04); }
 .product-image:hover img { transform: scale(1.04); }
 .product-tag { position: absolute; top: 14px; left: 14px; font-size: 9px; background: rgba(247, 243, 238, .94); padding: 7px 9px; text-transform: uppercase; letter-spacing: .09em; border: 1px solid rgba(23,21,19,.06); }
 .quick-add { position: absolute; right: 13px; bottom: 12px; background: rgba(23,21,19,.96); color: #f7f3ee; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-size: 20px; }
 .product-info { padding-top: 15px; }
-.brand { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
-.product-info h3 { font: 600 22px 'Cormorant Garamond', serif; margin: 6px 0 5px; }
-.product-info p { color: var(--muted); font-size: 11px; margin: 0; }
-.product-bottom { border-top: 1px solid var(--line); margin-top: 15px; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; }
-.product-bottom strong { font-size: 11px; font-weight: 700; }
-.product-bottom button { font-size: 21px; color: var(--bronze); }
+.product-title { display: flex; align-items: baseline; gap: 7px; margin: 0 0 5px; font: 600 20px 'Cormorant Garamond', serif; cursor: pointer; white-space: nowrap; overflow: hidden; }
+.product-title .brand { flex: none; font: 700 10px 'Cormorant Garamond', serif; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.product-price { display: block; font-size: 13px; font-weight: 700; }
 .quote-band { background: linear-gradient(135deg, #9f785a 0%, #7d5c42 100%); color: #f7efe9; text-align: center; padding: 104px 20px; }
 .quote-band .eyebrow { color: #f0d18b; }
 .quote-band h2 { font: 600 54px/1.05 'Cormorant Garamond', serif; margin: 20px 0 19px; }
@@ -230,7 +230,8 @@ footer p { margin-bottom: 22px; }
 .footer-bottom { max-width: 1240px; margin: auto; border-top: 1px solid #534d46; padding-top: 20px; display: flex; justify-content: space-between; color: #837d73; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
 .breadcrumb { display: flex; gap: 11px; color: var(--muted); font-size: 11px; margin-bottom: 55px; }
 .breadcrumb strong { color: var(--ink); font-weight: 500; }
-.catalog-heading h1, .cart-page h1 { font: 64px 'DM Serif Display', serif; letter-spacing: -.03em; margin: 15px 0 0; }
+.catalog-heading h1, .cart-page h1 { font: 600 64px 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.045em; margin: 15px 0 0; }
+.catalog-heading h1 { margin-top: 0; }
 .heading-note { font-size: 13px; line-height: 1.6; color: var(--muted); }
 .catalog-toolbar { display: flex; align-items: center; gap: 22px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 15px 0; margin-bottom: 34px; font-size: 11px; }
 .catalog-toolbar span { margin-right: auto; color: var(--muted); }
@@ -243,12 +244,12 @@ footer p { margin-bottom: 22px; }
 .size-pills { display: flex; gap: 4px; flex-wrap: wrap; }
 .size-pills button, .volume-options button { border: 1px solid var(--line); padding: 8px 10px; font-size: 11px; }
 .product-page { padding-bottom: 120px; }
-.product-detail { display: grid; grid-template-columns: 54% 46%; background: #ebe5db; }
+.product-detail { display: grid; grid-template-columns: 54% 46%; background: var(--paper-strong); }
 .detail-image { position: relative; min-height: 610px; overflow: hidden; }
 .detail-image img { width: 100%; height: 100%; min-height: 610px; object-fit: cover; filter: saturate(.8); }
-.detail-image span { position: absolute; top: 24px; left: 24px; background: rgba(244, 239, 233, .9); padding: 8px 11px; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
+.detail-image span { position: absolute; top: 24px; left: 24px; background: rgba(255, 255, 255, .92); padding: 8px 11px; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
 .detail-copy { padding: 72px 10%; align-self: center; }
-.detail-copy h1 { font: 68px/1 'DM Serif Display', serif; margin: 16px 0 10px; }
+.detail-copy h1 { font: 600 68px/1 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.045em; margin: 16px 0 10px; }
 .detail-note { color: var(--bronze); font-size: 12px; }
 .detail-copy > p:not(.detail-note) { color: var(--muted); font-size: 13px; line-height: 1.7; }
 .rule { border-top: 1px solid var(--line); margin: 35px 0 25px; }
@@ -266,7 +267,7 @@ footer p { margin-bottom: 22px; }
 .cart-row { display: flex; align-items: center; gap: 20px; padding: 15px 0; border-bottom: 1px solid var(--line); }
 .cart-row img { width: 75px; height: 85px; object-fit: cover; }
 .cart-row div { display: grid; gap: 6px; margin-right: auto; }
-.cart-row strong { font: 20px 'DM Serif Display', serif; }
+.cart-row strong { font: 600 20px 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.02em; }
 .cart-row small { color: var(--muted); font-size: 11px; }
 .cart-row b { font-size: 12px; font-weight: 500; }
 .cart-summary { max-width: 380px; margin: 35px 0 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 17px; border-top: 1px solid var(--ink); padding-top: 17px; font-size: 12px; }
@@ -274,7 +275,7 @@ footer p { margin-bottom: 22px; }
 .cart-summary .primary-button { grid-column: span 2; width: 100%; }
 .empty-cart { text-align: center; padding: 50px 0 100px; }
 .empty-mark { font-size: 50px; color: var(--bronze); }
-.empty-cart h2 { font: 34px 'DM Serif Display', serif; }
+.empty-cart h2 { font: 600 34px 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.03em; }
 @media (max-width: 800px) {
 	.site-header { height: 67px; padding: 0 20px; gap: 15px; justify-content: space-between; }
 	.menu-toggle { display: block; order: -1; }
@@ -306,7 +307,9 @@ footer p { margin-bottom: 22px; }
 	.discovery-season { min-height: 300px; padding: 28px; }
 	.discovery-season h2 { font-size: 40px; }
 	.discovery-tile { min-height: 145px; }
-	.occasion-strip { display: block; padding: 0 20px; margin-bottom: 40px; }
+	.season-layout { grid-template-columns: 1fr; padding: 0 20px; margin-bottom: 24px; }
+	.season-list { gap: 10px; }
+	.occasion-strip { display: block; padding: 0 20px; }
 	.occasion-strip h2 { font-size: 38px; margin-bottom: 28px; }
 	.occasion-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
 	.occasion-card { min-height: 165px; }
@@ -439,18 +442,19 @@ footer p { margin-bottom: 22px; }
 .home-page .discovery-tile strong,
 .home-page .occasion-list strong { font-size: 34px; font-weight: 600; letter-spacing: -.04em; }
 .home-page .discovery-layout { max-width: 1400px; gap: 14px; }
+.home-page .season-layout { max-width: 1400px; gap: 14px; margin-bottom: 28px; }
 .home-page .discovery-season { background: #18312b; border-radius: 4px; }
 .home-page .discovery-season .eyebrow { color: var(--gold); }
 .home-page .discovery-season h2 { font-size: 60px; font-weight: 500; letter-spacing: -.055em; }
 .home-page .discovery-season h2 em { color: var(--gold); }
 .home-page .text-button { color: var(--gold); font-weight: 800; }
-.home-page .product-carousel { max-width: 1400px; padding-top: 102px; }
+.home-page .product-carousel { max-width: 1400px; padding-top: 28px; }
 .home-page .product-image { border-radius: 4px; background: #e7eae3; box-shadow: none; border-color: #d9ded6; }
 .home-page .product-tag { border-radius: 2px; background: var(--paper); color: var(--ink); font-weight: 800; }
 .home-page .quick-add { border-radius: 3px; background: var(--ink); }
 .home-page .product-info h3 { font-size: 27px; font-weight: 600; letter-spacing: -.035em; }
 .home-page .product-bottom { border-top-color: #dfe4dc; }
-.home-page .occasion-strip { max-width: 1400px; padding-top: 46px; padding-bottom: 58px; }
+.home-page .occasion-strip { max-width: 1400px; padding-top: 46px; padding-bottom: 28px; }
 .home-page .occasion-strip h2 { font-size: 58px; font-weight: 600; letter-spacing: -.055em; }
 .home-app footer { background: #10201d; padding-top: 76px; }
 .home-app footer .eyebrow,
@@ -461,13 +465,17 @@ footer p { margin-bottom: 22px; }
 @media (max-width: 800px) {
   .home-app .site-header { padding: 0 20px; }
   .home-page .hero { min-height: 620px; }
-  .home-page .hero-copy { padding-left: 25px; padding-top: 255px; }
+  .home-page .hero-copy { padding-left: 25px; padding-top: 130px; }
   .home-page .hero h1 { font-size: 76px; }
   .home-page .entry-strip { padding-top: 30px; padding-bottom: 38px; }
   .home-page .entry-card { min-height: 66px; }
   .home-page .entry-card b { border-radius: 3px; }
   .home-page .discovery-season h2,
   .home-page .occasion-strip h2 { font-size: 46px; }
+  .home-page .discovery-layout { margin-bottom: 24px; }
+  .home-page .season-layout { margin-bottom: 24px; }
+  .home-page .occasion-strip { padding-bottom: 24px; }
+  .home-page .product-carousel { padding-top: 16px; }
 }
 
 /* Bright, energetic shop direction: white canvas, charcoal ink, electric violet. */
@@ -636,6 +644,8 @@ footer p { margin-bottom: 22px; }
   color: #1d2600;
   font-size: 0;
   box-shadow: none;
+  display: grid;
+  place-items: center;
   transition: transform .2s ease, background .2s ease;
 }
 .home-page .entry-card b::after {
@@ -643,7 +653,8 @@ footer p { margin-bottom: 22px; }
   font-family: Arial, sans-serif;
   font-size: 25px;
   font-weight: 400;
-  line-height: .85;
+  line-height: 1;
+  transform: translate(1px, -1px);
 }
 .home-page .entry-card:hover b { transform: scale(1.08); background: #e3ff70; }
 .home-page .trust-strip {
@@ -686,4 +697,80 @@ footer p { margin-bottom: 22px; }
   .home-page .trust-strip div,
   .home-page .trust-strip div:first-child,
   .home-page .trust-strip div:last-child { padding: 0; text-align: left; justify-items: start; }
+}
+
+/* Unify the whitespace above/below the trust bar with the rest of the page.
+   Bestsellery now sits directly under the trust bar, so its own leading
+   padding (.product-carousel) plus this margin must add up to the same
+   56px gap that sits above the trust bar (entry-strip's padding-bottom). */
+.home-page .entry-strip { padding-bottom: 56px; }
+.home-page .trust-strip { margin-top: 0; margin-bottom: 28px; }
+.home-page .secondary-heading { margin-top: 0; }
+
+@media (max-width: 800px) {
+  .home-page .entry-strip { padding-bottom: 32px; }
+  .home-page .trust-strip {
+    margin-bottom: 16px;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .home-page .trust-strip div {
+    padding: 14px 0;
+    border-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, .12);
+  }
+  .home-page .trust-strip div:first-child { padding-top: 0; border-top: 0; }
+  .home-page .trust-strip div:last-child { padding-bottom: 0; }
+}
+
+/* Force the brand + product name onto a single, matching typeface/size, no
+   matter which theme layer above last touched fonts for headings vs. plain
+   text (several layers set different font-size/weight for each). */
+.product-title,
+.product-title .brand {
+  font-family: 'Space Grotesk', 'Manrope', sans-serif !important;
+}
+.product-title {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+}
+.product-title .brand {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  color: var(--muted) !important;
+}
+
+/* Card badges are color-coded by what they say. !important guards against
+   the several older theme layers above that set a flat .product-tag
+   background/color with higher selector specificity than a single class. */
+.product-tag.tag-new { background: var(--gold, #c8ff00) !important; color: #14211f !important; border-color: transparent !important; }
+.product-tag.tag-best { background: #ffb100 !important; color: #2b1c00 !important; border-color: transparent !important; }
+.product-tag.tag-fav { background: #ff6f91 !important; color: #2b0014 !important; border-color: transparent !important; }
+.product-tag.tag-editor { background: #7c5cff !important; color: #ffffff !important; border-color: transparent !important; }
+
+/* FAQ accordion at the bottom of the homepage, re-themed to match the
+   current light/lime palette instead of the older serif/brown styling. */
+.home-page .faq-band { background: var(--paper-strong, #f5f5f5); padding-top: 56px; padding-bottom: 56px; }
+.home-page .faq-band .page-shell { padding-top: 0; padding-bottom: 0; }
+.home-page .faq-band h2 { font-family: 'Cormorant Garamond', serif; font-size: 43px; font-weight: 600; margin: 14px 0 14px; }
+.home-page .faq-band > .page-shell > div:first-child p { max-width: 320px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.home-page .faq-list { margin-top: 0; }
+.home-page .faq-list summary { font-family: 'Space Grotesk', 'Manrope', sans-serif; font-size: 16px; font-weight: 600; }
+.home-page .faq-list summary::after { color: var(--gold, #c8ff00); }
+.home-page .faq-list p { font-family: 'Manrope', sans-serif; }
+
+@media (max-width: 800px) {
+  .home-page .faq-band { padding-top: 32px; padding-bottom: 32px; }
+}
+
+/* Icons in the trust bar, sitting beside the label instead of above it. */
+.home-page .trust-strip > div { display: flex; align-items: center; justify-content: center; gap: 12px; border-left: 0; padding-left: 0; }
+.home-page .trust-strip .trust-copy { display: grid; gap: 2px; text-align: left; }
+.home-page .trust-strip .trust-icon { flex: none; width: 22px; height: 22px; color: var(--gold, #c8ff00); }
+
+@media (max-width: 800px) {
+  .home-page .trust-strip > div { justify-content: flex-start; }
 }
