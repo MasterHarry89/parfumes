@@ -927,17 +927,26 @@ function App() {
   );
 }
 
+const isHiddenBadge = (text) => {
+  const value = (text || "").toLowerCase();
+  return (
+    value.includes("editor") ||
+    value.includes("oblíb") ||
+    value.includes("oblib") ||
+    value.includes("minimalis")
+  );
+};
+
 const badgeTone = (text) => {
   const value = (text || "").toLowerCase();
   if (value.includes("nov")) return "tag-new";
   if (value.includes("bestsell")) return "tag-best";
-  if (value.includes("oblíb") || value.includes("oblib")) return "tag-fav";
-  if (value.includes("editor")) return "tag-editor";
   return "";
 };
 
 function ProductCard({ product, onOpen, onAdd, tag }) {
-  const badge = tag || product.tag;
+  const rawBadge = tag || product.tag;
+  const badge = rawBadge && !isHiddenBadge(rawBadge) ? rawBadge : null;
   return (
     <article className="product-card">
       <div className="product-image" onClick={onOpen}>
@@ -1106,9 +1115,7 @@ function Home({ products, onOpen, onShop }) {
           <div>
             <span className="eyebrow">Máte otázku?</span>
             <h2>Často kladené otázky</h2>
-            <p>
-              Vše, co potřebujete vědět o vzorcích, doručení a vůních.
-            </p>
+            <p>Vše, co potřebujete vědět o vzorcích, doručení a vůních.</p>
           </div>
           <div className="faq-list">
             {faqItems.map((item) => (

@@ -747,9 +747,7 @@ footer p { margin-bottom: 22px; }
    the several older theme layers above that set a flat .product-tag
    background/color with higher selector specificity than a single class. */
 .product-tag.tag-new { background: var(--gold, #c8ff00) !important; color: #14211f !important; border-color: transparent !important; }
-.product-tag.tag-best { background: #ffb100 !important; color: #2b1c00 !important; border-color: transparent !important; }
-.product-tag.tag-fav { background: #ff6f91 !important; color: #2b0014 !important; border-color: transparent !important; }
-.product-tag.tag-editor { background: #7c5cff !important; color: #ffffff !important; border-color: transparent !important; }
+.product-tag.tag-best { background: #ffffff !important; color: #14211f !important; border: 1px solid rgba(23,21,19,.1) !important; }
 
 /* FAQ accordion at the bottom of the homepage, re-themed to match the
    current light/lime palette instead of the older serif/brown styling. */
