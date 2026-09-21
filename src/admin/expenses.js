@@ -11,6 +11,8 @@ export const expenseCategories = [
 // Adds a row to the expenses ledger. Returns an error message, or null on success.
 // `amount` is in tenths of CZK.
 export const recordExpense = async ({ category, label, amount, productId = null, materialId = null, date }) => {
+  // Free stock (already owned, gifts) is not an expense, so nothing is recorded.
+  if (!(amount > 0)) return null;
   const { error } = await supabase.from("expenses").insert({
     spent_on: date ?? todayString(),
     category,
