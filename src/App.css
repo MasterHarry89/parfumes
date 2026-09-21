@@ -864,3 +864,9 @@ footer p { margin-bottom: 22px; }
 .option-tiles svg { width: 22px; height: 22px; }
 .option-tiles li.is-active { border-color: #252525; background: #f7ffd9; color: #252525; }
 .option-tiles li.is-active svg { color: #587300; }
+
+/* Several badges on one product: a flex row instead of one absolutely positioned pill. */
+.product-tags { position: absolute; top: 14px; left: 14px; z-index: 1; display: flex; flex-wrap: wrap; gap: 6px; max-width: calc(100% - 28px); }
+.product-tags .product-tag { position: static; }
+.pdp-badges { position: absolute; top: 18px; left: 18px; z-index: 1; display: flex; flex-wrap: wrap; gap: 8px; }
+.pdp-badges .pdp-badge { position: static; }

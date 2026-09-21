@@ -58,6 +58,7 @@ export const familyOptions = [
   "Citrus",
   "Dřevité",
   "Sladké",
+  "Vanilkové",
   "Ovocné",
   "Amber",
   "Fresh",
@@ -153,3 +154,21 @@ export const todayString = () => {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 };
+
+// Who a scent is for (products.gender).
+export const genderOptions = [
+  { key: "women", label: "Dámská" },
+  { key: "men", label: "Pánská" },
+  { key: "unisex", label: "Unisex" },
+];
+export const genderLabel = Object.fromEntries(genderOptions.map((option) => [option.key, option.label]));
+
+// Shop badges you can tick in the admin.
+export const tagOptions = ["Novinka", "Bestseller"];
+
+// products.tag holds one or more badges separated by commas, e.g. "Novinka, Bestseller".
+export const tagList = (tag) =>
+  String(tag || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);

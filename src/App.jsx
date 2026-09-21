@@ -7,9 +7,11 @@ import { supabase } from "./lib/supabase";
 import { navigate } from "./lib/navigate";
 import {
   money,
+  genderLabel,
   occasionOptions,
   priceFor,
   seasonOptions,
+  tagList,
   toList,
   volumes,
 } from "./lib/catalog";
@@ -83,7 +85,8 @@ const loadProducts = async () => {
       product.image ||
       "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=700&q=85",
     note: product.note || "Premium scent",
-    tag: product.tag || "Bestseller",
+    tag: product.tag || "",
+    gender: product.gender || "",
     families: toList(product.families),
     notesTop: toList(product.notes_top),
     notesHeart: toList(product.notes_heart),
@@ -457,14 +460,19 @@ const badgeTone = (text) => {
 };
 
 function ProductCard({ product, onOpen, onAdd, tag }) {
-  const rawBadge = tag || product.tag;
-  const badge = rawBadge && !isHiddenBadge(rawBadge) ? rawBadge : null;
+  const badges = (tag ? [tag] : tagList(product.tag)).filter((badge) => !isHiddenBadge(badge));
   return (
     <article className="product-card">
       <div className="product-image" onClick={onOpen}>
         <img src={product.image} alt={`${product.brand} ${product.name}`} />
-        {badge && (
-          <span className={`product-tag ${badgeTone(badge)}`}>{badge}</span>
+        {badges.length > 0 && (
+          <div className="product-tags">
+            {badges.map((badge) => (
+              <span key={badge} className={`product-tag ${badgeTone(badge)}`}>
+                {badge}
+              </span>
+            ))}
+          </div>
         )}
         <button
           className="quick-add"
@@ -629,6 +637,12 @@ function ProductDetail({ product, products, onAdd, onOpen, onBack }) {
               <dt>Značka</dt>
               <dd>{product.brand}</dd>
             </div>
+            {product.gender && genderLabel[product.gender] && (
+              <div>
+                <dt>Pro koho</dt>
+                <dd>{genderLabel[product.gender]}</dd>
+              </div>
+            )}
             <div>
               <dt>Rodina vůně</dt>
               <dd>{product.family}</dd>
@@ -758,8 +772,16 @@ function ProductDetail({ product, products, onAdd, onOpen, onBack }) {
         <div className="pdp-grid">
           <div className="pdp-gallery">
             <img src={product.image} alt={`${product.brand} ${product.name}`} />
-            {product.tag && !isHiddenBadge(product.tag) && (
-              <span className="pdp-badge">{product.tag}</span>
+            {tagList(product.tag).filter((badge) => !isHiddenBadge(badge)).length > 0 && (
+              <div className="pdp-badges">
+                {tagList(product.tag)
+                  .filter((badge) => !isHiddenBadge(badge))
+                  .map((badge) => (
+                    <span key={badge} className="pdp-badge">
+                      {badge}
+                    </span>
+                  ))}
+              </div>
             )}
           </div>
           <div className="pdp-info">

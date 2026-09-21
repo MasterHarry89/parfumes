@@ -49,8 +49,8 @@ function StatusPill({ status }) {
 }
 
 export function Product({ item }) {
-  return (
-    <div className="adm-product">
+  const content = (
+    <>
       {item.image ? (
         <img src={item.image} alt="" />
       ) : (
@@ -62,7 +62,23 @@ export function Product({ item }) {
         <strong>{item.name}</strong>
         <small>{item.brand || item.productId}</small>
       </div>
-    </div>
+    </>
+  );
+  if (!item.productId) return <div className="adm-product">{content}</div>;
+  const href = `/admin/produkty/${encodeURIComponent(item.productId)}`;
+  return (
+    <a
+      className="adm-product adm-product-link"
+      href={href}
+      title="Upravit produkt"
+      onClick={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        navigate(href);
+      }}
+    >
+      {content}
+    </a>
   );
 }
 

@@ -3,10 +3,10 @@ import {
   FiArrowUpRight,
   FiBox,
   FiClock,
+  FiGrid,
   FiHome,
   FiLogOut,
   FiPackage,
-  FiPlusCircle,
   FiShoppingBag,
   FiTrendingUp,
 } from "react-icons/fi";
@@ -19,14 +19,17 @@ import FinanceView from "./FinanceView";
 import LaborView from "./LaborView";
 import PackagingView from "./PackagingView";
 import ProductForm from "./ProductForm";
+import ProductsView from "./ProductsView";
 import RestockDialog from "./Restock";
 import { DashboardView, InventoryView, OrdersView } from "./views";
 
 const pages = [
   { path: "/admin", key: "prehled", title: "Přehled", icon: FiHome },
+  { path: "/admin/produkty", key: "produkty", title: "Produkty", icon: FiGrid },
   { path: "/admin/sklad", key: "sklad", title: "Sklad a ceny", icon: FiBox },
   { path: "/admin/obal", key: "obal", title: "Obalový materiál", icon: FiPackage },
-  { path: "/admin/produkty/novy", key: "novy-produkt", title: "Nový produkt", icon: FiPlusCircle },
+  // Not in the menu: reached with the "Nový produkt" button on the Produkty page.
+  { path: "/admin/produkty/novy", key: "novy-produkt", title: "Nový produkt", hidden: true },
   { path: "/admin/objednavky", key: "objednavky", title: "Objednávky", icon: FiShoppingBag },
   { path: "/admin/prace", key: "prace", title: "Práce a čas", icon: FiClock },
   { path: "/admin/finance", key: "finance", title: "Finance", icon: FiTrendingUp },
@@ -316,8 +319,15 @@ function AdminShell({ path, session, onCatalogChanged }) {
     return null;
   };
 
-  const page =
-    pages.find((candidate) => candidate.path === path.replace(/\/$/, "")) ?? pages[0];
+  const cleanPath = path.replace(/\/$/, "");
+  const editMatch = cleanPath.match(/^\/admin\/produkty\/(?!novy$)([^/]+)$/);
+  const editId = editMatch ? decodeURIComponent(editMatch[1]) : null;
+  const editProduct = editId && data ? data.products.find((product) => product.id === editId) : null;
+  const page = editMatch
+    ? { key: "upravit-produkt", title: "Upravit produkt" }
+    : (pages.find((candidate) => candidate.path === cleanPath) ?? pages[0]);
+  const navKey = ["novy-produkt", "upravit-produkt"].includes(page.key) ? "produkty" : page.key;
+  const headTitle = page.key === "upravit-produkt" && editProduct ? editProduct.name : page.title;
   const today = new Date().toLocaleDateString("cs-CZ", {
     weekday: "long",
     day: "numeric",
@@ -354,6 +364,34 @@ function AdminShell({ path, session, onCatalogChanged }) {
         onReload={reload}
       />
     );
+  } else if (page.key === "produkty") {
+    content = <ProductsView products={data.products} stock={stock} />;
+  } else if (page.key === "upravit-produkt") {
+    content = editProduct ? (
+      <ProductForm
+        key={editProduct.id}
+        product={editProduct}
+        inventoryCostPerMl={data.inventory.find((item) => item.productId === editProduct.id)?.costPerMl ?? null}
+        existingIds={[]}
+        materials={data.materials}
+        labourPerSample={labour.perSample}
+        onSaved={async () => {
+          await reload();
+          await onCatalogChanged?.();
+        }}
+        onOpenProduct={(id) => navigate(`/produkt/${id}`)}
+        onBack={() => navigate("/admin/produkty")}
+      />
+    ) : (
+      <div className="adm-page">
+        <p className="adm-alert" role="alert">
+          Produkt „{editId}“ neexistuje.
+        </p>
+        <button className="adm-button" onClick={() => navigate("/admin/produkty")}>
+          Zpět na produkty
+        </button>
+      </div>
+    );
   } else if (page.key === "novy-produkt") {
     content = (
       <ProductForm
@@ -365,6 +403,7 @@ function AdminShell({ path, session, onCatalogChanged }) {
           await onCatalogChanged?.();
         }}
         onOpenProduct={(id) => navigate(`/produkt/${id}`)}
+        onBack={() => navigate("/admin/produkty")}
       />
     );
   } else if (page.key === "objednavky") {
@@ -409,9 +448,11 @@ function AdminShell({ path, session, onCatalogChanged }) {
           <span>ADMIN</span>
         </a>
         <nav aria-label="Administrace">
-          {pages.map((candidate) => (
-            <NavLink key={candidate.key} page={candidate} active={candidate.key === page.key} />
-          ))}
+          {pages
+            .filter((candidate) => !candidate.hidden)
+            .map((candidate) => (
+              <NavLink key={candidate.key} page={candidate} active={candidate.key === navKey} />
+            ))}
         </nav>
         <div className="adm-side-foot">
           <a
@@ -438,7 +479,7 @@ function AdminShell({ path, session, onCatalogChanged }) {
         <header className="adm-head">
           <div>
             <span className="adm-eyebrow">{today}</span>
-            <h1>{page.title}</h1>
+            <h1>{headTitle}</h1>
           </div>
         </header>
         {content}

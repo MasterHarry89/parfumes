@@ -5,11 +5,17 @@ import { supabase } from "../lib/supabase";
 import {
   familyOptions,
   computePricing,
+  genderOptions,
   money,
   occasionOptions,
   parseNumber,
+  priceFor,
+  sampleVolumes,
   seasonOptions,
   slugify,
+  tagList,
+  tagOptions,
+  toList,
   toStored,
 } from "../lib/catalog";
 import { recordExpense } from "./expenses";
@@ -21,7 +27,8 @@ const emptyForm = {
   id: "",
   note: "",
   description: "",
-  tag: "Novinka",
+  tags: ["Novinka"],
+  gender: "",
   image: "",
   bottle: "",
   stock: "",
@@ -182,8 +189,58 @@ function TagInput({ label, values, onChange, placeholder }) {
   );
 }
 
-function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenProduct }) {
-  const [form, setForm] = useState(emptyForm);
+// Form values for an existing product row (edit mode). Prices start as the ones in the shop.
+const formFromProduct = (product) => {
+  const priced = {
+    price: Number(product.price || 0),
+    prices: product.prices && typeof product.prices === "object" ? product.prices : {},
+  };
+  return {
+    ...emptyForm,
+    name: product.name ?? "",
+    brand: product.brand ?? "",
+    id: product.id,
+    note: product.note ?? "",
+    description: product.description ?? "",
+    tags: tagList(product.tag).filter((tag) => tagOptions.includes(tag)),
+    gender: product.gender ?? "",
+    image: product.image ?? "",
+    families: toList(product.families),
+    seasons: toList(product.seasons),
+    occasions: toList(product.occasions),
+    notesTop: toList(product.notes_top),
+    notesHeart: toList(product.notes_heart),
+    notesBase: toList(product.notes_base),
+    longevity: product.longevity ?? null,
+    active: product.active !== false,
+    priceInputs: Object.fromEntries(
+      sampleVolumes.map((volume) => [volume.value, String(priceFor(priced, volume) / 10)]),
+    ),
+  };
+};
+
+// Badges that are not one of the two tickable ones (e.g. an older "Oblíbené") are kept as they are.
+const extraTags = (product) => tagList(product?.tag).filter((tag) => !tagOptions.includes(tag));
+
+// Path of a file in our photo bucket, or null for photos hosted elsewhere.
+const storagePathOf = (url) => {
+  const marker = `/storage/v1/object/public/${IMAGE_BUCKET}/`;
+  const index = String(url || "").indexOf(marker);
+  return index < 0 ? null : decodeURIComponent(url.slice(index + marker.length).split("?")[0]);
+};
+
+function ProductForm({
+  product = null,
+  inventoryCostPerMl = null,
+  existingIds,
+  materials,
+  labourPerSample,
+  onSaved,
+  onOpenProduct,
+  onBack,
+}) {
+  const editing = product !== null;
+  const [form, setForm] = useState(() => (editing ? formFromProduct(product) : emptyForm));
   const [idTouched, setIdTouched] = useState(false);
   const [errors, setErrors] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -203,7 +260,7 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
   }, [imageFile]);
 
   const set = (patch) => setForm((current) => ({ ...current, ...patch }));
-  const id = idTouched ? form.id : slugify(form.name);
+  const id = editing ? product.id : idTouched ? form.id : slugify(form.name);
   // The price covers the whole bottle; only `stockMl` of it goes on the shelf (default: all of it).
   const bottleMl = parseNumber(form.bottle);
   const stockMl = form.stock !== "" ? parseNumber(form.stock) : bottleMl > 0 ? bottleMl : 0;
@@ -211,8 +268,12 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
   const purchaseKc = parseNumber(form.purchase);
   const marginTarget = parseNumber(form.margin);
   // Perfume purchase cost per ml, in tenths of CZK (null until both numbers are filled in).
-  const costPerMl =
-    costBasisMl > 0 && form.purchase !== "" && purchaseKc >= 0 ? (purchaseKc * 10) / costBasisMl : null;
+  // When editing, the cost comes from the stock (change it there with "Doskladnit").
+  const costPerMl = editing
+    ? inventoryCostPerMl
+    : costBasisMl > 0 && form.purchase !== "" && purchaseKc >= 0
+      ? (purchaseKc * 10) / costBasisMl
+      : null;
 
   const pricing = computePricing({
     costPerMl,
@@ -241,16 +302,19 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
     const problems = [];
     if (!form.name.trim()) problems.push("Vyplňte název vůně.");
     if (!form.brand.trim()) problems.push("Vyplňte značku.");
-    if (!id) problems.push("Adresa produktu nesmí být prázdná.");
-    else if (existingIds.includes(id))
-      problems.push(`Produkt s adresou „${id}“ už existuje. Upravte název nebo adresu.`);
-    if (form.bottle !== "" && !(bottleMl > 0))
-      problems.push("Velikost flakonu musí být číslo větší než 0.");
-    if (!(stockMl >= 0)) problems.push("Množství ke skladování musí být číslo od 0.");
-    if (bottleMl > 0 && stockMl > bottleMl)
-      problems.push("Naskladňujete víc ml, než kolik má koupený flakon.");
-    if (form.purchase !== "" && !(purchaseKc >= 0))
-      problems.push("Nákupní cena musí být číslo od 0.");
+    if (!form.gender) problems.push("Vyberte, jestli je vůně pánská, dámská nebo unisex.");
+    if (!editing) {
+      if (!id) problems.push("Adresa produktu nesmí být prázdná.");
+      else if (existingIds.includes(id))
+        problems.push(`Produkt s adresou „${id}“ už existuje. Upravte název nebo adresu.`);
+      if (form.bottle !== "" && !(bottleMl > 0))
+        problems.push("Velikost flakonu musí být číslo větší než 0.");
+      if (!(stockMl >= 0)) problems.push("Množství ke skladování musí být číslo od 0.");
+      if (bottleMl > 0 && stockMl > bottleMl)
+        problems.push("Naskladňujete víc ml, než kolik má koupený flakon.");
+      if (form.purchase !== "" && !(purchaseKc >= 0))
+        problems.push("Nákupní cena musí být číslo od 0.");
+    }
     pricing.forEach((row) => {
       if (row.price === null)
         problems.push(`Zadejte prodejní cenu pro ${row.volume.label} vyšší než 0 Kč.`);
@@ -289,8 +353,7 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
         .data.publicUrl;
     }
 
-    const { error: productError } = await supabase.from("products").insert({
-      id,
+    const productRow = {
       name: form.name.trim(),
       brand: form.brand.trim(),
       family: form.families.join(", ") || null,
@@ -300,7 +363,8 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
       image: imageUrl,
       note: form.note.trim() || null,
       description: form.description.trim() || null,
-      tag: form.tag,
+      tag: [...form.tags, ...(editing ? extraTags(product) : [])].join(", ") || null,
+      gender: form.gender,
       active: form.active,
       notes_top: form.notesTop,
       notes_heart: form.notesHeart,
@@ -308,7 +372,10 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
       longevity: form.longevity,
       seasons: form.seasons,
       occasions: form.occasions,
-    });
+    };
+    const { error: productError } = editing
+      ? await supabase.from("products").update(productRow).eq("id", id)
+      : await supabase.from("products").insert({ id, ...productRow });
 
     if (productError) {
       if (uploadedPath) {
@@ -319,11 +386,26 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
           ? "Zápis byl odmítnut. Chybí oprávnění pro přihlášeného uživatele (viz supabase/product-form.sql)."
           : productError.code === "23505"
             ? `Produkt s adresou „${id}“ už existuje.`
+            : /gender/.test(productError.message)
+              ? "Databáze ještě nemá sloupec „Pro koho“. Spusťte supabase/product-gender.sql."
             : /prices/.test(productError.message)
               ? "Databáze ještě nemá sloupec pro ceny velikostí. Spusťte supabase/pricing.sql."
               : `Produkt se nepodařilo uložit: ${productError.message}`,
       ]);
       setSaving(false);
+      return;
+    }
+
+    if (editing) {
+      // The old photo is deleted only after the new state has been saved.
+      const oldPath = storagePathOf(product.image);
+      if (oldPath && imageUrl !== product.image) {
+        await supabase.storage.from(IMAGE_BUCKET).remove([oldPath]);
+      }
+      await onSaved();
+      setSaving(false);
+      setErrors([]);
+      setSavedId(id);
       return;
     }
 
@@ -360,12 +442,13 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
           <span className="pf-done-icon">
             <FiCheck aria-hidden="true" />
           </span>
-          <h2>Produkt byl uložen</h2>
+          <h2>{editing ? "Změny byly uloženy" : "Produkt byl uložen"}</h2>
           <p>
             <strong>
               {form.brand} {form.name}
             </strong>{" "}
-            je v databázi{form.active ? " a je vidět v e-shopu" : ", ale je skrytý"}.
+            {editing ? "je upravený" : "je v databázi"}
+            {form.active ? " a je vidět v e-shopu" : ", ale je skrytý"}.
           </p>
           {errors.map((error) => (
             <p className="pf-error" role="alert" key={error}>
@@ -376,18 +459,24 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
             <button className="pf-save" onClick={() => onOpenProduct(savedId)}>
               Zobrazit na webu
             </button>
-            <button
-              className="pf-secondary"
-              onClick={() => {
-                setForm(emptyForm);
-                setImageFile(null);
-                setIdTouched(false);
-                setErrors([]);
-                setSavedId(null);
-              }}
-            >
-              Přidat další produkt
-            </button>
+            {editing ? (
+              <button className="pf-secondary" onClick={onBack}>
+                Zpět na produkty
+              </button>
+            ) : (
+              <button
+                className="pf-secondary"
+                onClick={() => {
+                  setForm(emptyForm);
+                  setImageFile(null);
+                  setIdTouched(false);
+                  setErrors([]);
+                  setSavedId(null);
+                }}
+              >
+                Přidat další produkt
+              </button>
+            )}
           </div>
         </section>
       </div>
@@ -416,13 +505,18 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
               </Field>
               <Field
                 label="Adresa produktu"
-                hint="Vytvoří se z názvu, můžete ji upravit."
+                hint={
+                  editing
+                    ? "Adresu produktu nelze změnit, je spojená se skladem a odkazy."
+                    : "Vytvoří se z názvu, můžete ji upravit."
+                }
                 wide
               >
                 <span className="pf-prefix">
                   <span>/produkt/</span>
                   <input
                     value={id}
+                    readOnly={editing}
                     onChange={(event) => {
                       setIdTouched(true);
                       set({ id: slugify(event.target.value) });
@@ -431,6 +525,22 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
                   />
                 </span>
               </Field>
+              <div className="pf-field pf-wide">
+                <span className="pf-label">Pro koho *</span>
+                <div className="pf-segment" role="group" aria-label="Pro koho je vůně">
+                  {genderOptions.map((option) => (
+                    <button
+                      type="button"
+                      key={option.key}
+                      className={form.gender === option.key ? "is-on" : ""}
+                      aria-pressed={form.gender === option.key}
+                      onClick={() => set({ gender: option.key })}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <Field
                 label="Krátký popis"
                 hint="Zobrazí se pod názvem, např. „suché dřevo · kardamom · kůže“."
@@ -459,7 +569,7 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
               <div className="pf-photo">
                 <img src={previewUrl || form.image} alt="" />
                 <div>
-                  <strong>{imageFile ? imageFile.name : "Fotka z odkazu"}</strong>
+                  <strong>{imageFile ? imageFile.name : editing ? "Aktuální fotka" : "Fotka z odkazu"}</strong>
                   <div className="pf-photo-actions">
                     <label className="pf-secondary pf-small">
                       Změnit
@@ -529,6 +639,32 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
             )}
           </Card>
 
+{editing ? (
+          <Card
+            title="Ceny velikostí"
+            description={
+              costPerMl === null
+                ? "Tento produkt nemá ve skladu zadaný náklad, proto se marže nepočítá. Ceny můžete upravit ručně."
+                : `Náklad vychází ze skladu (${money(costPerMl)} za ml) a z obalu. Množství a nový nákup změníte na stránce Sklad a ceny tlačítkem Doskladnit.`
+            }
+          >
+            <div className="pf-grid pf-grid-3">
+              <Field label="Cílová marže (%)" hint="Z ní se počítají doporučené ceny.">
+                <input
+                  inputMode="decimal"
+                  value={form.margin}
+                  onChange={(event) => set({ margin: event.target.value })}
+                />
+              </Field>
+            </div>
+            <PricingTable
+              rows={pricing}
+              priceInputs={form.priceInputs}
+              onChange={(priceInputs) => set({ priceInputs })}
+              materialCount={materials.length}
+            />
+          </Card>
+          ) : (
           <Card
             title="Naskladnění a cenotvorba"
             description="Zadejte, jak velký flakon jste koupili a za kolik, a kolik z něj naskladňujete. Ceny velikostí se dopočítají a můžete je přepsat."
@@ -604,6 +740,7 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
               materialCount={materials.length}
             />
           </Card>
+          )}
 
           <Card
             title="Parfémové rodiny"
@@ -690,7 +827,13 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
               ) : (
                 <span>Bez fotky</span>
               )}
-              <b>{form.tag}</b>
+              {form.tags.length > 0 && (
+                <div className="pf-preview-tags">
+                  {form.tags.map((tag) => (
+                    <b key={tag}>{tag}</b>
+                  ))}
+                </div>
+              )}
             </div>
             <strong>
               {form.brand || "Značka"} {form.name || "Název vůně"}
@@ -699,19 +842,25 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
           </div>
 
           <div className="pf-card">
-            <span className="pf-label">Štítek</span>
-            <div className="pf-segment" role="group" aria-label="Štítek">
-              {["Novinka", "Bestseller"].map((tag) => (
-                <button
-                  type="button"
-                  key={tag}
-                  className={form.tag === tag ? "is-on" : ""}
-                  aria-pressed={form.tag === tag}
-                  onClick={() => set({ tag })}
-                >
-                  {tag}
-                </button>
-              ))}
+            <span className="pf-label">Štítky (lze zaškrtnout oba)</span>
+            <div className="pf-chips" role="group" aria-label="Štítky">
+              {tagOptions.map((tag) => {
+                const on = form.tags.includes(tag);
+                return (
+                  <button
+                    type="button"
+                    key={tag}
+                    className={on ? "is-on" : ""}
+                    aria-pressed={on}
+                    onClick={() =>
+                      set({ tags: on ? form.tags.filter((item) => item !== tag) : [...form.tags, tag] })
+                    }
+                  >
+                    {on && <FiCheck aria-hidden="true" />}
+                    {tag}
+                  </button>
+                );
+              })}
             </div>
             <label className="pf-switch">
               <input
@@ -733,7 +882,7 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
             </div>
           )}
           <button className="pf-save" disabled={saving}>
-            {saving ? "Ukládám…" : "Uložit produkt"}
+            {saving ? "Ukládám…" : editing ? "Uložit změny" : "Uložit produkt"}
           </button>
         </aside>
       </div>
