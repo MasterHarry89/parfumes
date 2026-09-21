@@ -23,8 +23,10 @@ const emptyForm = {
   description: "",
   tag: "Novinka",
   image: "",
+  bottle: "",
   stock: "",
   purchase: "",
+  bookExpense: true,
   margin: "60",
   priceInputs: {},
   families: [],
@@ -202,12 +204,15 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
 
   const set = (patch) => setForm((current) => ({ ...current, ...patch }));
   const id = idTouched ? form.id : slugify(form.name);
-  const stockMl = parseNumber(form.stock);
+  // The price covers the whole bottle; only `stockMl` of it goes on the shelf (default: all of it).
+  const bottleMl = parseNumber(form.bottle);
+  const stockMl = form.stock !== "" ? parseNumber(form.stock) : bottleMl > 0 ? bottleMl : 0;
+  const costBasisMl = bottleMl > 0 ? bottleMl : stockMl;
   const purchaseKc = parseNumber(form.purchase);
   const marginTarget = parseNumber(form.margin);
   // Perfume purchase cost per ml, in tenths of CZK (null until both numbers are filled in).
   const costPerMl =
-    stockMl > 0 && form.purchase !== "" && purchaseKc >= 0 ? (purchaseKc * 10) / stockMl : null;
+    costBasisMl > 0 && form.purchase !== "" && purchaseKc >= 0 ? (purchaseKc * 10) / costBasisMl : null;
 
   const pricing = computePricing({
     costPerMl,
@@ -239,8 +244,11 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
     if (!id) problems.push("Adresa produktu nesmí být prázdná.");
     else if (existingIds.includes(id))
       problems.push(`Produkt s adresou „${id}“ už existuje. Upravte název nebo adresu.`);
-    if (form.stock !== "" && !(stockMl >= 0))
-      problems.push("Objem na skladě musí být číslo od 0.");
+    if (form.bottle !== "" && !(bottleMl > 0))
+      problems.push("Velikost flakonu musí být číslo větší než 0.");
+    if (!(stockMl >= 0)) problems.push("Množství ke skladování musí být číslo od 0.");
+    if (bottleMl > 0 && stockMl > bottleMl)
+      problems.push("Naskladňujete víc ml, než kolik má koupený flakon.");
     if (form.purchase !== "" && !(purchaseKc >= 0))
       problems.push("Nákupní cena musí být číslo od 0.");
     pricing.forEach((row) => {
@@ -321,17 +329,18 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
 
     const { error: stockError } = await supabase.from("inventory").insert({
       product_id: id,
-      stock_ml: form.stock === "" ? 0 : stockMl,
+      stock_ml: stockMl,
       cost_per_ml: costPerMl === null ? 0 : Math.round(costPerMl),
     });
 
     const warnings = [];
     if (stockError) {
       warnings.push(`Produkt je uložený, ale sklad se nepodařilo založit: ${stockError.message}`);
-    } else if (purchaseKc > 0) {
+    } else if (purchaseKc > 0 && form.bookExpense) {
+      // The whole purchase is the expense, even when only part of the bottle is stocked.
       const expenseError = await recordExpense({
         category: "perfume",
-        label: `${form.brand.trim()} ${form.name.trim()} (${stockMl} ml)`,
+        label: `${form.brand.trim()} ${form.name.trim()} (${costBasisMl} ml)`,
         amount: toStored(purchaseKc),
         productId: id,
       });
@@ -522,15 +531,15 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
 
           <Card
             title="Naskladnění a cenotvorba"
-            description="Zadejte, kolik parfému naskladňujete a za kolik jste ho koupili. Ceny velikostí se dopočítají a můžete je přepsat."
+            description="Zadejte, jak velký flakon jste koupili a za kolik, a kolik z něj naskladňujete. Ceny velikostí se dopočítají a můžete je přepsat."
           >
             <div className="pf-grid pf-grid-3">
-              <Field label="Naskladnit (ml)">
+              <Field label="Velikost koupeného flakonu (ml)" hint="Podle ní se počítá cena za ml.">
                 <input
                   inputMode="decimal"
-                  value={form.stock}
-                  onChange={(event) => set({ stock: event.target.value })}
-                  placeholder="100"
+                  value={form.bottle}
+                  onChange={(event) => set({ bottle: event.target.value })}
+                  placeholder="75"
                 />
               </Field>
               <Field label="Nákupní cena celkem (Kč)">
@@ -546,6 +555,36 @@ function ProductForm({ existingIds, materials, labourPerSample, onSaved, onOpenP
                   {costPerMl === null ? "—" : money(costPerMl)}
                 </output>
               </Field>
+            </div>
+
+            <div className="pf-grid pf-grid-3 pf-spaced-block">
+              <Field
+                label="Naskladnit (ml)"
+                hint="Prázdné pole = celý flakon. Zbytek nemusíte nikde evidovat, sklad jde kdykoli upravit."
+              >
+                <input
+                  inputMode="decimal"
+                  value={form.stock}
+                  onChange={(event) => set({ stock: event.target.value })}
+                  placeholder={form.bottle || "75"}
+                />
+              </Field>
+              <div className="pf-field pf-span-2">
+                <label className="pf-switch pf-switch-top">
+                  <input
+                    type="checkbox"
+                    checked={form.bookExpense}
+                    onChange={(event) => set({ bookExpense: event.target.checked })}
+                  />
+                  <span>
+                    Zapsat nákup do výdajů{purchaseKc > 0 ? ` (${money(toStored(purchaseKc))})` : ""}
+                  </span>
+                </label>
+                <small className="pf-hint">
+                  Vypněte, pokud vůni už máte a nákup nechcete v účetnictví. Cena za ml se do nákladů na vzorek
+                  započítá tak jako tak.
+                </small>
+              </div>
             </div>
 
             <div className="pf-grid pf-grid-3 pf-spaced-block">

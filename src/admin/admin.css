@@ -446,3 +446,8 @@
   .adm-year { table-layout: auto; min-width: 960px; }
   .adm-year tbody th[scope="row"] { min-width: 150px; }
 }
+
+/* Stock form: checkbox next to the stocked-ml field */
+.pf-span-2 { grid-column: span 2; }
+.pf-switch-top { margin-top: 30px; }
+@media (max-width: 600px) { .pf-span-2 { grid-column: auto; } .pf-switch-top { margin-top: 0; } }

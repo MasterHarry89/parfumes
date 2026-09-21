@@ -9,8 +9,10 @@ import PricingTable from "./PricingTable";
 // Restocking an existing scent: adds the new ml, averages the purchase cost per
 // ml with what is still on the shelf and lets you re-price every sample size.
 export default function RestockDialog({ item, materials, labourPerSample, onClose, onDone }) {
+  const [bottle, setBottle] = useState("");
   const [ml, setMl] = useState("");
   const [total, setTotal] = useState("");
+  const [bookExpense, setBookExpense] = useState(true);
   const [margin, setMargin] = useState("60");
   // Starts on the prices currently in the shop, so nothing changes unless you want it to.
   const [priceInputs, setPriceInputs] = useState(() =>
@@ -25,14 +27,22 @@ export default function RestockDialog({ item, materials, labourPerSample, onClos
     return () => window.removeEventListener("keydown", onKey);
   }, [busy, onClose]);
 
-  const addMl = parseNumber(ml);
+  // The price covers the whole bottle; only `addMl` of it goes on the shelf (default: all of it).
+  const bottleMl = parseNumber(bottle);
+  const addMl = ml !== "" ? parseNumber(ml) : bottleMl > 0 ? bottleMl : NaN;
+  const costBasisMl = bottleMl > 0 ? bottleMl : addMl;
   const totalKc = parseNumber(total);
-  const validPurchase = addMl > 0 && total !== "" && totalKc >= 0;
+  const validPurchase =
+    addMl > 0 &&
+    costBasisMl > 0 &&
+    total !== "" &&
+    totalKc >= 0 &&
+    !(bottleMl > 0 && addMl > bottleMl);
   const purchaseTenths = totalKc * 10;
-  const purchasePerMl = validPurchase ? purchaseTenths / addMl : null;
-  // Weighted average over what is on the shelf plus the new purchase.
+  const purchasePerMl = validPurchase ? purchaseTenths / costBasisMl : null;
+  // Weighted average over what is on the shelf plus the ml being added at this bottle's price per ml.
   const newAverage = validPurchase
-    ? (item.stockMl * item.costPerMl + purchaseTenths) / (item.stockMl + addMl)
+    ? (item.stockMl * item.costPerMl + addMl * purchasePerMl) / (item.stockMl + addMl)
     : null;
 
   const rows = computePricing({
@@ -46,7 +56,10 @@ export default function RestockDialog({ item, materials, labourPerSample, onClos
 
   const save = async (event) => {
     event.preventDefault();
-    if (!validPurchase) return setError("Zadejte, kolik ml doskladňujete a za kolik celkem.");
+    if (bottleMl > 0 && addMl > bottleMl)
+      return setError("Doskladňujete víc ml, než kolik má koupený flakon.");
+    if (!validPurchase)
+      return setError("Zadejte velikost flakonu, nákupní cenu a kolik ml doskladňujete.");
     const missing = rows.find((row) => row.price === null);
     if (missing) return setError(`Zadejte prodejní cenu pro ${missing.volume.label}.`);
 
@@ -69,12 +82,15 @@ export default function RestockDialog({ item, materials, labourPerSample, onClos
       })
       .eq("id", item.productId);
 
-    const expenseError = await recordExpense({
-      category: "perfume",
-      label: `${item.brand} ${item.name} (doskladnění ${addMl} ml)`.trim(),
-      amount: toStored(totalKc),
-      productId: item.productId,
-    });
+    // The whole purchase is the expense, even when only part of the bottle is stocked.
+    const expenseError = bookExpense
+      ? await recordExpense({
+          category: "perfume",
+          label: `${item.brand} ${item.name} (doskladnění, flakon ${costBasisMl} ml)`.trim(),
+          amount: toStored(totalKc),
+          productId: item.productId,
+        })
+      : null;
 
     await onDone();
     setBusy(false);
@@ -123,20 +139,34 @@ export default function RestockDialog({ item, materials, labourPerSample, onClos
 
         <div className="pf-grid pf-grid-3">
           <label className="pf-field">
-            <span className="pf-label">Doskladnit (ml)</span>
-            <input autoFocus inputMode="decimal" value={ml} onChange={(event) => setMl(event.target.value)} placeholder="100" />
+            <span className="pf-label">Velikost koupeného flakonu (ml)</span>
+            <input autoFocus inputMode="decimal" value={bottle} onChange={(event) => setBottle(event.target.value)} placeholder="75" />
           </label>
           <label className="pf-field">
             <span className="pf-label">Nákupní cena celkem (Kč)</span>
-            <input inputMode="decimal" value={total} onChange={(event) => setTotal(event.target.value)} placeholder="5000" />
+            <input inputMode="decimal" value={total} onChange={(event) => setTotal(event.target.value)} placeholder="3000" />
           </label>
           <div className="pf-field">
-            <span className="pf-label">Cena tohoto nákupu za 1 ml</span>
+            <span className="pf-label">Cena tohoto flakonu za 1 ml</span>
             <output className="pf-readout">{purchasePerMl === null ? "—" : money(purchasePerMl)}</output>
           </div>
         </div>
+        <div className="pf-grid pf-grid-3">
+          <label className="pf-field">
+            <span className="pf-label">Doskladnit (ml)</span>
+            <input inputMode="decimal" value={ml} onChange={(event) => setMl(event.target.value)} placeholder={bottle || "75"} />
+            <small className="pf-hint">Prázdné pole = celý flakon. Zbytek nemusíte nikde evidovat.</small>
+          </label>
+          <div className="pf-field pf-span-2">
+            <label className="pf-switch pf-switch-top">
+              <input type="checkbox" checked={bookExpense} onChange={(event) => setBookExpense(event.target.checked)} />
+              <span>Zapsat nákup do výdajů{totalKc > 0 ? ` (${money(toStored(totalKc))})` : ""}</span>
+            </label>
+            <small className="pf-hint">Vypněte, pokud vůni už máte a nákup nechcete v účetnictví.</small>
+          </div>
+        </div>
         <p className="pf-hint">
-          Nová cena za ml je vážený průměr starých zásob a tohoto nákupu, takže marže odpovídá tomu, co opravdu prodáváte.
+          Nová cena za ml je vážený průměr starých zásob a přidaných ml, takže marže odpovídá tomu, co opravdu prodáváte.
         </p>
 
         <div className="pf-grid pf-grid-3">
