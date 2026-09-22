@@ -870,3 +870,30 @@ footer p { margin-bottom: 22px; }
 .product-tags .product-tag { position: static; }
 .pdp-badges { position: absolute; top: 18px; left: 18px; z-index: 1; display: flex; flex-wrap: wrap; gap: 8px; }
 .pdp-badges .pdp-badge { position: static; }
+
+/* Rozcestník: four entry points ("Dámské vůně" tile and the corner numbers
+   are gone). One row of four on desktop, a 2x2 grid on mobile. Wins over the
+   older scroll-rail and mobile compact-row rules above by appearing last for
+   the same .home-page-scoped selectors, and by higher specificity over the
+   legacy unscoped .entry-strip/.entry-card rules used at narrow widths. */
+.home-page .entry-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  overflow: visible;
+}
+.home-page .entry-card { min-height: 280px; }
+.home-page .entry-card::before { background: linear-gradient(180deg, rgba(8, 22, 19, .1) 30%, rgba(8, 22, 19, .86) 100%); }
+
+@media (max-width: 800px) {
+  .home-page .entry-strip { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .home-page .entry-card {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 190px;
+    padding: 18px;
+    border: 0;
+  }
+  .home-page .entry-card strong { font-size: 26px; }
+  .home-page .entry-card small { display: block; }
+}

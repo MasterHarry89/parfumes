@@ -7,7 +7,9 @@ import { supabase } from "./lib/supabase";
 import { navigate } from "./lib/navigate";
 import {
   money,
+  familyOptions,
   genderLabel,
+  genderOptions,
   occasionOptions,
   priceFor,
   seasonOptions,
@@ -102,11 +104,15 @@ const AdminApp = lazy(() => import("./admin/AdminApp"));
 
 function App() {
   const [path, setPath] = useState(window.location.pathname);
+  const [queryString, setQueryString] = useState(window.location.search);
   const [cart, setCart] = useState([]);
   const [search, setSearch] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const [headerHidden, setHeaderHidden] = useState(false);
   const [products, setProducts] = useState([]);
+  const [genderFilter, setGenderFilter] = useState([]);
+  const [familyFilter, setFamilyFilter] = useState([]);
+  const [tagFilter, setTagFilter] = useState("");
 
   const refreshProducts = async () => setProducts(await loadProducts());
 
@@ -115,10 +121,32 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const onPopState = () => setPath(window.location.pathname);
+    const onPopState = () => {
+      setPath(window.location.pathname);
+      setQueryString(window.location.search);
+    };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
+
+  // A tile or link can pre-select catalog filters via the URL, e.g.
+  // /kolekce?gender=men or /kolekce?tag=Novinka. Filters stay adjustable
+  // afterwards; they only reset when a new navigation changes the query.
+  useEffect(() => {
+    const params = new URLSearchParams(queryString);
+    setGenderFilter(params.getAll("gender"));
+    setFamilyFilter(params.getAll("family"));
+    setTagFilter(params.get("tag") ?? "");
+  }, [queryString]);
+
+  const toggleGender = (key) =>
+    setGenderFilter((current) =>
+      current.includes(key) ? current.filter((item) => item !== key) : [...current, key],
+    );
+  const toggleFamily = (name) =>
+    setFamilyFilter((current) =>
+      current.includes(name) ? current.filter((item) => item !== name) : [...current, name],
+    );
 
   useEffect(() => {
     let previousScrollY = window.scrollY;
@@ -145,15 +173,20 @@ function App() {
     };
     setCart((items) => [...items, ...Array.from({ length: quantity }, () => line)]);
   };
-  const filtered = useMemo(
-    () =>
-      products.filter((product) =>
-        `${product.name} ${product.brand} ${product.family}`
-          .toLowerCase()
-          .includes(search.toLowerCase()),
-      ),
-    [products, search],
-  );
+  const filtered = useMemo(() => {
+    const needle = search.toLowerCase();
+    return products.filter((product) => {
+      const matchesSearch = `${product.name} ${product.brand} ${product.family}`
+        .toLowerCase()
+        .includes(needle);
+      const matchesGender = genderFilter.length === 0 || genderFilter.includes(product.gender);
+      const matchesFamily =
+        familyFilter.length === 0 || product.families.some((family) => familyFilter.includes(family));
+      const matchesTag =
+        !tagFilter || tagList(product.tag).some((tag) => tag.toLowerCase() === tagFilter.toLowerCase());
+      return matchesSearch && matchesGender && matchesFamily && matchesTag;
+    });
+  }, [products, search, genderFilter, familyFilter, tagFilter]);
   const currentProduct = products.find((product) => path.includes(product.id));
   if (path.startsWith("/admin"))
     return (
@@ -186,23 +219,27 @@ function App() {
         <aside className="filters">
           <span className="eyebrow">Filtrovat</span>
           <h3>Pro koho</h3>
-          <label>
-            <input type="checkbox" /> Ženy
-          </label>
-          <label>
-            <input type="checkbox" /> Muži
-          </label>
-          <label>
-            <input type="checkbox" /> Unisex
-          </label>
+          {genderOptions.map((option) => (
+            <label key={option.key}>
+              <input
+                type="checkbox"
+                checked={genderFilter.includes(option.key)}
+                onChange={() => toggleGender(option.key)}
+              />{" "}
+              {option.label}
+            </label>
+          ))}
           <h3>Rodina vůně</h3>
-          {["Svěží", "Dřevitá", "Čistá", "Citrusová", "Pižmová"].map(
-            (family) => (
-              <label key={family}>
-                <input type="checkbox" /> {family}
-              </label>
-            ),
-          )}
+          {familyOptions.map((family) => (
+            <label key={family}>
+              <input
+                type="checkbox"
+                checked={familyFilter.includes(family)}
+                onChange={() => toggleFamily(family)}
+              />{" "}
+              {family}
+            </label>
+          ))}
           <h3>Velikost</h3>
           <div className="size-pills">
             {volumes.slice(0, 3).map((volume) => (
@@ -337,7 +374,7 @@ function App() {
           <button
             onClick={() => {
               setMenuOpen(false);
-              navigate("/kolekce");
+              navigate("/kolekce?gender=women");
             }}
           >
             Ženy
@@ -345,7 +382,7 @@ function App() {
           <button
             onClick={() => {
               setMenuOpen(false);
-              navigate("/kolekce");
+              navigate("/kolekce?gender=men");
             }}
           >
             Muži
@@ -361,7 +398,7 @@ function App() {
           <button
             onClick={() => {
               setMenuOpen(false);
-              navigate("/kolekce");
+              navigate("/kolekce?tag=Novinka");
             }}
           >
             Novinky
@@ -931,13 +968,19 @@ function ProductCarousel({ title, eyebrow, products, onOpen, onAdd, badge }) {
   if (!products.length) return null;
   return (
     <section
-      onClick={() => navigate("/kolekce")}
       className={`product-carousel page-shell ${title === "Bestsellery" ? "bestseller-carousel" : ""}`}
     >
       <div className="carousel-heading">
         <div>
           <h2>{title}</h2>
         </div>
+        <button
+          onClick={() =>
+            navigate(badge ? `/kolekce?tag=${encodeURIComponent(badge)}` : "/kolekce")
+          }
+        >
+          Zobrazit vše <span>→</span>
+        </button>
       </div>
       <div className="carousel-track">
         {products.map((product) => (
@@ -1277,33 +1320,19 @@ function HomeContent({ products, onOpen, onShop }) {
       <section className="entry-strip">
         <button
           className="entry-card entry-men"
-          onClick={onShop}
+          onClick={() => navigate("/kolekce?gender=men")}
           style={{
             backgroundImage:
               "url(https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg)",
           }}
         >
-          <span>01 / NEJŽÁDANĚJŠÍ</span>
           <strong>Pánské vůně</strong>
           <small>Výrazné kompozice s čistou autoritou</small>
           <b aria-hidden="true">&gt;</b>
         </button>
         <button
-          className="entry-card entry-women"
-          onClick={onShop}
-          style={{
-            backgroundImage:
-              "url(https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85)",
-          }}
-        >
-          <span>02 / OBJEVTE</span>
-          <strong>Dámské vůně</strong>
-          <small>Elegantní vůně pro vlastní podpis</small>
-          <b aria-hidden="true">&gt;</b>
-        </button>
-        <button
           className="entry-card entry-new"
-          onClick={onShop}
+          onClick={() => navigate("/kolekce?tag=Novinka")}
           style={{
             backgroundImage:
               "url(https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=900&q=85)",
@@ -1321,7 +1350,6 @@ function HomeContent({ products, onOpen, onShop }) {
               "url(https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85)",
           }}
         >
-          <span>04 / PRO VÍCE VRSTEV</span>
           <strong>Sety</strong>
           <small>Pro více vůní v jednom výběru</small>
           <b aria-hidden="true">&gt;</b>
@@ -1334,7 +1362,6 @@ function HomeContent({ products, onOpen, onShop }) {
               "url(https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85)",
           }}
         >
-          <span>05 / VÝHODNĚJI</span>
           <strong>Akce</strong>
           <small>Výhodnější výběr vůní</small>
           <b aria-hidden="true">&gt;</b>
