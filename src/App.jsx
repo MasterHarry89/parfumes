@@ -247,16 +247,22 @@ function App() {
             ))}
           </div>
         </aside>
-        <section className="product-grid">
-          {filtered.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onOpen={() => navigate(`/produkt/${product.id}`)}
-              onAdd={() => addToCart(product)}
-            />
-          ))}
-        </section>
+        {filtered.length === 0 ? (
+          <div className="catalog-empty">
+            <p>Pro zvolený filtr jsme nenašli žádnou vůni.</p>
+          </div>
+        ) : (
+          <section className="product-grid">
+            {filtered.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onOpen={() => navigate(`/produkt/${product.id}`)}
+                onAdd={() => addToCart(product)}
+              />
+            ))}
+          </section>
+        )}
       </div>
     </main>
   );
@@ -998,13 +1004,6 @@ function ProductCarousel({ title, eyebrow, products, onOpen, onAdd, badge }) {
 }
 
 function Home({ products, onOpen, onShop }) {
-  const newest = [...products]
-    .sort(
-      (a, b) =>
-        new Date(b.created_at || b.updated_at || 0) -
-        new Date(a.created_at || a.updated_at || 0),
-    )
-    .slice(0, 6);
   const bestsellers = products
     .filter((product) =>
       `${product.tag || ""} ${product.name || ""}`
@@ -1042,13 +1041,6 @@ function Home({ products, onOpen, onShop }) {
         </div>
       </section>
       <HomeContent products={products} onOpen={onOpen} onShop={onShop} />
-      <ProductCarousel
-        title="Novinky"
-        badge="NOVINKA"
-        products={newest}
-        onOpen={onOpen}
-        onAdd={() => {}}
-      />
       <FaqBand />
     </div>
   );
@@ -1062,6 +1054,13 @@ function HomeContent({ products, onOpen, onShop }) {
   const bestsellerItems = bestsellers.length
     ? bestsellers
     : products.slice(0, 6);
+  const newest = [...products]
+    .sort(
+      (a, b) =>
+        new Date(b.created_at || b.updated_at || 0) -
+        new Date(a.created_at || a.updated_at || 0),
+    )
+    .slice(0, 6);
   const fragranceFamilies = [
     {
       icon: "✦",
@@ -1356,7 +1355,7 @@ function HomeContent({ products, onOpen, onShop }) {
         </button>
         <button
           className="entry-card entry-sale"
-          onClick={onShop}
+          onClick={() => navigate("/kolekce?tag=Akce")}
           style={{
             backgroundImage:
               "url(https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85)",
@@ -1450,6 +1449,13 @@ function HomeContent({ products, onOpen, onShop }) {
           ))}
         </div>
       </div>
+      <ProductCarousel
+        title="Novinky"
+        badge="NOVINKA"
+        products={newest}
+        onOpen={onOpen}
+        onAdd={() => {}}
+      />
       <div className="occasion-strip">
         <div>
           <h2>Podle příležitosti</h2>

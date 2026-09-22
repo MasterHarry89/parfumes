@@ -164,7 +164,7 @@ export const genderOptions = [
 export const genderLabel = Object.fromEntries(genderOptions.map((option) => [option.key, option.label]));
 
 // Shop badges you can tick in the admin.
-export const tagOptions = ["Novinka", "Bestseller"];
+export const tagOptions = ["Novinka", "Bestseller", "Akce"];
 
 // products.tag holds one or more badges separated by commas, e.g. "Novinka, Bestseller".
 export const tagList = (tag) =>

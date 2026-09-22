@@ -842,7 +842,7 @@ function ProductForm({
           </div>
 
           <div className="pf-card">
-            <span className="pf-label">Štítky (lze zaškrtnout oba)</span>
+            <span className="pf-label">Štítky (lze zaškrtnout víc najednou)</span>
             <div className="pf-chips" role="group" aria-label="Štítky">
               {tagOptions.map((tag) => {
                 const on = form.tags.includes(tag);
