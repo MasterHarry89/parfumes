@@ -1019,8 +1019,8 @@ function Home({ products, onOpen, onShop }) {
       <section className="hero">
         <img
           className="hero-photo"
-          src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=1600&q=90"
-          alt="Flakón parfému"
+          src="/parfumes.png"
+          alt="Kolekce parfémů"
         />
         <div className="hero-copy">
           <span className="eyebrow">Vybrané vůně s charakterem</span>
