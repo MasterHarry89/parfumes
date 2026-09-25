@@ -85,7 +85,7 @@ const loadProducts = async () => {
       product.prices && typeof product.prices === "object" ? product.prices : {},
     image:
       product.image ||
-      "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=700&q=85",
+      "/parfumes2.png",
     note: product.note || "Premium scent",
     tag: product.tag || "",
     gender: product.gender || "",
@@ -1068,8 +1068,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "čerstvé a lehké",
       label: "Rodina vůně",
       tone: "category-coral",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Citrus_slices-1002778.jpeg/960px-Citrus_slices-1002778.jpeg",
+      image: "/parfumes2.png",
     },
     {
       icon: "◌",
@@ -1077,8 +1076,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "čisté a sebejisté",
       label: "Rodina vůně",
       tone: "category-yellow",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg",
+      image: "/parfumes3.png",
     },
     {
       icon: "◈",
@@ -1086,8 +1084,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "hřejivé a návykové",
       label: "Rodina vůně",
       tone: "category-plum",
-      image:
-        "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes2.png",
     },
     {
       icon: "❋",
@@ -1095,8 +1092,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "šťavnaté a hravé",
       label: "Rodina vůně",
       tone: "category-rose",
-      image:
-        "https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes3.png",
     },
     {
       icon: "▣",
@@ -1104,8 +1100,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "teplé a hluboké",
       label: "Rodina vůně",
       tone: "category-sage",
-      image:
-        "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes2.png",
     },
     {
       icon: "✧",
@@ -1113,8 +1108,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "série pro každý den",
       label: "Rodina vůně",
       tone: "category-ink",
-      image:
-        "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes3.png",
     },
     {
       icon: "✹",
@@ -1122,8 +1116,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "výrazné a hřejivé",
       label: "Rodina vůně",
       tone: "category-sun",
-      image:
-        "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes2.png",
     },
     {
       icon: "◉",
@@ -1131,8 +1124,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "smyslné a hluboké",
       label: "Rodina vůně",
       tone: "category-plum",
-      image:
-        "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes3.png",
     },
     {
       icon: "▰",
@@ -1140,8 +1132,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "suché a charakteristické",
       label: "Rodina vůně",
       tone: "category-ink",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg",
+      image: "/parfumes2.png",
     },
     {
       icon: "▥",
@@ -1149,8 +1140,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "kouřové a sofistikované",
       label: "Rodina vůně",
       tone: "category-coral",
-      image:
-        "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes3.png",
     },
     {
       icon: "♧",
@@ -1158,8 +1148,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "svěží a přirozené",
       label: "Rodina vůně",
       tone: "category-sage",
-      image:
-        "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes2.png",
     },
     {
       icon: "≈",
@@ -1167,8 +1156,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "čisté a osvěžující",
       label: "Rodina vůně",
       tone: "category-fog",
-      image:
-        "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes3.png",
     },
     {
       icon: "◌",
@@ -1176,8 +1164,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "měkké a intimní",
       label: "Rodina vůně",
       tone: "category-rose",
-      image:
-        "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes2.png",
     },
     {
       icon: "·",
@@ -1185,8 +1172,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "jemné a uhlazené",
       label: "Rodina vůně",
       tone: "category-yellow",
-      image:
-        "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes3.png",
     },
     {
       icon: "❀",
@@ -1194,8 +1180,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "elegantní a opojné",
       label: "Rodina vůně",
       tone: "category-coral",
-      image:
-        "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes2.png",
     },
     {
       icon: "◒",
@@ -1203,8 +1188,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "SEZÓNA · lehké ráno a nový začátek",
       label: "Podle sezóny",
       tone: "category-rose",
-      image:
-        "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes3.png",
     },
     {
       icon: "☼",
@@ -1212,8 +1196,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "SEZÓNA · svěžest na rozpálené dny",
       label: "Podle sezóny",
       tone: "category-sun",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Citrus_slices-1002778.jpeg/960px-Citrus_slices-1002778.jpeg",
+      image: "/parfumes2.png",
     },
     {
       icon: "◐",
@@ -1229,8 +1212,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "SEZÓNA · výrazná stopa a teplo",
       label: "Podle sezóny",
       tone: "category-fog",
-      image:
-        "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes3.png",
     },
     {
       icon: "♡",
@@ -1238,8 +1220,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · blízko, ale s charakterem",
       label: "Podle použití",
       tone: "category-coral",
-      image:
-        "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes2.png",
     },
     {
       icon: "▤",
@@ -1247,8 +1228,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · čistá autorita bez hluku",
       label: "Podle použití",
       tone: "category-yellow",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg",
+      image: "/parfumes3.png",
     },
     {
       icon: "✦",
@@ -1256,8 +1236,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · když má být přítomnost cítit",
       label: "Podle použití",
       tone: "category-sage",
-      image:
-        "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes2.png",
     },
     {
       icon: "↗",
@@ -1265,8 +1244,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · podpis, ke kterému se vrátíte",
       label: "Podle použití",
       tone: "category-ink",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Citrus_slices-1002778.jpeg/960px-Citrus_slices-1002778.jpeg",
+      image: "/parfumes3.png",
     },
     {
       icon: "⌁",
@@ -1274,8 +1252,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · čistá energie a svěžest",
       label: "Podle použití",
       tone: "category-fog",
-      image:
-        "https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes2.png",
     },
     {
       icon: "✷",
@@ -1283,8 +1260,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "POUŽITÍ · výrazná stopa po setmění",
       label: "Podle použití",
       tone: "category-plum",
-      image:
-        "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85",
+      image: "/parfumes3.png",
     },
   ];
 
