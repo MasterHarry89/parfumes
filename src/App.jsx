@@ -1221,8 +1221,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "SEZÓNA · koření, dřevo a vrstvy",
       label: "Podle sezóny",
       tone: "category-plum",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg",
+      image: "/fall.png",
     },
     {
       icon: "❄",
@@ -1321,8 +1320,7 @@ function HomeContent({ products, onOpen, onShop }) {
           className="entry-card entry-men"
           onClick={() => navigate("/kolekce?gender=men")}
           style={{
-            backgroundImage:
-              "url(https://upload.wikimedia.org/wikipedia/commons/d/d1/Log_Ends_-_geograph.org.uk_-_350620.jpg)",
+            backgroundImage: "url(/parfumes2.png)",
           }}
         >
           <strong>Pánské vůně</strong>
@@ -1333,8 +1331,7 @@ function HomeContent({ products, onOpen, onShop }) {
           className="entry-card entry-new"
           onClick={() => navigate("/kolekce?tag=Novinka")}
           style={{
-            backgroundImage:
-              "url(https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=900&q=85)",
+            backgroundImage: "url(/parfumes3.png)",
           }}
         >
           <strong>Nové</strong>
@@ -1345,8 +1342,7 @@ function HomeContent({ products, onOpen, onShop }) {
           className="entry-card entry-sets"
           onClick={onShop}
           style={{
-            backgroundImage:
-              "url(https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85)",
+            backgroundImage: "url(/parfumes2.png)",
           }}
         >
           <strong>Sety</strong>
@@ -1357,8 +1353,7 @@ function HomeContent({ products, onOpen, onShop }) {
           className="entry-card entry-sale"
           onClick={() => navigate("/kolekce?tag=Akce")}
           style={{
-            backgroundImage:
-              "url(https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85)",
+            backgroundImage: "url(/parfumes3.png)",
           }}
         >
           <strong>Akce</strong>
