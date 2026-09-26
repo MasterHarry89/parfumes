@@ -997,3 +997,14 @@ footer p { margin-bottom: 22px; }
   transform: translate(-2px, -4px) rotate(45deg);
 }
 .home-app .primary-button:hover span { transform: scale(1.08); }
+
+/* Announcement: the tagline lives in its own span so mobile can drop it and
+   keep the bar on one line; undo the generic ".announcement span" dot styling. */
+.home-app .announcement .announcement-extra { color: inherit; margin: 0; }
+
+/* Page headings scale with the viewport so "Vzorky parfémů" / "Váš výběr"
+   stay on one line on narrower phones (375–393px) instead of wrapping. */
+@media (max-width: 800px) {
+  .home-app .announcement .announcement-extra { display: none; }
+  .catalog-heading h1, .cart-page h1 { font-size: clamp(34px, 11vw, 50px); }
+}

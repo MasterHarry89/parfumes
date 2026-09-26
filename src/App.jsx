@@ -55,7 +55,7 @@ const faqItems = [
   {
     question: "Jak funguje doprava zdarma?",
     answer:
-      "Při nákupu nad 900 Kč je doprava po ČR zdarma, jinak účtujeme sazbu podle zvoleného přepravce.",
+      "Při nákupu nad 1 500 Kč je doprava po ČR zdarma, jinak účtujeme sazbu podle zvoleného přepravce.",
   },
   {
     question: "Jak probíhá vrácení zboží?",
@@ -386,8 +386,11 @@ function App() {
   return (
     <div className="app home-app">
       <div className="announcement">
-        Doprava zdarma od 900 Kč <span>·</span> Vzorky, které vás dostanou blíž
-        k vaší vůni
+        Doprava zdarma od 1 500 Kč{" "}
+        <span className="announcement-extra">
+          <span>·</span> Vzorky, které vás dostanou blíž
+          k vaší vůni
+        </span>
       </div>
       <header className={`site-header ${headerHidden ? "header-hidden" : ""}`}>
         <button
@@ -827,7 +830,7 @@ function ProductDetail({ product, products, onAdd, onOpen, onBack }) {
       content: (
         <p>
           Objednávky expedujeme do 24 hodin z České republiky, obvykle je máte
-          doma za 1–2 pracovní dny. Při nákupu nad 900 Kč je doprava po ČR
+          doma za 1–2 pracovní dny. Při nákupu nad 1 500 Kč je doprava po ČR
           zdarma, jinak účtujeme sazbu podle zvoleného přepravce.
         </p>
       ),
@@ -908,7 +911,7 @@ function ProductDetail({ product, products, onAdd, onOpen, onBack }) {
               <div className="ship-note">
                 <FiTruck aria-hidden="true" />
                 <span>
-                  Doprava <b>zdarma od 900 Kč</b>. Doručení obvykle za 1–2
+                  Doprava <b>zdarma od 1 500 Kč</b>. Doručení obvykle za 1–2
                   pracovní dny.
                 </span>
               </div>
@@ -1402,7 +1405,7 @@ function HomeContent({ products, onOpen, onShop }) {
           <FiTruck className="trust-icon" aria-hidden="true" />
           <div className="trust-copy">
             <strong>Doprava zdarma</strong>
-            <span>při nákupu od 900 Kč</span>
+            <span>při nákupu od 1 500 Kč</span>
           </div>
         </div>
       </section>
