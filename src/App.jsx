@@ -166,13 +166,34 @@ function App() {
   }, []);
   const addToCart = (product, volume = volumes[0], quantity = 1) => {
     if (volume.future) return;
-    const line = {
-      ...product,
-      volume: volume.label,
-      price: priceFor(product, volume),
-    };
-    setCart((items) => [...items, ...Array.from({ length: quantity }, () => line)]);
+    // One line per product + volume; adding the same combination again only
+    // bumps its quantity so the cart can be edited line by line.
+    const key = `${product.id}-${volume.label}`;
+    setCart((items) =>
+      items.some((item) => item.key === key)
+        ? items.map((item) =>
+            item.key === key ? { ...item, quantity: item.quantity + quantity } : item,
+          )
+        : [
+            ...items,
+            {
+              ...product,
+              key,
+              volume: volume.label,
+              price: priceFor(product, volume),
+              quantity,
+            },
+          ],
+    );
   };
+  const changeQuantity = (key, delta) =>
+    setCart((items) =>
+      items
+        .map((item) => (item.key === key ? { ...item, quantity: item.quantity + delta } : item))
+        .filter((item) => item.quantity > 0),
+    );
+  const removeFromCart = (key) => setCart((items) => items.filter((item) => item.key !== key));
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const filtered = useMemo(() => {
     const needle = search.toLowerCase();
     return products.filter((product) => {
@@ -281,38 +302,56 @@ function App() {
     );
   const renderCart = () => (
     <main className="page-shell cart-page">
-      <div className="breadcrumb">
-        <button onClick={() => navigate("/")}>Domů</button>
-        <span>/</span>
-        <strong>Košík</strong>
-      </div>
       <h1>Váš výběr</h1>
       {cart.length ? (
         <>
           <div className="cart-items">
-            {cart.map((item, index) => (
-              <div className="cart-row" key={`${item.id}-${index}`}>
+            {cart.map((item) => (
+              <div className="cart-row" key={item.key}>
                 <img src={item.image} alt="" />
-                <div>
+                <div className="cart-row-info">
                   <strong>{item.name}</strong>
                   <small>
                     {item.brand} · {item.volume}
                   </small>
+                  <div className="cart-qty" aria-label="Množství">
+                    <button
+                      onClick={() => changeQuantity(item.key, -1)}
+                      aria-label={`Ubrat ${item.name}`}
+                    >
+                      −
+                    </button>
+                    <span>{item.quantity}</span>
+                    <button
+                      onClick={() => changeQuantity(item.key, 1)}
+                      aria-label={`Přidat ${item.name}`}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
-                <b>{money(item.price)}</b>
+                <div className="cart-row-side">
+                  <b>{money(item.price * item.quantity)}</b>
+                  <button
+                    className="cart-remove"
+                    onClick={() => removeFromCart(item.key)}
+                  >
+                    Odebrat
+                  </button>
+                </div>
               </div>
             ))}
           </div>
           <div className="cart-summary">
             <span>Mezisoučet</span>
             <strong>
-              {money(cart.reduce((sum, item) => sum + item.price, 0))}
+              {money(cart.reduce((sum, item) => sum + item.price * item.quantity, 0))}
             </strong>
             <button
               className="primary-button"
               onClick={() => alert("Checkout bude napojený na Stripe.")}
             >
-              Pokračovat k platbě <span>↗</span>
+              Pokračovat k platbě <span>→</span>
             </button>
           </div>
         </>
@@ -324,7 +363,7 @@ function App() {
             className="primary-button"
             onClick={() => navigate("/kolekce")}
           >
-            Prozkoumat vzorky <span>↗</span>
+            Prozkoumat vzorky <span>→</span>
           </button>
         </div>
       )}
@@ -426,7 +465,7 @@ function App() {
             ♙
           </button>
           <button className="cart-button" onClick={() => navigate("/kosik")}>
-            Košík <span>{cart.length}</span>
+            Košík <span>{cartCount}</span>
           </button>
         </div>
       </header>
@@ -1036,7 +1075,7 @@ function Home({ products, onOpen, onShop }) {
             čistou autoritu a výraznou přítomnost bez zbytečného hluku.
           </p>
           <button className="primary-button" onClick={onShop}>
-            Prozkoumat kolekci <span>↗</span>
+            Prozkoumat kolekci <span>→</span>
           </button>
         </div>
       </section>

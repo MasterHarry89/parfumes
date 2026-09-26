@@ -913,3 +913,87 @@ footer p { margin-bottom: 22px; }
 }
 
 .catalog-empty { padding: 60px 20px; text-align: center; color: var(--muted); font-size: 14px; }
+
+/* Even 40px rhythm between homepage sections on mobile. Two leftovers broke it:
+   the unscoped mobile .page-shell padding (75px) won over .product-carousel's
+   padding-bottom, leaving a huge gap under Novinky, and the unconditional
+   .family-track margin-bottom (78px) was never reduced for small screens. */
+@media (max-width: 800px) {
+  .home-page .product-carousel { padding-bottom: 22px; } /* + 18px carousel-track padding */
+  .home-page .product-carousel.bestseller-carousel { padding-bottom: 10px; }
+  .home-page .occasion-strip { padding-top: 0; }
+  .home-page .family-track { margin-bottom: 40px; }
+}
+
+/* Trust bar rows on mobile: an older rule (.trust-strip div:first-child /
+   :last-child { padding: 0 }) outranked the 14px row padding, so the first and
+   last rows sat flush against the dividers. Match its specificity here. */
+@media (max-width: 800px) {
+  .home-page .trust-strip > div,
+  .home-page .trust-strip > div:first-child,
+  .home-page .trust-strip > div:last-child { padding: 14px 0; }
+  .home-page .trust-strip > div:first-child { padding-top: 0; }
+  .home-page .trust-strip > div:last-child { padding-bottom: 0; }
+}
+
+/* Entry cards: neutral (not green-tinted) scrim, with the copy anchored
+   bottom-left where the scrim is darkest, so it no longer sits on the bottles. */
+.home-page .entry-card { justify-content: flex-end; align-items: flex-start; text-align: left; }
+.home-page .entry-card::before {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, .35) 65%, rgba(0, 0, 0, .78) 100%);
+}
+.home-page .entry-card strong { margin: 0; text-shadow: 0 1px 12px rgba(0, 0, 0, .25); }
+.home-page .entry-card small { margin-top: 6px; padding-right: 44px; opacity: .85; }
+
+@media (max-width: 800px) {
+  .home-page .entry-card { padding: 16px; }
+  .home-page .entry-card strong { font-size: 22px; line-height: 1.05; }
+  .home-page .entry-card small { font-size: 11px; line-height: 1.35; padding-right: 36px; }
+}
+
+/* Cart rows: rounded thumbnail like the product cards, quantity stepper and
+   a remove action. */
+.cart-row img { border-radius: 12px; background: #f4f4f4; flex: none; }
+.cart-row .cart-row-info { display: grid; gap: 6px; margin-right: auto; min-width: 0; }
+.cart-row .cart-qty { display: inline-flex; align-items: center; gap: 0; width: max-content; margin-top: 6px; border: 1px solid var(--line); border-radius: 999px; }
+.cart-qty button { width: 32px; height: 30px; display: grid; place-items: center; font-size: 16px; line-height: 1; color: var(--ink); border-radius: 999px; }
+.cart-qty button:hover { background: #f1f1f1; }
+.cart-qty span { min-width: 22px; text-align: center; font-size: 13px; font-weight: 600; }
+.cart-row .cart-row-side { display: grid; gap: 10px; justify-items: end; margin: 0; }
+.cart-remove { font-size: 11px; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+.cart-remove:hover { color: var(--ink); }
+
+@media (max-width: 800px) {
+  .cart-row { gap: 14px; align-items: flex-start; }
+  .cart-row img { width: 68px; height: 78px; }
+  .cart-row strong { font-size: 17px; }
+}
+
+/* Primary buttons reuse the › chevron from the homepage entry cards, just
+   black and without the disc. The → character in the markup is hidden and
+   redrawn via ::after. */
+.home-app .primary-button { align-items: center; gap: 22px; padding: 7px 7px 7px 24px; }
+.home-app .primary-button span {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  color: #14211f;
+  font-size: 0;
+  line-height: 1;
+  transition: transform .2s;
+}
+/* Drawn with borders instead of a font glyph, whose baseline sat it visibly
+   below the button label; this keeps it exactly on the vertical center. */
+.home-app .primary-button span::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  /* Uppercase labels have no descenders, so their visual middle sits above the
+     line box center; lift the chevron to line up with the caps. */
+  transform: translate(-2px, -4px) rotate(45deg);
+}
+.home-app .primary-button:hover span { transform: scale(1.08); }
