@@ -113,6 +113,8 @@ function App() {
   const [genderFilter, setGenderFilter] = useState([]);
   const [familyFilter, setFamilyFilter] = useState([]);
   const [tagFilter, setTagFilter] = useState("");
+  const [seasonFilter, setSeasonFilter] = useState([]);
+  const [occasionFilter, setOccasionFilter] = useState([]);
 
   const refreshProducts = async () => setProducts(await loadProducts());
 
@@ -137,6 +139,8 @@ function App() {
     setGenderFilter(params.getAll("gender"));
     setFamilyFilter(params.getAll("family"));
     setTagFilter(params.get("tag") ?? "");
+    setSeasonFilter(params.getAll("season"));
+    setOccasionFilter(params.getAll("occasion"));
   }, [queryString]);
 
   const toggleGender = (key) =>
@@ -146,6 +150,14 @@ function App() {
   const toggleFamily = (name) =>
     setFamilyFilter((current) =>
       current.includes(name) ? current.filter((item) => item !== name) : [...current, name],
+    );
+  const toggleSeason = (key) =>
+    setSeasonFilter((current) =>
+      current.includes(key) ? current.filter((item) => item !== key) : [...current, key],
+    );
+  const toggleOccasion = (key) =>
+    setOccasionFilter((current) =>
+      current.includes(key) ? current.filter((item) => item !== key) : [...current, key],
     );
 
   useEffect(() => {
@@ -205,9 +217,24 @@ function App() {
         familyFilter.length === 0 || product.families.some((family) => familyFilter.includes(family));
       const matchesTag =
         !tagFilter || tagList(product.tag).some((tag) => tag.toLowerCase() === tagFilter.toLowerCase());
-      return matchesSearch && matchesGender && matchesFamily && matchesTag;
+      const matchesSeason =
+        seasonFilter.length === 0 || product.seasons.some((season) => seasonFilter.includes(season));
+      const matchesOccasion =
+        occasionFilter.length === 0 ||
+        product.occasions.some((occasion) => occasionFilter.includes(occasion));
+      return (
+        matchesSearch && matchesGender && matchesFamily && matchesTag && matchesSeason && matchesOccasion
+      );
     });
-  }, [products, search, genderFilter, familyFilter, tagFilter]);
+  }, [products, search, genderFilter, familyFilter, tagFilter, seasonFilter, occasionFilter]);
+  // When the catalog was opened from a single home-page tile (e.g. Léto, Dřevité),
+  // name the page after it instead of the generic heading.
+  const activeLabels = [
+    ...familyFilter,
+    ...seasonOptions.filter((option) => seasonFilter.includes(option.key)).map((option) => option.label),
+    ...occasionOptions.filter((option) => occasionFilter.includes(option.key)).map((option) => option.label),
+  ];
+  const catalogTitle = activeLabels.length === 1 ? activeLabels[0] : "Vzorky parfémů";
   const currentProduct = products.find((product) => path.includes(product.id));
   if (path.startsWith("/admin"))
     return (
@@ -219,7 +246,7 @@ function App() {
     <main className="catalog-page page-shell">
       <div className="catalog-heading">
         <div>
-          <h1>Vzorky parfémů</h1>
+          <h1>{catalogTitle}</h1>
         </div>
         <p className="heading-note">
           Malé množství. Velký první dojem.
@@ -259,6 +286,28 @@ function App() {
                 onChange={() => toggleFamily(family)}
               />{" "}
               {family}
+            </label>
+          ))}
+          <h3>Sezóna</h3>
+          {seasonOptions.map((option) => (
+            <label key={option.key}>
+              <input
+                type="checkbox"
+                checked={seasonFilter.includes(option.key)}
+                onChange={() => toggleSeason(option.key)}
+              />{" "}
+              {option.label}
+            </label>
+          ))}
+          <h3>Příležitost</h3>
+          {occasionOptions.map((option) => (
+            <label key={option.key}>
+              <input
+                type="checkbox"
+                checked={occasionFilter.includes(option.key)}
+                onChange={() => toggleOccasion(option.key)}
+              />{" "}
+              {option.label}
             </label>
           ))}
           <h3>Velikost</h3>
@@ -1087,6 +1136,24 @@ function Home({ products, onOpen, onShop }) {
     </div>
   );
 }
+// Home-page occasion tiles use friendlier titles than the stored occasion keys.
+const occasionTileKeys = {
+  Rande: "rande",
+  Office: "prace",
+  Večer: "vecer",
+  "Každý den": "kazdodenni",
+  Sport: "sport",
+  Párty: "party",
+};
+
+// Catalog URL showing only the scents that match a home-page tile.
+const tileLink = (tile) => {
+  const season = seasonOptions.find((option) => option.label === tile.title);
+  if (season) return `/kolekce?season=${season.key}`;
+  if (occasionTileKeys[tile.title]) return `/kolekce?occasion=${occasionTileKeys[tile.title]}`;
+  return `/kolekce?family=${encodeURIComponent(tile.title)}`;
+};
+
 function HomeContent({ products, onOpen, onShop }) {
   const bestsellers = products.filter((product) =>
     `${product.tag || ""} ${product.name || ""}`
@@ -1426,7 +1493,7 @@ function HomeContent({ products, onOpen, onShop }) {
           <button
             className={`family-tile ${family.tone} ${family.title === "Dřevité" ? "family-wood" : ""}`}
             key={family.title}
-            onClick={onShop}
+            onClick={() => navigate(tileLink(family))}
             style={{ backgroundImage: `url(${family.image})` }}
           >
             <strong>{family.title}</strong>
@@ -1442,7 +1509,7 @@ function HomeContent({ products, onOpen, onShop }) {
       <div className="season-layout">
         <button
           className={`discovery-tile season-current ${currentSeason.tone}`}
-          onClick={onShop}
+          onClick={() => navigate(tileLink(currentSeason))}
           style={{ backgroundImage: `url(${currentSeason.image})` }}
         >
           <strong>{currentSeason.title}</strong>
@@ -1453,7 +1520,7 @@ function HomeContent({ products, onOpen, onShop }) {
             <button
               className={`discovery-tile ${season.tone}`}
               key={season.title}
-              onClick={onShop}
+              onClick={() => navigate(tileLink(season))}
               style={{ backgroundImage: `url(${season.image})` }}
             >
               <strong>{season.title}</strong>
@@ -1477,7 +1544,7 @@ function HomeContent({ products, onOpen, onShop }) {
           {fragranceFamilies.slice(8).map((family, index) => (
             <button
               key={family.title}
-              onClick={onShop}
+              onClick={() => navigate(tileLink(family))}
               style={{ backgroundImage: `url(${family.image})` }}
             >
               <strong>{family.title}</strong>
