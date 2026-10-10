@@ -200,7 +200,7 @@ em { color: var(--bronze); font-style: italic; }
 .section-heading h2 { font: 600 43px/1.1 'Cormorant Garamond', serif; letter-spacing: -.02em; margin: 0; }
 .section-heading button, .catalog-toolbar .filter-button { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; }
 .section-heading button span { color: var(--bronze); font-size: 17px; padding-left: 12px; }
-.product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 21px; }
+.product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 21px; align-content: start; }
 .product-card { min-width: 0; }
 .product-image { width: 100%; padding: 0; position: relative; display: block; overflow: hidden; background: #ebe6df; aspect-ratio: .84; border: 1px solid rgba(23, 21, 19, .06); box-shadow: 0 12px 24px rgba(31, 23, 19, .03); cursor: pointer; }
 .product-image img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; filter: saturate(.82) contrast(1.04); }
