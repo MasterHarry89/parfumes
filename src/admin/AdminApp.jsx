@@ -14,6 +14,7 @@ import {
 import "./admin.css";
 import { supabase } from "../lib/supabase";
 import { navigate } from "../lib/navigate";
+import { useAdminAccess, useSession } from "../lib/auth";
 import { packagingCost, priceFor, sampleVolumes, toList } from "../lib/catalog";
 import FinanceView from "./FinanceView";
 import LaborView from "./LaborView";
@@ -94,39 +95,6 @@ const loadAll = async () => {
     })),
   };
 };
-
-function useSession() {
-  const [session, setSession] = useState(undefined); // undefined = still loading
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSession(data.session));
-    const { data } = supabase.auth.onAuthStateChange((_event, next) => setSession(next));
-    return () => data.subscription.unsubscribe();
-  }, []);
-  return session;
-}
-
-// Asks the database whether this login is on the allow-list (public.is_admin()).
-function useAdminAccess(session) {
-  const userId = session?.user?.id;
-  const [access, setAccess] = useState({ userId: null, status: "checking" });
-  useEffect(() => {
-    if (!userId) return;
-    let cancelled = false;
-    supabase.rpc("is_admin").then(({ data, error }) => {
-      if (cancelled) return;
-      setAccess(
-        error
-          ? { userId, status: "error", message: error.message }
-          : { userId, status: data ? "ok" : "denied" },
-      );
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [userId]);
-  // Never reuse a verdict that belongs to a previous login.
-  return access.userId === userId ? access : { status: "checking" };
-}
 
 function Screen({ children }) {
   return <div className="adm adm-screen">{children}</div>;

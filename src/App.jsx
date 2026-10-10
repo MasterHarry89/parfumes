@@ -5,6 +5,7 @@ const hero = null;
 
 import { supabase } from "./lib/supabase";
 import { navigate } from "./lib/navigate";
+import { useAdminAccess, useSession } from "./lib/auth";
 import {
   money,
   familyOptions,
@@ -21,6 +22,7 @@ import {
   FiCheck,
   FiCheckCircle,
   FiDroplet,
+  FiEdit2,
   FiMinus,
   FiPackage,
   FiPlus,
@@ -63,6 +65,9 @@ const faqItems = [
       "Nepoužité vzorky můžete vrátit do 14 dnů od doručení podle standardních podmínek e-shopu.",
   },
 ];
+// The shop starts with men's and unisex scents only; the admin still offers every option.
+const shopGenderOptions = genderOptions.filter((option) => option.key !== "women");
+
 const loadProducts = async () => {
   const { data, error } = await supabase
     .from("products")
@@ -115,6 +120,9 @@ function App() {
   const [tagFilter, setTagFilter] = useState("");
   const [seasonFilter, setSeasonFilter] = useState([]);
   const [occasionFilter, setOccasionFilter] = useState([]);
+  // Logged-in admins get shortcuts into the admin (e.g. editing a product).
+  const session = useSession();
+  const isAdmin = useAdminAccess(session).status === "ok";
 
   const refreshProducts = async () => setProducts(await loadProducts());
 
@@ -267,7 +275,7 @@ function App() {
         <aside className="filters">
           <span className="eyebrow">Filtrovat</span>
           <h3>Pro koho</h3>
-          {genderOptions.map((option) => (
+          {shopGenderOptions.map((option) => (
             <label key={option.key}>
               <input
                 type="checkbox"
@@ -345,6 +353,7 @@ function App() {
         onAdd={addToCart}
         onOpen={(id) => navigate(`/produkt/${id}`)}
         onBack={() => navigate("/kolekce")}
+        onEdit={isAdmin ? () => navigate(`/admin/produkty/${currentProduct.id}`) : null}
       />
     ) : (
       renderCatalog()
@@ -467,14 +476,6 @@ function App() {
             }}
           >
             Vzorky
-          </button>
-          <button
-            onClick={() => {
-              setMenuOpen(false);
-              navigate("/kolekce?gender=women");
-            }}
-          >
-            Ženy
           </button>
           <button
             onClick={() => {
@@ -719,7 +720,7 @@ function FaqBand() {
   );
 }
 
-function ProductDetail({ product, products, onAdd, onOpen, onBack }) {
+function ProductDetail({ product, products, onAdd, onOpen, onBack, onEdit }) {
   const [selected, setSelected] = useState(volumes[0]);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -902,6 +903,11 @@ function ProductDetail({ product, products, onAdd, onOpen, onBack }) {
           <button onClick={onBack}>Vzorky</button>
           <span>/</span>
           <strong>{product.name}</strong>
+          {onEdit && (
+            <button className="admin-edit" onClick={onEdit}>
+              <FiEdit2 aria-hidden="true" /> Upravit produkt
+            </button>
+          )}
         </div>
         <div className="pdp-grid">
           <div className="pdp-gallery">
