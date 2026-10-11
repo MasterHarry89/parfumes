@@ -241,6 +241,9 @@ footer p { margin-bottom: 22px; }
 .filters h3 { font-size: 12px; margin: 32px 0 12px; }
 .filters label { display: block; color: var(--muted); font-size: 11px; margin: 10px 0; }
 .filters input { accent-color: var(--bronze); margin-right: 7px; }
+/* "Filtry" in the toolbar hides the panel and lets the products use the full width. */
+.catalog-layout:not(.filters-open) { grid-template-columns: 1fr; }
+.catalog-layout:not(.filters-open) .filters { display: none; }
 .size-pills { display: flex; gap: 4px; flex-wrap: wrap; }
 .size-pills button { border: 1px solid var(--line); padding: 8px 10px; font-size: 11px; }
 .product-page { padding-bottom: 120px; }
@@ -325,6 +328,7 @@ footer p { margin-bottom: 22px; }
 	.heading-note { margin-top: 20px; }
 	.catalog-layout { display: block; }
 	.filters { display: none; }
+	.catalog-layout.filters-open .filters { display: block; border-right: 0; padding: 0 0 24px; margin-bottom: 28px; border-bottom: 1px solid var(--line); }
 }
 
 /* Home refresh — an editorial, contemporary fragrance palette. */
@@ -1012,3 +1016,82 @@ footer p { margin-bottom: 22px; }
 /* Admin-only shortcut on the product page. */
 .admin-edit { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border: 1px solid var(--ink); border-radius: 999px; color: var(--ink); font-size: 11px; font-weight: 600; }
 .admin-edit:hover { background: var(--ink); color: #fff; }
+
+/* Customer account: login / registration, points and order history. */
+.account-page { padding-bottom: 110px; max-width: 860px; }
+.account-page h1 { font: 600 clamp(34px, 6vw, 64px) 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.045em; margin: 15px 0 36px; }
+.account-muted { color: var(--muted); font-size: 13px; }
+.auth-card { max-width: 420px; border: 1px solid var(--line); background: #fff; padding: 28px; }
+.auth-tabs { display: flex; gap: 22px; border-bottom: 1px solid var(--line); margin-bottom: 18px; }
+.auth-tabs button { padding: 0 0 12px; font-size: 13px; font-weight: 600; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.auth-tabs button.is-active { color: var(--ink); border-color: var(--ink); }
+.auth-lead { color: var(--muted); font-size: 13px; line-height: 1.5; margin: 0 0 20px; }
+.auth-card form { display: grid; gap: 16px; }
+.auth-card label { display: grid; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.auth-card input { border: 1px solid var(--line); padding: 12px; font-size: 14px; background: var(--paper); text-transform: none; letter-spacing: 0; }
+.auth-card input:focus { outline: 2px solid var(--bronze); outline-offset: -1px; }
+.auth-card .primary-button { justify-content: space-between; width: 100%; }
+.auth-card .primary-button:disabled { opacity: .6; transform: none; }
+.auth-error { color: #b3261e; font-size: 13px; margin: 0; }
+.auth-notice { color: var(--bronze); font-size: 13px; margin: 0; }
+.account-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+.account-head p { margin: 6px 0 0; font-size: 15px; }
+.account-logout { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+.account-logout:hover { color: var(--ink); }
+.points-card { display: grid; gap: 6px; padding: 26px; background: var(--ink); color: #fff; margin-bottom: 44px; }
+.points-card .eyebrow { color: var(--gold); }
+.points-card strong { font: 600 54px 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.04em; line-height: 1; }
+.points-card small { color: rgba(255, 255, 255, .7); font-size: 12px; }
+.account-section { margin-bottom: 44px; }
+.account-section h2 { font: 600 24px 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.02em; margin: 0 0 16px; }
+.account-empty { border: 1px dashed var(--line); padding: 28px; display: grid; justify-items: start; gap: 14px; }
+.account-empty p { margin: 0; color: var(--muted); font-size: 13px; }
+.order-list, .order-items, .bought-list { list-style: none; margin: 0; padding: 0; }
+.order-row { border-top: 1px solid var(--line); padding: 16px 0; display: grid; gap: 10px; }
+.order-row:last-child { border-bottom: 1px solid var(--line); }
+.order-row-top { display: flex; align-items: center; gap: 16px; }
+.order-row-top > div { display: grid; gap: 3px; margin-right: auto; }
+.order-row-top small, .order-items li, .order-points { color: var(--muted); font-size: 12px; }
+.order-status { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; padding: 5px 9px; border-radius: 999px; background: var(--paper-strong); }
+.order-status-ok { background: #dcefd9; color: #24572a; }
+.order-status-warn { background: #fbecc8; color: #7a5300; }
+.order-status-bad { background: #f6d9d6; color: #8c1d18; }
+.order-points { font-weight: 600; color: var(--bronze); }
+.bought-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+.bought-list button { width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px; border: 1px solid var(--line); text-align: left; font-size: 13px; font-weight: 600; }
+.bought-list button:hover:not(:disabled) { border-color: var(--ink); }
+.bought-list img { width: 44px; height: 52px; object-fit: cover; }
+.bought-list span { display: grid; gap: 2px; }
+.bought-list small { color: var(--muted); font-size: 11px; font-weight: 400; }
+@media (max-width: 800px) {
+  .order-row-top { flex-wrap: wrap; }
+  .order-row-top > div { flex-basis: 100%; }
+}
+
+/* One content rail for the whole front page on desktop: every section lines up
+   with the header content (max 1440px with a 5vw gutter on each side). Earlier
+   rules mixed 1240/1344/1400/1440px widths, so sections started and ended at
+   different places. */
+@media (min-width: 801px) {
+  .home-page .entry-strip,
+  .home-page .secondary-heading,
+  .home-page .family-track,
+  .home-page .season-layout,
+  .home-page .discovery-layout,
+  .home-page .product-carousel,
+  .home-page .occasion-strip,
+  .home-page .faq-band .page-shell {
+    max-width: 1440px;
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
+  /* The trust bar is a filled box, so it gets the rail as its own width. */
+  .home-page .trust-strip {
+    width: calc(min(1440px, 100%) - 10vw);
+    max-width: none;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .home-app .footer-top,
+  .home-app .footer-bottom { max-width: calc(1440px - 10vw); }
+}

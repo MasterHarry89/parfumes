@@ -9,26 +9,12 @@ import {
   FiShoppingBag,
 } from "react-icons/fi";
 
-import { countsAsRevenue, money, volumes } from "../lib/catalog";
+import { countsAsRevenue, money, orderStatusInfo, volumes } from "../lib/catalog";
 import { navigate } from "../lib/navigate";
 
 export const LOW_STOCK_ML = 30;
 
-const statusMap = {
-  pending: ["Čeká na zaplacení", "warn"],
-  paid: ["Zaplaceno", "info"],
-  zaplaceno: ["Zaplaceno", "info"],
-  processing: ["Zpracovává se", "info"],
-  "k výrobě": ["K výrobě", "warn"],
-  shipped: ["Odesláno", "ok"],
-  odesláno: ["Odesláno", "ok"],
-  completed: ["Dokončeno", "muted"],
-  dokončeno: ["Dokončeno", "muted"],
-  cancelled: ["Zrušeno", "bad"],
-  canceled: ["Zrušeno", "bad"],
-};
-const statusInfo = (status) =>
-  statusMap[String(status).toLowerCase()] ?? [String(status), "muted"];
+const statusInfo = orderStatusInfo;
 
 // Cost of one 1 ml sample: the perfume, its packaging and the labour to fill it.
 export const sampleCost = (item) => item.costPerMl + item.packaging1 + item.labour1;

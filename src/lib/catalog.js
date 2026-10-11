@@ -105,6 +105,27 @@ export const toStored = (kc) => Math.round(kc * 10);
 export const countsAsRevenue = (status) =>
   !["pending", "cancelled", "canceled", "zrušeno"].includes(String(status).toLowerCase());
 
+// Order status -> [label, tone]; shown in the admin and in the customer account.
+const orderStatuses = {
+  pending: ["Čeká na zaplacení", "warn"],
+  paid: ["Zaplaceno", "info"],
+  zaplaceno: ["Zaplaceno", "info"],
+  processing: ["Zpracovává se", "info"],
+  "k výrobě": ["K výrobě", "warn"],
+  shipped: ["Odesláno", "ok"],
+  odesláno: ["Odesláno", "ok"],
+  completed: ["Dokončeno", "muted"],
+  dokončeno: ["Dokončeno", "muted"],
+  cancelled: ["Zrušeno", "bad"],
+  canceled: ["Zrušeno", "bad"],
+};
+export const orderStatusInfo = (status) =>
+  orderStatuses[String(status).toLowerCase()] ?? [String(status), "muted"];
+
+// Loyalty points: 1 point for every full 10 Kč of a paid order (totals are in tenths of CZK).
+export const orderPoints = (order) =>
+  countsAsRevenue(order.status) ? Math.floor(Number(order.total || 0) / 100) : 0;
+
 // One row per sample size with the cost breakdown, the suggested price and the
 // price actually in use. Money is in tenths of CZK. `priceInputs` holds prices
 // (as text, in Kč) the user typed over the suggestion, keyed by size in ml.

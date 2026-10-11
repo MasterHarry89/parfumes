@@ -6,6 +6,7 @@ const hero = null;
 import { supabase } from "./lib/supabase";
 import { navigate } from "./lib/navigate";
 import { useAdminAccess, useSession } from "./lib/auth";
+import Account from "./Account";
 import {
   money,
   familyOptions,
@@ -120,6 +121,9 @@ function App() {
   const [tagFilter, setTagFilter] = useState("");
   const [seasonFilter, setSeasonFilter] = useState([]);
   const [occasionFilter, setOccasionFilter] = useState([]);
+  const [sortOrder, setSortOrder] = useState("recommended");
+  // The filter panel starts open on desktop and closed on phones, where it would push the products down.
+  const [filtersOpen, setFiltersOpen] = useState(() => window.matchMedia("(min-width: 801px)").matches);
   // Logged-in admins get shortcuts into the admin (e.g. editing a product).
   const session = useSession();
   const isAdmin = useAdminAccess(session).status === "ok";
@@ -235,6 +239,18 @@ function App() {
       );
     });
   }, [products, search, genderFilter, familyFilter, tagFilter, seasonFilter, occasionFilter]);
+  const sorted = useMemo(() => {
+    const addedAt = (product) => new Date(product.created_at || product.updated_at || 0).getTime();
+    const isBestseller = (product) =>
+      tagList(product.tag).some((tag) => tag.toLowerCase() === "bestseller");
+    const compare = {
+      recommended: (a, b) => isBestseller(b) - isBestseller(a),
+      newest: (a, b) => addedAt(b) - addedAt(a),
+      cheapest: (a, b) => a.price - b.price,
+      priciest: (a, b) => b.price - a.price,
+    }[sortOrder];
+    return [...filtered].sort(compare);
+  }, [filtered, sortOrder]);
   // When the catalog was opened from a single home-page tile (e.g. Léto, Dřevité),
   // name the page after it instead of the generic heading.
   const activeLabels = [
@@ -264,14 +280,25 @@ function App() {
       </div>
       <div className="catalog-toolbar">
         <span>{filtered.length} vůní</span>
-        <button className="filter-button">☷ &nbsp; Filtry</button>
-        <select aria-label="Řazení">
-          <option>Doporučené</option>
-          <option>Nejnovější</option>
-          <option>Od nejlevnějších</option>
+        <button
+          className="filter-button"
+          aria-expanded={filtersOpen}
+          onClick={() => setFiltersOpen((open) => !open)}
+        >
+          ☷ &nbsp; {filtersOpen ? "Skrýt filtry" : "Filtry"}
+        </button>
+        <select
+          aria-label="Řazení"
+          value={sortOrder}
+          onChange={(event) => setSortOrder(event.target.value)}
+        >
+          <option value="recommended">Doporučené</option>
+          <option value="newest">Nejnovější</option>
+          <option value="cheapest">Od nejlevnějších</option>
+          <option value="priciest">Od nejdražších</option>
         </select>
       </div>
-      <div className="catalog-layout">
+      <div className={`catalog-layout ${filtersOpen ? "filters-open" : ""}`}>
         <aside className="filters">
           <span className="eyebrow">Filtrovat</span>
           <h3>Pro koho</h3>
@@ -331,7 +358,7 @@ function App() {
           </div>
         ) : (
           <section className="product-grid">
-            {filtered.map((product) => (
+            {sorted.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
@@ -430,6 +457,8 @@ function App() {
   const content =
     path === "/kosik" ? (
       renderCart()
+    ) : path === "/ucet" ? (
+      <Account session={session} products={products} />
     ) : path === "/kolekce" || path === "/znacky" ? (
       renderCatalog()
     ) : path.startsWith("/produkt/") ? (
@@ -514,7 +543,7 @@ function App() {
               }
             />
           </label>
-          <button className="icon-button" aria-label="Účet">
+          <button className="icon-button" aria-label="Účet" onClick={() => navigate("/ucet")}>
             ♙
           </button>
           <button className="cart-button" onClick={() => navigate("/kosik")}>

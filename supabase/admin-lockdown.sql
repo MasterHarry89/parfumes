@@ -4,15 +4,18 @@
 --
 -- Before you run it:
 --   1. Create your admin user in Authentication > Users.
---   2. Turn off public sign-ups (Authentication > Providers > Email).
--- The statement below then allow-lists every existing auth user, i.e. just you.
+--   2. Make sure you are the only user in Authentication > Users.
+-- On the first run the statement below allow-lists every existing auth user, i.e. just you.
+-- Once customers can sign up (customer-accounts.sql) it adds nobody, so re-running
+-- this file never turns customers into admins.
 -- To add someone later:  insert into public.admins values ('name@example.com');
 
 create table if not exists public.admins (email text primary key);
 alter table public.admins enable row level security; -- no policies: unreadable through the API
 
 insert into public.admins (email)
-select lower(email) from auth.users where email is not null
+select lower(email) from auth.users
+where email is not null and not exists (select 1 from public.admins)
 on conflict do nothing;
 
 create or replace function public.is_admin()
