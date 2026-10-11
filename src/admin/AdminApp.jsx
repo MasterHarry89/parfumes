@@ -105,6 +105,10 @@ const loadAll = async () => {
       shippingPrice: Number(order.shipping_price || 0),
       paymentMethod: order.payment_method ?? null,
       paymentFee: Number(order.payment_fee || 0),
+      packetId: order.packeta_packet_id ?? null,
+      barcode: order.packeta_barcode ?? null,
+      packetStatus: order.packeta_status ?? null,
+      packetStatusCode: order.packeta_status_code ?? null,
     })),
   };
 };
@@ -425,7 +429,7 @@ function AdminShell({ path, session, onCatalogChanged }) {
       </div>
     );
   } else if (page.key === "objednavky") {
-    content = <OrdersView orders={data.orders} />;
+    content = <OrdersView orders={data.orders} onReload={reload} />;
   } else if (page.key === "finance") {
     content = (
       <FinanceView

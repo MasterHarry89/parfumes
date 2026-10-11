@@ -8,12 +8,22 @@ import {
   FiDownload,
   FiInfo,
   FiPlus,
+  FiPrinter,
+  FiRefreshCw,
+  FiSend,
   FiShoppingBag,
 } from "react-icons/fi";
 
 import { countsAsRevenue, money, orderStatusInfo, volumes } from "../lib/catalog";
 import { navigate } from "../lib/navigate";
 import { buildPacketaCsv, downloadCsv, isReadyToShip } from "./packetaExport";
+import {
+  createPackets,
+  downloadLabels,
+  needsLabel,
+  packetStatusLabel,
+  refreshPacketStatuses,
+} from "./packetaApi";
 
 export const LOW_STOCK_ML = 30;
 
@@ -366,40 +376,115 @@ export function InventoryView({ stock, onSaveStock, onRestock }) {
   );
 }
 
-export function OrdersView({ orders }) {
+export function OrdersView({ orders, onReload }) {
   const [filter, setFilter] = useState("all");
   const statuses = [...new Set(orders.map((order) => order.status))];
   const visible =
     filter === "all" ? orders : orders.filter((order) => order.status === filter);
-  const readyToShip = orders.filter(isReadyToShip);
-  const [skipped, setSkipped] = useState([]);
+  // Ready to ship and not sent to Zásilkovna yet; and packets still waiting for a label.
+  const readyToShip = orders.filter((order) => isReadyToShip(order) && !order.packetId);
+  const awaitingLabel = orders.filter(needsLabel);
+  const [busy, setBusy] = useState(null); // create | labels | refresh | null
+  const [message, setMessage] = useState(null); // { tone, text, list }
 
-  const exportPacketa = () => {
-    const { csv, count, skipped: notExported } = buildPacketaCsv(readyToShip);
-    setSkipped(notExported);
+  const run = async (action, job) => {
+    setBusy(action);
+    setMessage(null);
+    try {
+      await job();
+    } catch (error) {
+      setMessage({ tone: "bad", text: error.message });
+    }
+    setBusy(null);
+  };
+
+  const sendToPacketa = () =>
+    run("create", async () => {
+      const { results } = await createPackets(readyToShip.map((order) => order.id));
+      const failed = results.filter((result) => !result.ok);
+      const byId = new Map(orders.map((order) => [order.id, order]));
+      setMessage({
+        tone: failed.length ? "bad" : "ok",
+        text: `Založeno zásilek: ${results.length - failed.length}.${failed.length ? " Tyto se nepodařilo založit:" : " Teď si stáhněte štítky."}`,
+        list: failed.map((result) => {
+          const order = byId.get(result.id);
+          return `${order ? orderLabel(order) : result.id} (${order?.customer ?? ""}): ${result.error}`;
+        }),
+      });
+      await onReload();
+    });
+
+  const printLabels = () =>
+    run("labels", () => downloadLabels(awaitingLabel.map((order) => order.id)));
+
+  const refresh = () =>
+    run("refresh", async () => {
+      const { checked, changed, failed } = await refreshPacketStatuses();
+      setMessage({
+        tone: failed.length ? "bad" : "ok",
+        text: `Zkontrolováno zásilek: ${checked}, změněných objednávek: ${changed}.`,
+        list: failed.map((item) => `${item.id}: ${item.error}`),
+      });
+      await onReload();
+    });
+
+  // Fallback without the API: CSV for Zásilkovna's manual import.
+  const exportCsv = () => {
+    const { csv, count, skipped } = buildPacketaCsv(readyToShip);
+    setMessage(
+      skipped.length
+        ? {
+            tone: "bad",
+            text: "Tyto objednávky nejsou v exportu, zadejte je v Zásilkovně ručně:",
+            list: skipped.map(({ order, reason }) => `${orderLabel(order)} (${order.customer}): ${reason}`),
+          }
+        : null,
+    );
     if (count > 0) downloadCsv(csv, `zasilkovna-${new Date().toISOString().slice(0, 10)}.csv`);
   };
 
   return (
     <div className="adm-page">
-      <div className="adm-toolbar">
-        <p className="adm-lead">
-          Klikněte na objednávku pro detail, doručení a změnu stavu.
-        </p>
-        <button className="adm-button" disabled={readyToShip.length === 0} onClick={exportPacketa}>
-          <FiDownload aria-hidden="true" /> Export pro Zásilkovnu ({readyToShip.length})
+      <p className="adm-lead">Klikněte na objednávku pro detail, doručení a změnu stavu.</p>
+      <div className="adm-ship-actions">
+        <button
+          className="adm-button"
+          disabled={readyToShip.length === 0 || busy !== null}
+          onClick={sendToPacketa}
+        >
+          <FiSend aria-hidden="true" />
+          {busy === "create" ? "Zakládám…" : `Odeslat do Zásilkovny (${readyToShip.length})`}
+        </button>
+        <button
+          className="adm-button adm-button-light"
+          disabled={awaitingLabel.length === 0 || busy !== null}
+          onClick={printLabels}
+        >
+          <FiPrinter aria-hidden="true" />
+          {busy === "labels" ? "Připravuji…" : `Štítky (${awaitingLabel.length})`}
+        </button>
+        <button className="adm-button adm-button-light" disabled={busy !== null} onClick={refresh}>
+          <FiRefreshCw aria-hidden="true" />
+          {busy === "refresh" ? "Aktualizuji…" : "Aktualizovat stavy zásilek"}
+        </button>
+        <button
+          className="adm-link"
+          disabled={readyToShip.length === 0 || busy !== null}
+          onClick={exportCsv}
+        >
+          <FiDownload aria-hidden="true" /> CSV export
         </button>
       </div>
-      {skipped.length > 0 && (
-        <div className="adm-alert" role="alert">
-          Tyto objednávky nejsou v exportu, zadejte je v Zásilkovně ručně:
-          <ul>
-            {skipped.map(({ order, reason }) => (
-              <li key={order.id}>
-                {orderLabel(order)} ({order.customer}): {reason}
-              </li>
-            ))}
-          </ul>
+      {message && (
+        <div className={`adm-ship-message ${message.tone === "ok" ? "adm-note" : "adm-alert"}`} role="status">
+          {message.text}
+          {message.list?.length > 0 && (
+            <ul>
+              {message.list.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
       <Panel flush>
@@ -459,6 +544,9 @@ export function OrdersView({ orders }) {
                     </td>
                     <td>
                       <StatusPill status={order.status} />
+                      {packetStatusLabel(order) && (
+                        <small className="adm-sub">{packetStatusLabel(order)}</small>
+                      )}
                     </td>
                     <td className="adm-right">
                       <strong>{money(order.total)}</strong>

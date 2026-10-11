@@ -486,3 +486,10 @@
 .adm-order-sum div { grid-template-columns: 1fr auto; }
 .adm-order-total { padding-top: 10px; border-top: 1px solid #f0f0f0; font-size: 16px !important; }
 .adm-order-total dt { color: #171717; font-weight: 700; }
+
+/* Zásilkovna actions above the order list. */
+.adm-ship-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 16px; }
+.adm-ship-actions .adm-link { display: inline-flex; align-items: center; gap: 6px; }
+.adm-ship-actions button:disabled { opacity: .5; cursor: default; }
+.adm-ship-message { display: block; font-size: 13px; line-height: 1.5; }
+.adm-ship-message ul { margin: 8px 0 0; padding-left: 18px; }

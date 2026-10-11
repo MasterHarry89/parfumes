@@ -4,6 +4,7 @@ import { FiArrowLeft, FiMail, FiMapPin, FiPhone } from "react-icons/fi";
 import { money, orderPoints, orderStatusInfo } from "../lib/catalog";
 import { paymentMethods, shippingMethods } from "../lib/checkout";
 import { navigate } from "../lib/navigate";
+import { packetStatusLabel } from "./packetaApi";
 import { Panel, orderLabel } from "./views";
 
 // The order life cycle the admin moves through. "Zaplaceno" and later count as
@@ -123,6 +124,15 @@ export default function OrderDetail({ order, onSaveStatus }) {
                   <small className="adm-sub">
                     {address.zip} {address.city}
                   </small>
+                </dd>
+              </div>
+            )}
+            {order.barcode && (
+              <div>
+                <dt>Zásilka</dt>
+                <dd>
+                  {order.barcode}
+                  <small className="adm-sub">{packetStatusLabel(order)}</small>
                 </dd>
               </div>
             )}

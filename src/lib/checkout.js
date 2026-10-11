@@ -19,7 +19,11 @@ export const shippingMethods = [
   },
 ];
 
+// Bank details for "Bankovním převodem", set in Netlify environment variables.
+export const bankAccount = import.meta.env.VITE_BANK_ACCOUNT || "";
+
 // The card option turns on once a payment gateway is connected (VITE_CARD_PAYMENTS=on).
+// Bank transfer is offered only once VITE_BANK_ACCOUNT is set.
 export const paymentMethods = [
   {
     key: "card",
@@ -34,6 +38,7 @@ export const paymentMethods = [
     note: "Platební údaje zobrazíme po odeslání objednávky",
     fee: 0,
     enabled: true,
+    hidden: !bankAccount,
   },
   {
     key: "cod",
@@ -42,13 +47,10 @@ export const paymentMethods = [
     fee: 290,
     enabled: true,
   },
-];
+].filter((method) => !method.hidden);
 
 export const shippingPriceFor = (method, subtotal) =>
   subtotal >= FREE_SHIPPING_FROM ? 0 : method.price;
-
-// Bank details for "Bankovním převodem", set in Netlify environment variables.
-export const bankAccount = import.meta.env.VITE_BANK_ACCOUNT || "";
 
 // ---- Zásilkovna (Packeta) pickup-point widget -------------------------------
 // With VITE_PACKETA_API_KEY set, customers pick the point on Zásilkovna's map.
