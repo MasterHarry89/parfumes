@@ -7,6 +7,7 @@ import { supabase } from "./lib/supabase";
 import { navigate } from "./lib/navigate";
 import { useAdminAccess, useSession } from "./lib/auth";
 import Account from "./Account";
+import Checkout from "./Checkout";
 import {
   money,
   familyOptions,
@@ -22,6 +23,8 @@ import {
 import {
   FiCheck,
   FiCheckCircle,
+  FiChevronLeft,
+  FiChevronRight,
   FiDroplet,
   FiEdit2,
   FiMinus,
@@ -30,6 +33,7 @@ import {
   FiRotateCcw,
   FiShoppingBag,
   FiTruck,
+  FiUser,
   FiZap,
 } from "react-icons/fi";
 
@@ -434,7 +438,7 @@ function App() {
             </strong>
             <button
               className="primary-button"
-              onClick={() => alert("Checkout bude napojený na Stripe.")}
+              onClick={() => navigate("/pokladna")}
             >
               Pokračovat k platbě <span>→</span>
             </button>
@@ -457,6 +461,8 @@ function App() {
   const content =
     path === "/kosik" ? (
       renderCart()
+    ) : path === "/pokladna" ? (
+      <Checkout cart={cart} session={session} onPlaced={() => setCart([])} />
     ) : path === "/ucet" ? (
       <Account session={session} products={products} />
     ) : path === "/kolekce" || path === "/znacky" ? (
@@ -544,7 +550,7 @@ function App() {
             />
           </label>
           <button className="icon-button" aria-label="Účet" onClick={() => navigate("/ucet")}>
-            ♙
+            <FiUser aria-hidden="true" />
           </button>
           <button className="cart-button" onClick={() => navigate("/kosik")}>
             Košík <span>{cartCount}</span>
@@ -1096,7 +1102,49 @@ function ProductDetail({ product, products, onAdd, onOpen, onBack, onEdit }) {
     </div>
   );
 }
+// Desktop prev/next buttons for a horizontally scrolling row. `edges` says
+// whether the row is scrolled to its start / end; both are true when it all fits.
+function useRailScroll(itemCount) {
+  const ref = useRef(null);
+  const [edges, setEdges] = useState({ start: true, end: true });
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const update = () =>
+      setEdges({
+        start: node.scrollLeft <= 1,
+        end: node.scrollLeft + node.clientWidth >= node.scrollWidth - 1,
+      });
+    update();
+    node.addEventListener("scroll", update, { passive: true });
+    const observer = new ResizeObserver(update);
+    observer.observe(node);
+    return () => {
+      node.removeEventListener("scroll", update);
+      observer.disconnect();
+    };
+  }, [itemCount]);
+  const scrollBy = (direction) =>
+    ref.current?.scrollBy({ left: direction * ref.current.clientWidth * 0.8, behavior: "smooth" });
+  return { ref, edges, scrollBy };
+}
+
+function RailArrows({ rail }) {
+  if (rail.edges.start && rail.edges.end) return null;
+  return (
+    <div className="rail-arrows">
+      <button aria-label="Posunout zpět" disabled={rail.edges.start} onClick={() => rail.scrollBy(-1)}>
+        <FiChevronLeft aria-hidden="true" />
+      </button>
+      <button aria-label="Posunout dál" disabled={rail.edges.end} onClick={() => rail.scrollBy(1)}>
+        <FiChevronRight aria-hidden="true" />
+      </button>
+    </div>
+  );
+}
+
 function ProductCarousel({ title, eyebrow, products, onOpen, onAdd, badge }) {
+  const rail = useRailScroll(products.length);
   if (!products.length) return null;
   return (
     <section
@@ -1106,15 +1154,18 @@ function ProductCarousel({ title, eyebrow, products, onOpen, onAdd, badge }) {
         <div>
           <h2>{title}</h2>
         </div>
-        <button
-          onClick={() =>
-            navigate(badge ? `/kolekce?tag=${encodeURIComponent(badge)}` : "/kolekce")
-          }
-        >
-          Zobrazit vše <span>→</span>
-        </button>
+        <div className="rail-actions">
+          <button
+            onClick={() =>
+              navigate(badge ? `/kolekce?tag=${encodeURIComponent(badge)}` : "/kolekce")
+            }
+          >
+            Zobrazit vše <span>→</span>
+          </button>
+          <RailArrows rail={rail} />
+        </div>
       </div>
-      <div className="carousel-track">
+      <div className="carousel-track" ref={rail.ref}>
         {products.map((product) => (
           <ProductCard
             key={product.id}
@@ -1417,6 +1468,7 @@ function HomeContent({ products, onOpen, onShop }) {
   };
 
   const seasonTiles = fragranceFamilies.slice(4, 8);
+  const familyRail = useRailScroll(fragranceFamilies.slice(0, 4).length);
   const month = new Date().getMonth();
   const currentSeasonName =
     month === 11 || month <= 1
@@ -1522,8 +1574,9 @@ function HomeContent({ products, onOpen, onShop }) {
         <div onClick={onShop}>
           <h2>Parfémové rodiny</h2>
         </div>
+        <RailArrows rail={familyRail} />
       </div>
-      <div className="family-track">
+      <div className="family-track" ref={familyRail.ref}>
         {fragranceFamilies.slice(0, 4).map((family, index) => (
           <button
             className={`family-tile ${family.tone} ${family.title === "Dřevité" ? "family-wood" : ""}`}
