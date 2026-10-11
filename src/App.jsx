@@ -1503,7 +1503,7 @@ function HomeContent({ products, onOpen, onShop }) {
           className="entry-card entry-new"
           onClick={() => navigate("/kolekce?tag=Novinka")}
           style={{
-            backgroundImage: "url(/parfumes3.png)",
+            backgroundImage: "url(/parfumes4.png)",
           }}
         >
           <strong>Nové</strong>
