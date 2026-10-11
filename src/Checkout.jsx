@@ -114,7 +114,7 @@ function Confirmation({ order }) {
   return (
     <main className="page-shell checkout-page checkout-done">
       <span className="eyebrow">Děkujeme</span>
-      <h1>Objednávka č. {order.order_number} je přijatá</h1>
+      <h1>Objednávka č. {order.order_number} byla přijata ke zpracování</h1>
       <p className="checkout-lead">
         Objednávku jsme uložili. Ozveme se vám na <b>{order.email}</b>.
       </p>

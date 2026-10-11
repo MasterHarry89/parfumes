@@ -10,7 +10,10 @@ export const PARCEL_WEIGHT_KG = 0.1;
 // carriers in the Zásilkovna administration). Empty = home-delivery orders are skipped.
 export const HOME_DELIVERY_CARRIER_ID = "";
 
+// Zásilkovna reserves the first column of every import file ("Nevybráno"); it
+// must stay empty and cannot be mapped, so each row starts with a blank cell.
 const columns = [
+  "Vyhrazeno",
   "Číslo",
   "Celé jméno",
   "E-mail",
@@ -78,6 +81,7 @@ export const buildPacketaCsv = (orders) => {
       address = [street, houseNumber, order.shippingAddress?.city ?? "", order.shippingAddress?.zip ?? ""];
     }
     rows.push([
+      "",
       order.number ?? order.id,
       order.customer,
       order.email,
