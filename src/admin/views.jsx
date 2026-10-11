@@ -3,7 +3,9 @@ import {
   FiAlertTriangle,
   FiBox,
   FiCheck,
+  FiChevronRight,
   FiDollarSign,
+  FiDownload,
   FiInfo,
   FiPlus,
   FiShoppingBag,
@@ -11,6 +13,7 @@ import {
 
 import { countsAsRevenue, money, orderStatusInfo, volumes } from "../lib/catalog";
 import { navigate } from "../lib/navigate";
+import { buildPacketaCsv, downloadCsv, isReadyToShip } from "./packetaExport";
 
 export const LOW_STOCK_ML = 30;
 
@@ -28,6 +31,9 @@ const shortId = (id) => {
   const text = String(id);
   return text.length > 10 ? `#${text.slice(0, 8)}` : `#${text}`;
 };
+
+// "#1042" once the order has a number (checkout.sql), the short id before that.
+export const orderLabel = (order) => (order.number ? `#${order.number}` : shortId(order.id));
 
 function StatusPill({ status }) {
   const [label, tone] = statusInfo(status);
@@ -193,7 +199,7 @@ export function DashboardView({ stock, orders }) {
                   <div>
                     <strong>{order.customer}</strong>
                     <small>
-                      {shortId(order.id)} · {order.date}
+                      {orderLabel(order)} · {order.date}
                     </small>
                   </div>
                   <StatusPill status={order.status} />
@@ -365,12 +371,37 @@ export function OrdersView({ orders }) {
   const statuses = [...new Set(orders.map((order) => order.status))];
   const visible =
     filter === "all" ? orders : orders.filter((order) => order.status === filter);
+  const readyToShip = orders.filter(isReadyToShip);
+  const [skipped, setSkipped] = useState([]);
+
+  const exportPacketa = () => {
+    const { csv, count, skipped: notExported } = buildPacketaCsv(readyToShip);
+    setSkipped(notExported);
+    if (count > 0) downloadCsv(csv, `zasilkovna-${new Date().toISOString().slice(0, 10)}.csv`);
+  };
 
   return (
     <div className="adm-page">
-      <p className="adm-lead">
-        Objednávky se zde objeví po potvrzení platby přes Stripe.
-      </p>
+      <div className="adm-toolbar">
+        <p className="adm-lead">
+          Klikněte na objednávku pro detail, doručení a změnu stavu.
+        </p>
+        <button className="adm-button" disabled={readyToShip.length === 0} onClick={exportPacketa}>
+          <FiDownload aria-hidden="true" /> Export pro Zásilkovnu ({readyToShip.length})
+        </button>
+      </div>
+      {skipped.length > 0 && (
+        <div className="adm-alert" role="alert">
+          Tyto objednávky nejsou v exportu, zadejte je v Zásilkovně ručně:
+          <ul>
+            {skipped.map(({ order, reason }) => (
+              <li key={order.id}>
+                {orderLabel(order)} ({order.customer}): {reason}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <Panel flush>
         <div className="adm-tabs" role="tablist" aria-label="Filtr objednávek">
           <button
@@ -404,23 +435,36 @@ export function OrdersView({ orders }) {
                   <th>Objednávka</th>
                   <th>Zákazník</th>
                   <th>Datum</th>
+                  <th>Doprava</th>
                   <th>Stav</th>
                   <th className="adm-right">Celkem</th>
+                  <th aria-label="Detail" />
                 </tr>
               </thead>
               <tbody>
                 {visible.map((order) => (
-                  <tr key={order.id}>
+                  <tr
+                    key={order.id}
+                    className="is-link"
+                    onClick={() => navigate(`/admin/objednavky/${encodeURIComponent(order.id)}`)}
+                  >
                     <td>
-                      <strong>{shortId(order.id)}</strong>
+                      <strong>{orderLabel(order)}</strong>
                     </td>
                     <td>{order.customer}</td>
                     <td>{order.date}</td>
+                    <td>
+                      {order.shippingPoint?.name ??
+                        (order.shippingAddress ? order.shippingAddress.city : "—")}
+                    </td>
                     <td>
                       <StatusPill status={order.status} />
                     </td>
                     <td className="adm-right">
                       <strong>{money(order.total)}</strong>
+                    </td>
+                    <td className="adm-right adm-row-arrow">
+                      <FiChevronRight aria-hidden="true" />
                     </td>
                   </tr>
                 ))}

@@ -22,7 +22,8 @@ import PackagingView from "./PackagingView";
 import ProductForm from "./ProductForm";
 import ProductsView from "./ProductsView";
 import RestockDialog from "./Restock";
-import { DashboardView, InventoryView, OrdersView } from "./views";
+import OrderDetail from "./OrderDetail";
+import { DashboardView, InventoryView, OrdersView, orderLabel } from "./views";
 
 const pages = [
   { path: "/admin", key: "prehled", title: "Přehled", icon: FiHome },
@@ -92,6 +93,18 @@ const loadAll = async () => {
       date: new Date(order.created_at).toLocaleDateString("cs-CZ"),
       status: order.status || "pending",
       total: Number(order.total || 0),
+      number: order.order_number ?? null,
+      userId: order.user_id ?? null,
+      email: order.email ?? "",
+      phone: order.phone ?? "",
+      note: order.note ?? "",
+      items: toList(order.items),
+      shippingMethod: order.shipping_method ?? null,
+      shippingPoint: order.shipping_point ?? null,
+      shippingAddress: order.shipping_address ?? null,
+      shippingPrice: Number(order.shipping_price || 0),
+      paymentMethod: order.payment_method ?? null,
+      paymentFee: Number(order.payment_fee || 0),
     })),
   };
 };
@@ -287,15 +300,39 @@ function AdminShell({ path, session, onCatalogChanged }) {
     return null;
   };
 
+  const saveOrderStatus = async (id, status) => {
+    const { error } = await supabase.from("orders").update({ status }).eq("id", id);
+    if (error) return "Stav se nepodařilo uložit.";
+    setData((current) => ({
+      ...current,
+      orders: current.orders.map((order) => (order.id === id ? { ...order, status } : order)),
+    }));
+    return null;
+  };
+
   const cleanPath = path.replace(/\/$/, "");
+  const orderMatch = cleanPath.match(/^\/admin\/objednavky\/([^/]+)$/);
+  const orderId = orderMatch ? decodeURIComponent(orderMatch[1]) : null;
+  const openOrder = orderId && data ? data.orders.find((order) => String(order.id) === orderId) : null;
   const editMatch = cleanPath.match(/^\/admin\/produkty\/(?!novy$)([^/]+)$/);
   const editId = editMatch ? decodeURIComponent(editMatch[1]) : null;
   const editProduct = editId && data ? data.products.find((product) => product.id === editId) : null;
   const page = editMatch
     ? { key: "upravit-produkt", title: "Upravit produkt" }
+    : orderMatch
+    ? { key: "objednavka", title: "Objednávka" }
     : (pages.find((candidate) => candidate.path === cleanPath) ?? pages[0]);
-  const navKey = ["novy-produkt", "upravit-produkt"].includes(page.key) ? "produkty" : page.key;
-  const headTitle = page.key === "upravit-produkt" && editProduct ? editProduct.name : page.title;
+  const navKey = ["novy-produkt", "upravit-produkt"].includes(page.key)
+    ? "produkty"
+    : page.key === "objednavka"
+      ? "objednavky"
+      : page.key;
+  const headTitle =
+    page.key === "upravit-produkt" && editProduct
+      ? editProduct.name
+      : page.key === "objednavka" && openOrder
+        ? `Objednávka ${orderLabel(openOrder)}`
+        : page.title;
   const today = new Date().toLocaleDateString("cs-CZ", {
     weekday: "long",
     day: "numeric",
@@ -373,6 +410,19 @@ function AdminShell({ path, session, onCatalogChanged }) {
         onOpenProduct={(id) => navigate(`/produkt/${id}`)}
         onBack={() => navigate("/admin/produkty")}
       />
+    );
+  } else if (page.key === "objednavka") {
+    content = openOrder ? (
+      <OrderDetail order={openOrder} onSaveStatus={saveOrderStatus} />
+    ) : (
+      <div className="adm-page">
+        <p className="adm-alert" role="alert">
+          Objednávka neexistuje.
+        </p>
+        <button className="adm-button" onClick={() => navigate("/admin/objednavky")}>
+          Zpět na objednávky
+        </button>
+      </div>
     );
   } else if (page.key === "objednavky") {
     content = <OrdersView orders={data.orders} />;

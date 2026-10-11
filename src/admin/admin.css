@@ -467,3 +467,22 @@
 .adm-search svg { position: absolute; top: 50%; left: 14px; width: 16px; height: 16px; color: var(--muted); transform: translateY(-50%); pointer-events: none; }
 .adm-search input { width: 100%; height: 42px; padding: 0 14px 0 38px; border: 1px solid #e2e2e2; border-radius: 999px; background: #fff; color: var(--ink); font: inherit; font-size: 14px; }
 .adm-search input:focus { border-color: #252525; box-shadow: 0 0 0 3px rgba(200, 255, 0, .55); outline: none; }
+
+/* Order detail: status switcher and label/value lists. */
+.adm-status-steps { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.adm-status-step { padding: 9px 16px; border: 1px solid #e5e5e5; border-radius: 999px; background: #fff; font-size: 13px; font-weight: 600; color: #4b4b4b; cursor: pointer; transition: background .15s, border-color .15s; }
+.adm-status-step:hover:not(:disabled) { border-color: #171717; }
+.adm-status-step:disabled { cursor: wait; }
+.adm-status-step.is-current { background: #171717; border-color: #171717; color: #fff; }
+.adm-status-step.adm-status-bad.is-current { background: #b42318; border-color: #b42318; }
+.adm-dl { display: grid; gap: 12px; margin: 8px 0 0; }
+.adm-dl div { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 12px; font-size: 14px; }
+.adm-dl dt { display: flex; align-items: center; gap: 6px; color: #737373; }
+.adm-dl dt svg { width: 14px; height: 14px; }
+.adm-dl dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+.adm-dl dd small { display: block; font-weight: 400; }
+.adm-dl a { color: inherit; }
+.adm-order-sum { margin: 0; padding: 16px 24px 22px; border-top: 1px solid #f0f0f0; }
+.adm-order-sum div { grid-template-columns: 1fr auto; }
+.adm-order-total { padding-top: 10px; border-top: 1px solid #f0f0f0; font-size: 16px !important; }
+.adm-order-total dt { color: #171717; font-weight: 700; }
