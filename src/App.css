@@ -140,7 +140,7 @@ em { color: var(--bronze); font-style: italic; }
 .family-track::-webkit-scrollbar { display: none; }
 .family-tile { flex: 0 0 220px; min-height: 205px; padding: 18px; text-align: left; display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s; position: relative; overflow: hidden; background-position: center; background-size: cover; }
 .family-tile::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20, 16, 13, .08) 15%, rgba(20, 16, 13, .78) 100%); }
-.family-tile.family-wood::before { background: linear-gradient(180deg, rgba(20, 16, 13, .42), rgba(20, 16, 13, .88)); }
+.family-tile.family-wood::before { background: linear-gradient(180deg, rgba(20, 16, 13, .05), rgba(20, 16, 13, .75)); }
 .family-tile > * { position: relative; z-index: 1; color: #fff; }
 .family-tile strong, .discovery-tile strong { margin-top: auto; font: 600 29px 'Cormorant Garamond', serif; }
 .family-tile small, .discovery-tile small { margin-top: 6px; font-size: 10px; opacity: .75; }
@@ -1158,6 +1158,8 @@ footer p { margin-bottom: 22px; }
     padding-left: 0;
     padding-right: 0;
   }
+  /* Only five featured families now, so the tiles share the full rail width instead of scrolling. */
+  .home-page .family-tile { flex: 1 1 0; min-width: 0; min-height: 300px; }
 }
 
 /* Header spans the full window (its background used to stop at 1440px and look

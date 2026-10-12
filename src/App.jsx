@@ -1263,7 +1263,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "čerstvé a lehké",
       label: "Rodina vůně",
       tone: "category-coral",
-      image: "/parfumes2.png",
+      image: "/citrus.png",
     },
     {
       icon: "◌",
@@ -1271,7 +1271,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "čisté a sebejisté",
       label: "Rodina vůně",
       tone: "category-yellow",
-      image: "/parfumes3.png",
+      image: "/wood.png",
     },
     {
       icon: "◈",
@@ -1311,7 +1311,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "výrazné a hřejivé",
       label: "Rodina vůně",
       tone: "category-sun",
-      image: "/parfumes2.png",
+      image: "/spices.png",
     },
     {
       icon: "◉",
