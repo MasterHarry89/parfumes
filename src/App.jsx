@@ -1510,6 +1510,7 @@ function HomeContent({ products, onOpen, onShop }) {
       title: "Každý den",
       description: "Vůně, které fungují přirozeně od rána do večera.",
       keys: ["kazdodenni"],
+      thumb: "bleu de chanel",
     },
     {
       title: "Práce a business",
@@ -1525,14 +1526,21 @@ function HomeContent({ products, onOpen, onShop }) {
       title: "Speciální příležitosti",
       description:
         "Výrazné vůně na události, oslavy a chvíle, kdy chceš vyniknout.",
-      keys: ["party"],
+      keys: ["party", "vecer"],
+      thumb: "tuxedo",
     },
   ];
-  // Thumbnail = first scent tagged with that occasion, so the row shows a real bottle.
-  const occasionThumb = (keys) =>
-    products.find((product) =>
-      product.occasions.some((occasion) => keys.includes(occasion)),
-    )?.image || "/parfumes2.png";
+  // Thumbnail = the scent named in `thumb` (matched on brand + name), otherwise
+  // the first scent tagged with the row's main (first) occasion.
+  const occasionThumb = ({ keys, thumb }) =>
+    (thumb &&
+      products.find((product) =>
+        `${product.brand} ${product.name}`.toLowerCase().includes(thumb),
+      )?.image) ||
+    keys
+      .map((key) => products.find((product) => product.occasions.includes(key)))
+      .find(Boolean)?.image ||
+    "/parfumes2.png";
 
   return (
     <main>
@@ -1673,7 +1681,7 @@ function HomeContent({ products, onOpen, onShop }) {
                 )
               }
             >
-              <img src={occasionThumb(item.keys)} alt="" />
+              <img src={occasionThumb(item)} alt="" />
               <span>
                 <strong>{item.title}</strong>
                 <small>{item.description}</small>
