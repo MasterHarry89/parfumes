@@ -1468,7 +1468,12 @@ function HomeContent({ products, onOpen, onShop }) {
   };
 
   const seasonTiles = fragranceFamilies.slice(4, 8);
-  const familyRail = useRailScroll(fragranceFamilies.slice(0, 4).length);
+  // Only these families get a home-page tile; the rest stay reachable via catalog filters.
+  const featuredFamilies = ["Citrus", "Dřevité", "Sladké", "Kořeněné", "Orientální"];
+  const familyTiles = fragranceFamilies
+    .slice(0, 4)
+    .filter((family) => featuredFamilies.includes(family.title));
+  const familyRail = useRailScroll(familyTiles.length);
   const month = new Date().getMonth();
   const currentSeasonName =
     month === 11 || month <= 1
@@ -1634,7 +1639,7 @@ function HomeContent({ products, onOpen, onShop }) {
         <RailArrows rail={familyRail} />
       </div>
       <div className="family-track" ref={familyRail.ref}>
-        {fragranceFamilies.slice(0, 4).map((family, index) => (
+        {familyTiles.map((family, index) => (
           <button
             className={`family-tile ${family.tone} ${family.title === "Dřevité" ? "family-wood" : ""}`}
             key={family.title}
