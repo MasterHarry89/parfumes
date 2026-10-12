@@ -1481,9 +1481,28 @@ function HomeContent({ products, onOpen, onShop }) {
   const currentSeason =
     seasonTiles.find((season) => season.title === currentSeasonName) ||
     seasonTiles[0];
-  const otherSeasons = seasonTiles.filter(
-    (season) => season.title !== currentSeason.title,
-  );
+  const seasonCopy = {
+    Jaro: {
+      eyebrow: "Přišlo jaro",
+      headline: "Je načase vybrat si svou signature jarní vůni",
+      cta: "Objevit jarní vůně",
+    },
+    Léto: {
+      eyebrow: "Přišlo léto",
+      headline: "Je načase vybrat si svou signature letní vůni",
+      cta: "Objevit letní vůně",
+    },
+    Podzim: {
+      eyebrow: "Přišel podzim",
+      headline: "Je načase vybrat si svou signature podzimní vůni",
+      cta: "Objevit podzimní vůně",
+    },
+    Zima: {
+      eyebrow: "Přišla zima",
+      headline: "Je načase vybrat si svou signature zimní vůni",
+      cta: "Objevit zimní vůně",
+    },
+  }[currentSeason.title];
 
   return (
     <main>
@@ -1589,33 +1608,19 @@ function HomeContent({ products, onOpen, onShop }) {
           </button>
         ))}
       </div>
-      <div className="section-heading secondary-heading">
-        <div onClick={onShop}>
-          <h2>Podle sezóny</h2>
-        </div>
-      </div>
       <div className="season-layout">
         <button
           className={`discovery-tile season-current ${currentSeason.tone}`}
           onClick={() => navigate(tileLink(currentSeason))}
           style={{ backgroundImage: `url(${currentSeason.image})` }}
         >
-          <strong>{currentSeason.title}</strong>
+          <span className="season-eyebrow">{seasonCopy.eyebrow}</span>
+          <strong>{seasonCopy.headline}</strong>
           <small>{currentSeason.description.replace("SEZÓNA · ", "")}</small>
+          <span className="season-cta">
+            {seasonCopy.cta} <span aria-hidden="true">→</span>
+          </span>
         </button>
-        <div className="season-list">
-          {otherSeasons.map((season) => (
-            <button
-              className={`discovery-tile ${season.tone}`}
-              key={season.title}
-              onClick={() => navigate(tileLink(season))}
-              style={{ backgroundImage: `url(${season.image})` }}
-            >
-              <strong>{season.title}</strong>
-              <small>{season.description.replace("SEZÓNA · ", "")}</small>
-            </button>
-          ))}
-        </div>
       </div>
       <ProductCarousel
         title="Novinky"

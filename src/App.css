@@ -155,6 +155,18 @@ em { color: var(--bronze); font-style: italic; }
 .season-layout { max-width: 1240px; margin: 0 auto 28px; padding: 0 5vw; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .season-list { display: grid; grid-template-rows: repeat(3, 1fr); gap: 12px; }
 .season-current .eyebrow { color: var(--gold); font-size: 10px; }
+/* Single banner for the current season (switches automatically by month). */
+.season-layout { grid-template-columns: 1fr; }
+.home-page .season-current { min-height: 440px; padding: 44px; }
+.home-page .season-current::before { background: linear-gradient(90deg, rgba(20, 16, 13, .82), rgba(20, 16, 13, .35) 60%, rgba(20, 16, 13, .1)); }
+.season-current .season-eyebrow { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; opacity: .85; }
+.home-app .home-page .season-current strong { margin-top: 12px; max-width: 560px; font-size: clamp(32px, 3.6vw, 52px); line-height: 1; }
+.home-page .season-current small { margin-top: 14px; font-size: 13px; }
+.season-current .season-cta { margin-top: 26px; align-self: flex-start; padding: 13px 22px; border-radius: 999px; background: #c8ff00; color: #1d2600 !important; font-size: 13px; font-weight: 800; }
+@media (max-width: 800px) {
+  .home-page .season-current { min-height: 360px; padding: 26px; }
+  .home-page .season-current::before { background: linear-gradient(180deg, rgba(20, 16, 13, .15), rgba(20, 16, 13, .85)); }
+}
 .discovery-tile { min-height: 189px; padding: 20px; display: flex; flex-direction: column; justify-content: flex-end; text-align: left; transition: transform .2s, box-shadow .2s; position: relative; overflow: hidden; background-position: center; background-size: cover; color: #fff; }
 .discovery-tile::before, .occasion-list button::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20, 16, 13, .12), rgba(20, 16, 13, .82)); }
 .discovery-tile > *, .occasion-list button > * { position: relative; z-index: 1; color: #fff; }
