@@ -174,21 +174,24 @@ em { color: var(--bronze); font-style: italic; }
 .occasion-strip { max-width: 1240px; margin: 0 auto; padding: 0 5vw 28px; }
 .occasion-strip h2 { font: 43px 'Cormorant Garamond', serif; margin: 0 0 30px; }
 .occasion-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-/* Occasion signpost: thumbnail rows, two columns on desktop, one on mobile. */
-.occasion-guide { display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 48px; border-top: 1px solid var(--line); }
-.occasion-guide button { display: flex; align-items: center; gap: 20px; padding: 20px 4px; border-bottom: 1px solid var(--line); background: none; text-align: left; color: var(--ink); transition: background .2s; }
-.occasion-guide button:hover { background: var(--paper-strong); }
-.occasion-guide img { flex: none; width: 76px; height: 76px; border-radius: 12px; object-fit: cover; background: var(--paper-strong); }
-.occasion-guide span { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
-.occasion-guide strong { font: 700 19px 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.03em; }
-.occasion-guide small { color: var(--muted); font-size: 14px; line-height: 1.45; }
-.occasion-guide-arrow { flex: none; font-size: 20px; color: var(--muted); transition: transform .2s, color .2s; }
-.occasion-guide button:hover .occasion-guide-arrow { transform: translateX(4px); color: var(--ink); }
+/* Occasion signpost: cards tinted with the product photos' beige backdrop, copy left, bottle right. */
+.occasion-guide { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.occasion-guide button { display: flex; align-items: stretch; height: 116px; padding: 0; border-radius: 14px; overflow: hidden; background: #f1e6da; text-align: left; color: var(--ink); transition: transform .2s, box-shadow .2s; }
+.occasion-guide button:hover { transform: translateY(-4px); box-shadow: 0 18px 32px rgba(34, 23, 18, .1); }
+.occasion-guide-copy { display: flex; flex-direction: column; justify-content: center; gap: 6px; flex: 1; min-width: 0; padding: 16px 8px 16px 26px; }
+.occasion-guide strong { display: inline-flex; align-items: center; gap: 4px; font: 700 19px 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.03em; }
+.occasion-guide strong svg { transition: transform .2s; }
+.occasion-guide button:hover strong svg { transform: translateX(4px); }
+.occasion-guide small { max-width: 340px; color: #6b5f55; font-size: 14px; line-height: 1.4; }
+/* Photo keeps its own beige; the left edge fades out so it melts into the card. */
+.occasion-guide img { flex: none; width: 30%; max-width: 170px; object-fit: cover; -webkit-mask-image: linear-gradient(90deg, transparent, #000 22%); mask-image: linear-gradient(90deg, transparent, #000 22%); }
 @media (max-width: 800px) {
-  .occasion-guide { grid-template-columns: 1fr; }
-  .occasion-guide button { gap: 16px; padding: 16px 0; }
-  .occasion-guide img { width: 64px; height: 64px; }
+  .occasion-guide { grid-template-columns: 1fr; gap: 10px; }
+  .occasion-guide button { height: 108px; }
+  .occasion-guide-copy { padding: 14px 4px 14px 18px; }
+  .occasion-guide strong { font-size: 17px; }
   .occasion-guide small { font-size: 13px; }
+  .occasion-guide img { width: 32%; }
 }
 .occasion-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .occasion-list button { min-height: 190px; padding: 18px; display: flex; flex-direction: column; text-align: left; background-color: var(--paper-strong); background-position: center; background-size: cover; border: 1px solid rgba(23,21,19,.06); transition: transform .2s, box-shadow .2s; position: relative; overflow: hidden; }

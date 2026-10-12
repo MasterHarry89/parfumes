@@ -1681,12 +1681,14 @@ function HomeContent({ products, onOpen, onShop }) {
                 )
               }
             >
-              <img src={occasionThumb(item)} alt="" />
-              <span>
-                <strong>{item.title}</strong>
+              <span className="occasion-guide-copy">
+                <strong>
+                  {item.title}
+                  <FiChevronRight aria-hidden="true" />
+                </strong>
                 <small>{item.description}</small>
               </span>
-              <FiChevronRight className="occasion-guide-arrow" aria-hidden="true" />
+              <img src={occasionThumb(item)} alt="" />
             </button>
           ))}
         </div>
