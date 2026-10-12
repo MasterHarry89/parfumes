@@ -1504,6 +1504,36 @@ function HomeContent({ products, onOpen, onShop }) {
     },
   }[currentSeason.title];
 
+  // Home-page shortcut into the catalog; each row may cover several stored occasion keys.
+  const occasionGuide = [
+    {
+      title: "Každý den",
+      description: "Vůně, které fungují přirozeně od rána do večera.",
+      keys: ["kazdodenni"],
+    },
+    {
+      title: "Práce a business",
+      description: "Elegantní, sebevědomé a nepřehnaně výrazné vůně.",
+      keys: ["prace"],
+    },
+    {
+      title: "Večer a rande",
+      description: "Charakter, hloubka a vůně, které zanechají dojem.",
+      keys: ["vecer", "rande"],
+    },
+    {
+      title: "Speciální příležitosti",
+      description:
+        "Výrazné vůně na události, oslavy a chvíle, kdy chceš vyniknout.",
+      keys: ["party"],
+    },
+  ];
+  // Thumbnail = first scent tagged with that occasion, so the row shows a real bottle.
+  const occasionThumb = (keys) =>
+    products.find((product) =>
+      product.occasions.some((occasion) => keys.includes(occasion)),
+    )?.image || "/parfumes2.png";
+
   return (
     <main>
       <section className="entry-strip">
@@ -1633,15 +1663,22 @@ function HomeContent({ products, onOpen, onShop }) {
         <div>
           <h2>Podle příležitosti</h2>
         </div>
-        <div className="occasion-list">
-          {fragranceFamilies.slice(8).map((family, index) => (
+        <div className="occasion-guide">
+          {occasionGuide.map((item) => (
             <button
-              key={family.title}
-              onClick={() => navigate(tileLink(family))}
-              style={{ backgroundImage: `url(${family.image})` }}
+              key={item.title}
+              onClick={() =>
+                navigate(
+                  `/kolekce?${item.keys.map((key) => `occasion=${key}`).join("&")}`,
+                )
+              }
             >
-              <strong>{family.title}</strong>
-              <small>{family.description.replace("POUŽITÍ · ", "")}</small>
+              <img src={occasionThumb(item.keys)} alt="" />
+              <span>
+                <strong>{item.title}</strong>
+                <small>{item.description}</small>
+              </span>
+              <FiChevronRight className="occasion-guide-arrow" aria-hidden="true" />
             </button>
           ))}
         </div>
