@@ -1279,7 +1279,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "hřejivé a návykové",
       label: "Rodina vůně",
       tone: "category-plum",
-      image: "/parfumes2.png",
+      image: "/sweet.png",
     },
     {
       icon: "❋",
@@ -1319,7 +1319,7 @@ function HomeContent({ products, onOpen, onShop }) {
       description: "smyslné a hluboké",
       label: "Rodina vůně",
       tone: "category-plum",
-      image: "/parfumes3.png",
+      image: "/orient.png",
     },
     {
       icon: "▰",
