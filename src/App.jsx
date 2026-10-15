@@ -71,6 +71,12 @@ const faqItems = [
       "Nepoužité vzorky můžete vrátit do 14 dnů od doručení podle standardních podmínek e-shopu.",
   },
 ];
+// Product tags the catalog can filter by (matched case-insensitively against product.tag).
+const catalogTagOptions = [
+  { key: "Bestseller", label: "Bestsellery" },
+  { key: "Novinka", label: "Novinky" },
+  { key: "Akce", label: "Akce" },
+];
 // The shop starts with men's and unisex scents only; the admin still offers every option.
 const shopGenderOptions = genderOptions.filter((option) => option.key !== "women");
 
@@ -306,6 +312,22 @@ function App() {
       <div className={`catalog-layout ${filtersOpen ? "filters-open" : ""}`}>
         <aside className="filters">
           <span className="eyebrow">Filtrovat</span>
+          {/* Tag set by home-page links (?tag=…); one at a time, unticking clears it. */}
+          <h3>Výběr</h3>
+          {catalogTagOptions.map((option) => (
+            <label key={option.key}>
+              <input
+                type="checkbox"
+                checked={tagFilter.toLowerCase() === option.key.toLowerCase()}
+                onChange={() =>
+                  setTagFilter((current) =>
+                    current.toLowerCase() === option.key.toLowerCase() ? "" : option.key,
+                  )
+                }
+              />{" "}
+              {option.label}
+            </label>
+          ))}
           <h3>Pro koho</h3>
           {shopGenderOptions.map((option) => (
             <label key={option.key}>
