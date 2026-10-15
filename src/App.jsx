@@ -588,6 +588,7 @@ function App() {
           </div>
           <div>
             <span className="eyebrow">Pomoc</span>
+            <button onClick={() => navigate("/o-projektu")}>O projektu</button>
             <button onClick={() => navigate("/doprava-a-platba")}>Doprava a platba</button>
             <button onClick={() => navigate("/odstoupeni-od-smlouvy")}>Vrácení zboží</button>
             <button onClick={() => navigate("/kontakt")}>Kontakt</button>

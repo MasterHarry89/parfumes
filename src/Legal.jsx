@@ -56,6 +56,70 @@ const SellerBlock = () => (
 );
 
 export const legalPages = {
+  "o-projektu": {
+    title: "O projektu",
+    content: (
+      <>
+        <p className="legal-lead">
+          Éparfumes vznikl z jednoduché myšlenky: podělit se o vůně, které mám
+          rád, s lidmi, kteří je mají rádi stejně.
+        </p>
+
+        <h2>Proč to dělám</h2>
+        <p>
+          Parfémy sbírám už roky. Postupně se mi doma sešla sbírka vůní, ke
+          kterým se člověk běžně nedostane – často luxusních, výrazných a
+          drahých. A protože vím, jak frustrující je koupit celý flakon
+          naslepo, rozhodl jsem se z ní nabídnout vzorky ostatním.
+        </p>
+
+        <h2>Konec drahých „blind buy“</h2>
+        <p>
+          Kdo miluje parfémy, to zná: vůně skvěle zní v recenzích, na papírku
+          v obchodě voní úžasně, ale na vlastní kůži, po pár hodinách nošení,
+          je to najednou něco úplně jiného. U parfému za několik tisíc korun je
+          takový „blind buy“ zbytečně drahý omyl.
+        </p>
+        <p>
+          Vzorek vám dá možnost vůni nosit několik dní, v práci, večer, v
+          různém počasí – a teprve potom se rozhodnout, jestli si zaslouží
+          místo ve vaší sbírce.
+        </p>
+
+        <h2>Komunita, ne velký byznys</h2>
+        <p>
+          Cílem Éparfumes není obrovský výdělek. Ceny vzorků jsou nastavené
+          tak, aby pokryly samotnou vůni, flakonky, balení a dopravu. Jde mi
+          hlavně o to, aby se drahé a zajímavé vůně dostaly k lidem, kteří je
+          ocení, a aby si je mohli vyzkoušet bez zbytečného rizika.
+        </p>
+
+        <h2>Na čem mi záleží</h2>
+        <ul>
+          <li>
+            <strong>Jen originály.</strong> Každý vzorek je plněný z
+            originálního flakonu, žádné repliky ani „inspirované“ vůně.
+          </li>
+          <li>
+            <strong>Pečlivé plnění.</strong> Vzorky plním ručně do čistých
+            flakonků a každý pečlivě označím.
+          </li>
+          <li>
+            <strong>Upřímná doporučení.</strong> Rád poradím, co zkusit dál –
+            napište mi přes stránku <Link to="/kontakt">Kontakt</Link>.
+          </li>
+        </ul>
+
+        <p>
+          Děkuju, že jste tady. Ať najdete vůni, která bude opravdu vaše.
+        </p>
+        <p>
+          <Link to="/kolekce">Prohlédnout vzorky →</Link>
+        </p>
+      </>
+    ),
+  },
+
   "obchodni-podminky": {
     title: "Obchodní podmínky",
     content: (
