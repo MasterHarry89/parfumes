@@ -402,7 +402,15 @@ export default function Checkout({ cart, session, onPlaced }) {
             {busy ? "Odesílám…" : "Objednat s povinností platby"} <span>→</span>
           </button>
           <small className="checkout-terms">
-            Odesláním objednávky souhlasíte s obchodními podmínkami.
+            Odesláním objednávky souhlasíte s{" "}
+            <a href="/obchodni-podminky" target="_blank" rel="noreferrer">
+              obchodními podmínkami
+            </a>
+            . Informace o zpracování osobních údajů najdete v{" "}
+            <a href="/ochrana-osobnich-udaju" target="_blank" rel="noreferrer">
+              zásadách ochrany osobních údajů
+            </a>
+            .
           </small>
         </aside>
       </form>

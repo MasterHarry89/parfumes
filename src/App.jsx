@@ -8,6 +8,7 @@ import { navigate } from "./lib/navigate";
 import { useAdminAccess, useSession } from "./lib/auth";
 import Account from "./Account";
 import Checkout from "./Checkout";
+import LegalPage, { legalLinks, legalPages } from "./Legal";
 import {
   money,
   familyOptions,
@@ -469,6 +470,8 @@ function App() {
       renderCatalog()
     ) : path.startsWith("/produkt/") ? (
       renderProduct()
+    ) : legalPages[path.slice(1)] ? (
+      <LegalPage slug={path.slice(1)} />
     ) : (
       <Home
         products={products}
@@ -585,9 +588,17 @@ function App() {
           </div>
           <div>
             <span className="eyebrow">Pomoc</span>
-            <button>Doprava a platba</button>
-            <button>Vrácení zboží</button>
-            <button>Kontakt</button>
+            <button onClick={() => navigate("/doprava-a-platba")}>Doprava a platba</button>
+            <button onClick={() => navigate("/odstoupeni-od-smlouvy")}>Vrácení zboží</button>
+            <button onClick={() => navigate("/kontakt")}>Kontakt</button>
+          </div>
+          <div>
+            <span className="eyebrow">Informace</span>
+            {legalLinks.map(([slug, label]) => (
+              <button key={slug} onClick={() => navigate(`/${slug}`)}>
+                {label}
+              </button>
+            ))}
           </div>
           <div>
             <span className="eyebrow">Buďte u toho</span>
@@ -1260,6 +1271,8 @@ function HomeContent({ products, onOpen, onShop }) {
     {
       icon: "✦",
       title: "Citrus",
+      // Tile label only; `title` must stay equal to the catalog filter value.
+      displayTitle: "Citrusové",
       description: "čerstvé a lehké",
       label: "Rodina vůně",
       tone: "category-coral",
@@ -1646,7 +1659,7 @@ function HomeContent({ products, onOpen, onShop }) {
             onClick={() => navigate(tileLink(family))}
             style={{ backgroundImage: `url(${family.image})` }}
           >
-            <strong>{family.title}</strong>
+            <strong>{family.displayTitle || family.title}</strong>
             <small>{family.description}</small>
           </button>
         ))}
