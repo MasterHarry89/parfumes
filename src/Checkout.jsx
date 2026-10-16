@@ -281,7 +281,7 @@ export default function Checkout({ cart, session, onPlaced }) {
             {!session && (
               <p className="checkout-hint">
                 Máte účet?{" "}
-                <button type="button" onClick={() => navigate("/ucet")}>
+                <button type="button" onClick={() => navigate("/ucet?zpet=pokladna")}>
                   Přihlaste se
                 </button>{" "}
                 a za nákup získáte body.

@@ -119,10 +119,34 @@ const loadProducts = async () => {
 // The admin lives in its own chunk so shoppers never download it.
 const AdminApp = lazy(() => import("./admin/AdminApp"));
 
+// The cart survives reloads and new tabs (e.g. the link in the sign-up e-mail).
+const CART_KEY = "eparfumes-cart";
+const loadCart = () => {
+  try {
+    const stored = JSON.parse(localStorage.getItem(CART_KEY));
+    // Drop anything malformed so a bad stored line can never crash every page load.
+    return Array.isArray(stored)
+      ? stored.filter(
+          (item) =>
+            item &&
+            typeof item.key === "string" &&
+            typeof item.name === "string" &&
+            typeof item.brand === "string" &&
+            typeof item.volume === "string" &&
+            Number.isFinite(item.price) &&
+            Number.isInteger(item.quantity) &&
+            item.quantity > 0,
+        )
+      : [];
+  } catch {
+    return [];
+  }
+};
+
 function App() {
   const [path, setPath] = useState(window.location.pathname);
   const [queryString, setQueryString] = useState(window.location.search);
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(loadCart);
   const [search, setSearch] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const [headerHidden, setHeaderHidden] = useState(false);
@@ -138,6 +162,14 @@ function App() {
   // Logged-in admins get shortcuts into the admin (e.g. editing a product).
   const session = useSession();
   const isAdmin = useAdminAccess(session).status === "ok";
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    } catch {
+      // Private mode or blocked storage: the cart just lives in memory.
+    }
+  }, [cart]);
 
   const refreshProducts = async () => setProducts(await loadProducts());
 
@@ -498,6 +530,7 @@ function App() {
       <Home
         products={products}
         onOpen={(id) => navigate(`/produkt/${id}`)}
+        onAdd={addToCart}
         onShop={() => navigate("/kolekce")}
       />
     );
@@ -1214,7 +1247,7 @@ function ProductCarousel({ title, eyebrow, products, onOpen, onAdd, badge }) {
   );
 }
 
-function Home({ products, onOpen, onShop }) {
+function Home({ products, onOpen, onAdd, onShop }) {
   const bestsellers = products
     .filter((product) =>
       `${product.tag || ""} ${product.name || ""}`
@@ -1251,7 +1284,7 @@ function Home({ products, onOpen, onShop }) {
           </button>
         </div>
       </section>
-      <HomeContent products={products} onOpen={onOpen} onShop={onShop} />
+      <HomeContent products={products} onOpen={onOpen} onAdd={onAdd} onShop={onShop} />
       <FaqBand />
     </div>
   );
@@ -1274,7 +1307,7 @@ const tileLink = (tile) => {
   return `/kolekce?family=${encodeURIComponent(tile.title)}`;
 };
 
-function HomeContent({ products, onOpen, onShop }) {
+function HomeContent({ products, onOpen, onAdd, onShop }) {
   const bestsellers = products.filter((product) =>
     `${product.tag || ""} ${product.name || ""}`
       .toLowerCase()
@@ -1666,7 +1699,7 @@ function HomeContent({ products, onOpen, onShop }) {
         badge="BESTSELLER"
         products={bestsellerItems}
         onOpen={onOpen}
-        onAdd={() => {}}
+        onAdd={onAdd}
       />
       <div className="section-heading secondary-heading">
         <div onClick={onShop}>
@@ -1706,7 +1739,7 @@ function HomeContent({ products, onOpen, onShop }) {
         badge="NOVINKA"
         products={newest}
         onOpen={onOpen}
-        onAdd={() => {}}
+        onAdd={onAdd}
       />
       <div className="occasion-strip">
         <div>

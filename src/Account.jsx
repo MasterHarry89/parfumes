@@ -37,7 +37,8 @@ function AuthForm() {
       const { data, error: authError } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: `${window.location.origin}/ucet` },
+        // Keeps ?zpet=pokladna so the confirmation link leads back to the checkout.
+        options: { emailRedirectTo: `${window.location.origin}/ucet${window.location.search}` },
       });
       if (authError) setError(authErrorMessage(authError));
       // With e-mail confirmation on, Supabase returns no session until the link is clicked.
@@ -189,7 +190,7 @@ function AccountOverview({ session, products }) {
                 <li key={order.id} className="order-row">
                   <div className="order-row-top">
                     <div>
-                      <strong>Objednávka #{String(order.id).slice(0, 8)}</strong>
+                      <strong>Objednávka č. {order.order_number ?? String(order.id).slice(0, 8)}</strong>
                       <small>{new Date(order.created_at).toLocaleDateString("cs-CZ")}</small>
                     </div>
                     <span className={`order-status order-status-${tone}`}>{label}</span>
@@ -245,6 +246,12 @@ function AccountOverview({ session, products }) {
 }
 
 export default function Account({ session, products }) {
+  // Coming from the checkout ("Přihlaste se"): once logged in, go straight back to it.
+  const returnToCheckout = new URLSearchParams(window.location.search).get("zpet") === "pokladna";
+  useEffect(() => {
+    if (session && returnToCheckout) navigate("/pokladna");
+  }, [session, returnToCheckout]);
+
   return (
     <main className="page-shell account-page">
       <h1>{session ? "Můj účet" : "Účet"}</h1>
