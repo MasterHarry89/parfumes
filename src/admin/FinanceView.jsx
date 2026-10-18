@@ -140,6 +140,7 @@ export default function FinanceView({ stock, orders, expenses, ready, labour, on
   const [error, setError] = useState("");
   const [revenueOpen, setRevenueOpen] = useState(false);
   const [expensesOpen, setExpensesOpen] = useState(false);
+  const [discountsOpen, setDiscountsOpen] = useState(false);
   const [openGroups, setOpenGroups] = useState([]);
   const toggleGroup = (key) =>
     setOpenGroups((open) => (open.includes(key) ? open.filter((item) => item !== key) : [...open, key]));
@@ -157,11 +158,20 @@ export default function FinanceView({ stock, orders, expenses, ready, labour, on
   const revenue = zeros();
   const orderCount = zeros();
   const revenueLines = [];
+  // Discounts given on paid orders, per code. Informational: the totals above are already after discount.
+  const discountMonths = zeros();
+  const discountLines = new Map();
   orders
     .filter((order) => countsAsRevenue(order.status) && yearOf(order.createdAt) === year)
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .forEach((order) => {
       const index = monthIndex(order.createdAt);
+      if (order.discountAmount > 0) {
+        const label = order.discountCode || "Bez kódu";
+        if (!discountLines.has(label)) discountLines.set(label, { label, months: zeros() });
+        discountLines.get(label).months[index] += order.discountAmount;
+        discountMonths[index] += order.discountAmount;
+      }
       revenue[index] += order.total;
       orderCount[index] += 1;
       const months = zeros();
@@ -196,6 +206,10 @@ export default function FinanceView({ stock, orders, expenses, ready, labour, on
   groups.forEach((group) => group.months.forEach((value, index) => (expenseMonths[index] += value)));
   const profit = revenue.map((value, index) => value - expenseMonths[index]);
 
+  const discountTotal = sum(discountMonths);
+  const discountList = [...discountLines.values()]
+    .map((line) => ({ ...line, total: sum(line.months) }))
+    .sort((a, b) => b.total - a.total);
   const revenueTotal = sum(revenue);
   const expenseTotal = sum(expenseMonths);
   const profitTotal = revenueTotal - expenseTotal;
@@ -231,7 +245,7 @@ export default function FinanceView({ stock, orders, expenses, ready, labour, on
           icon={FiDollarSign}
           label={`Obrat ${year}`}
           value={money(revenueTotal)}
-          note={`${sum(orderCount)} zaplacených objednávek`}
+          note={`${sum(orderCount)} zaplacených objednávek${discountTotal > 0 ? ` · slevy ${money(discountTotal)}` : ""}`}
           tone="lime"
         />
         <Metric icon={FiShoppingBag} label={`Výdaje ${year}`} value={money(expenseTotal)} note="nákupy, materiál, poplatky" />
@@ -303,6 +317,29 @@ export default function FinanceView({ stock, orders, expenses, ready, labour, on
                   </tr>
                 ))}
 
+              {discountTotal > 0 && (
+                <tr className="is-group">
+                  <th scope="row" title="Už odečtené z obratu, jen pro přehled">
+                    <Expander open={discountsOpen} onClick={() => setDiscountsOpen(!discountsOpen)}>
+                      Poskytnuté slevy
+                    </Expander>
+                  </th>
+                  {monthCells(discountMonths)}
+                  <td className="is-total">{kc(discountTotal)}</td>
+                </tr>
+              )}
+              {discountTotal > 0 &&
+                discountsOpen &&
+                discountList.map((line) => (
+                  <tr key={`discount-${line.label}`} className="is-child">
+                    <th scope="row" title={line.label}>
+                      {line.label}
+                    </th>
+                    {monthCells(line.months)}
+                    <td className="is-total">{kc(line.total)}</td>
+                  </tr>
+                ))}
+
               <tr className="is-strong is-line">
                 <th scope="row">
                   <Expander open={expensesOpen} onClick={() => setExpensesOpen(!expensesOpen)}>
@@ -366,7 +403,8 @@ export default function FinanceView({ stock, orders, expenses, ready, labour, on
         </div>
         <p className="adm-footnote adm-inset-note">
           Nákupy se počítají v měsíci, kdy jste je zaplatili. V měsících, kdy nakupujete zásoby, je zisk proto nižší a
-          později se to srovná. Do obratu se počítají jen zaplacené objednávky.
+          později se to srovná. Do obratu se počítají jen zaplacené objednávky, a to už po slevě. Řádek Poskytnuté slevy
+          ukazuje, kolik slevové kódy stály; od obratu se znovu neodečítá.
         </p>
       </Panel>
 

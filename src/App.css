@@ -1223,6 +1223,15 @@ footer p { margin-bottom: 22px; }
 .checkout-summary .primary-button:disabled { opacity: .6; transform: none; }
 .checkout-terms { color: var(--muted); font-size: 11px; text-align: center; }
 .checkout-error { color: #b3261e; font-size: 13px; margin: 0; }
+.discount-toggle { justify-self: start; color: var(--ink); font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.discount-field { display: grid; gap: 8px; }
+.discount-row { display: flex; gap: 8px; }
+.discount-row input { flex: 1; min-width: 0; border: 1px solid var(--line); padding: 10px 12px; font-size: 14px; background: var(--paper); text-transform: uppercase; letter-spacing: .04em; }
+.discount-row input::placeholder { text-transform: none; letter-spacing: 0; }
+.discount-row input:focus { outline: 2px solid var(--bronze); outline-offset: -1px; }
+.discount-applied { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 12px; background: var(--paper); border: 1px dashed var(--bronze); font-size: 13px; }
+.discount-applied button { color: var(--muted); font-size: 12px; text-decoration: underline; }
+.checkout-summary .checkout-discount dt, .checkout-summary .checkout-discount dd { color: var(--bronze); }
 .checkout-done { max-width: 720px; }
 .payment-box { border: 1px solid var(--line); background: #fff; padding: 24px; margin-bottom: 28px; display: grid; gap: 14px; }
 .payment-box h2 { font: 600 20px 'Space Grotesk', 'Manrope', sans-serif; margin: 0; }

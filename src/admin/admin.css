@@ -493,3 +493,10 @@
 .adm-ship-actions button:disabled { opacity: .5; cursor: default; }
 .adm-ship-message { display: block; font-size: 13px; line-height: 1.5; }
 .adm-ship-message ul { margin: 8px 0 0; padding-left: 18px; }
+
+/* Discount codes */
+.adm-form-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.adm-form-actions .adm-submit { margin-top: 0; }
+.adm-nowrap { white-space: nowrap; }
+.adm-icon-plain:hover { background: #f2f2f2; color: var(--ink); }
+.adm-order-sum .adm-discount dt, .adm-order-sum .adm-discount dd { color: #2f6b0f; }

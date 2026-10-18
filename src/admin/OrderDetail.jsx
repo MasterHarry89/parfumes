@@ -185,6 +185,12 @@ export default function OrderDetail({ order, onSaveStatus }) {
             <dt>Mezisoučet</dt>
             <dd>{money(subtotal)}</dd>
           </div>
+          {order.discountAmount > 0 && (
+            <div className="adm-discount">
+              <dt>Sleva {order.discountCode}</dt>
+              <dd>−{money(order.discountAmount)}</dd>
+            </div>
+          )}
           <div>
             <dt>Doprava</dt>
             <dd>{order.shippingPrice ? money(order.shippingPrice) : "Zdarma"}</dd>

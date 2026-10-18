@@ -8,6 +8,7 @@ import {
   FiLogOut,
   FiPackage,
   FiShoppingBag,
+  FiTag,
   FiTrendingUp,
 } from "react-icons/fi";
 
@@ -16,6 +17,7 @@ import { supabase } from "../lib/supabase";
 import { navigate } from "../lib/navigate";
 import { useAdminAccess, useSession } from "../lib/auth";
 import { packagingCost, priceFor, sampleVolumes, toList } from "../lib/catalog";
+import DiscountsView from "./DiscountsView";
 import FinanceView from "./FinanceView";
 import LaborView from "./LaborView";
 import PackagingView from "./PackagingView";
@@ -33,12 +35,13 @@ const pages = [
   // Not in the menu: reached with the "Nový produkt" button on the Produkty page.
   { path: "/admin/produkty/novy", key: "novy-produkt", title: "Nový produkt", hidden: true },
   { path: "/admin/objednavky", key: "objednavky", title: "Objednávky", icon: FiShoppingBag },
+  { path: "/admin/slevy", key: "slevy", title: "Slevy", icon: FiTag },
   { path: "/admin/prace", key: "prace", title: "Práce a čas", icon: FiClock },
   { path: "/admin/finance", key: "finance", title: "Finance", icon: FiTrendingUp },
 ];
 
 const loadAll = async () => {
-  const [products, inventory, orders, materials, expenses, tasks, settings] = await Promise.all([
+  const [products, inventory, orders, materials, expenses, tasks, settings, discounts] = await Promise.all([
     supabase.from("products").select("*").order("created_at", { ascending: false }),
     supabase.from("inventory").select("*"),
     supabase.from("orders").select("*").order("created_at", { ascending: false }),
@@ -46,6 +49,7 @@ const loadAll = async () => {
     supabase.from("expenses").select("*").order("spent_on", { ascending: false }),
     supabase.from("labor_tasks").select("*").order("created_at"),
     supabase.from("admin_settings").select("*"),
+    supabase.from("discount_codes").select("*").order("created_at", { ascending: false }),
   ]);
   const failed = [products, inventory, orders].find((result) => result.error);
   if (failed) throw failed.error;
@@ -71,6 +75,21 @@ const loadAll = async () => {
     hourlyRateKc: Number(
       (settings.data ?? []).find((setting) => setting.key === "hourly_rate")?.value?.kc || 0,
     ),
+    // Until supabase/discounts.sql has been run the table does not exist.
+    discountsReady: !discounts.error,
+    discounts: (discounts.data ?? []).map((code) => ({
+      id: code.id,
+      code: code.code,
+      kind: code.kind,
+      value: Number(code.value || 0),
+      validFrom: code.valid_from ?? "",
+      validTo: code.valid_to ?? "",
+      minOrder: Number(code.min_order || 0),
+      maxUses: code.max_uses ?? null,
+      oncePerCustomer: Boolean(code.once_per_customer),
+      active: code.active !== false,
+      note: code.note ?? "",
+    })),
     materialsReady: !materials.error,
     materials: (materials.data ?? []).map((material) => ({
       id: material.id,
@@ -105,6 +124,9 @@ const loadAll = async () => {
       shippingPrice: Number(order.shipping_price || 0),
       paymentMethod: order.payment_method ?? null,
       paymentFee: Number(order.payment_fee || 0),
+      discountId: order.discount_id ?? null,
+      discountCode: order.discount_code ?? null,
+      discountAmount: Number(order.discount_amount || 0),
       packetId: order.packeta_packet_id ?? null,
       barcode: order.packeta_barcode ?? null,
       packetStatus: order.packeta_status ?? null,
@@ -438,6 +460,15 @@ function AdminShell({ path, session, onCatalogChanged }) {
         expenses={data.expenses}
         ready={data.financeReady}
         labour={labour}
+        onReload={reload}
+      />
+    );
+  } else if (page.key === "slevy") {
+    content = (
+      <DiscountsView
+        ready={data.discountsReady}
+        codes={data.discounts}
+        orders={data.orders}
         onReload={reload}
       />
     );

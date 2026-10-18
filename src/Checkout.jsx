@@ -13,6 +13,7 @@ import {
   shippingPriceFor,
   startCardPayment,
 } from "./lib/checkout";
+import { discountErrorMessage, discountValueLabel, isValidCode, normalizeCode } from "./lib/discounts";
 
 // Messages for the exceptions raised by public.place_order().
 const orderErrors = {
@@ -26,9 +27,85 @@ const orderErrors = {
   invalid_shipping: "Vyberte prosím způsob dopravy.",
   invalid_payment: "Vyberte prosím způsob platby.",
 };
+// A refused discount code arrives as "discount_<reason>", e.g. discount_used_up.
+const discountFailure = (error) => error.message?.match(/discount_([a-z_]+)/)?.[1] ?? null;
 const orderErrorMessage = (error) =>
+  (discountFailure(error) && discountErrorMessage({ error: discountFailure(error) })) ??
   orderErrors[Object.keys(orderErrors).find((code) => error.message?.includes(code))] ??
   "Objednávku se nepodařilo odeslat. Zkuste to prosím znovu.";
+
+// "Máte slevový kód?" in the summary. The code is checked right away for the
+// preview; place_order() checks it again with the real prices.
+function DiscountField({ subtotal, email, discount, onChange }) {
+  const [open, setOpen] = useState(false);
+  const [text, setText] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const apply = async () => {
+    const code = normalizeCode(text);
+    if (!code) return setMessage("Zadejte slevový kód.");
+    if (!isValidCode(code)) return setMessage("Tento slevový kód neexistuje.");
+    setBusy(true);
+    setMessage("");
+    const { data, error } = await supabase.rpc("check_discount", {
+      p_code: code,
+      p_subtotal: subtotal,
+      p_email: email,
+    });
+    setBusy(false);
+    if (error) return setMessage(discountErrorMessage({}));
+    if (!data.ok) return setMessage(discountErrorMessage(data));
+    onChange(data);
+    setText("");
+  };
+
+  if (discount)
+    return (
+      <div className="discount-applied">
+        <span>
+          Kód <b>{discount.code}</b> · sleva {discountValueLabel(discount.kind, discount.value)}
+        </span>
+        <button type="button" onClick={() => onChange(null)}>
+          Odebrat
+        </button>
+      </div>
+    );
+
+  if (!open)
+    return (
+      <button type="button" className="discount-toggle" onClick={() => setOpen(true)}>
+        Máte slevový kód?
+      </button>
+    );
+
+  return (
+    <div className="discount-field">
+      <div className="discount-row">
+        <input
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+          // Enter would otherwise submit the whole order form.
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              apply();
+            }
+          }}
+          placeholder="Slevový kód"
+          aria-label="Slevový kód"
+          autoCapitalize="characters"
+          autoComplete="off"
+          autoFocus
+        />
+        <button type="button" className="checkout-secondary" onClick={apply} disabled={busy}>
+          {busy ? "Ověřuji…" : "Použít"}
+        </button>
+      </div>
+      {message && <p className="checkout-error">{message}</p>}
+    </div>
+  );
+}
 
 function Field({ label, children, wide }) {
   return (
@@ -180,6 +257,7 @@ export default function Checkout({ cart, session, onPlaced }) {
     paymentMethods.find((method) => method.enabled).key,
   );
   const [point, setPoint] = useState(null);
+  const [discount, setDiscount] = useState(null); // check_discount() answer for the applied code
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [placed, setPlaced] = useState(null);
@@ -200,8 +278,11 @@ export default function Checkout({ cart, session, onPlaced }) {
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shippingMethod = shippingMethods.find((method) => method.key === shipping);
   const paymentMethod = paymentMethods.find((method) => method.key === payment);
-  const shippingPrice = shippingPriceFor(shippingMethod, subtotal);
-  const total = subtotal + shippingPrice + paymentMethod.fee;
+  // The discount is taken off the goods only; free shipping is judged after it.
+  const discountAmount = discount ? Number(discount.amount) : 0;
+  const goods = subtotal - discountAmount;
+  const shippingPrice = shippingPriceFor(shippingMethod, goods);
+  const total = goods + shippingPrice + paymentMethod.fee;
   const setContactField = (field) => (event) =>
     setContact((current) => ({ ...current, [field]: event.target.value }));
   const setAddressField = (field) => (event) =>
@@ -225,6 +306,7 @@ export default function Checkout({ cart, session, onPlaced }) {
         shipping_point: shipping === "packeta_point" ? point : null,
         shipping_address: shipping === "packeta_home" ? address : null,
         payment_method: payment,
+        discount_code: discount?.code ?? null,
         items: cart.map((item) => ({
           product_id: item.id,
           volume: parseInt(item.volume, 10),
@@ -234,6 +316,8 @@ export default function Checkout({ cart, session, onPlaced }) {
     });
     setBusy(false);
     if (placeError) {
+      // E.g. the last use was taken meanwhile: drop the code so the totals are right again.
+      if (discountFailure(placeError)) setDiscount(null);
       setError(orderErrorMessage(placeError));
       return;
     }
@@ -299,7 +383,7 @@ export default function Checkout({ cart, session, onPlaced }) {
               value={shipping}
               onChange={setShipping}
               renderPrice={(method) => {
-                const price = shippingPriceFor(method, subtotal);
+                const price = shippingPriceFor(method, goods);
                 return price ? money(price) : "Zdarma";
               }}
             />
@@ -333,9 +417,9 @@ export default function Checkout({ cart, session, onPlaced }) {
                 </Field>
               </div>
             )}
-            {subtotal < FREE_SHIPPING_FROM && (
+            {goods < FREE_SHIPPING_FROM && (
               <p className="checkout-hint">
-                Do dopravy zdarma vám chybí {money(FREE_SHIPPING_FROM - subtotal)}.
+                Do dopravy zdarma vám chybí {money(FREE_SHIPPING_FROM - goods)}.
               </p>
             )}
           </section>
@@ -377,11 +461,18 @@ export default function Checkout({ cart, session, onPlaced }) {
               </li>
             ))}
           </ul>
+          <DiscountField subtotal={subtotal} email={contact.email} discount={discount} onChange={setDiscount} />
           <dl>
             <div>
               <dt>Mezisoučet</dt>
               <dd>{money(subtotal)}</dd>
             </div>
+            {discountAmount > 0 && (
+              <div className="checkout-discount">
+                <dt>Sleva {discount.code}</dt>
+                <dd>−{money(discountAmount)}</dd>
+              </div>
+            )}
             <div>
               <dt>Doprava</dt>
               <dd>{shippingPrice ? money(shippingPrice) : "Zdarma"}</dd>
