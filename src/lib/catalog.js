@@ -81,10 +81,17 @@ export const sampleVolumes = volumes.filter((volume) => !volume.future);
 export const priceFor = (product, volume) =>
   Number(product.prices?.[volume.value]) || product.price + volume.price;
 
-// Packaging cost (tenths of CZK) of ONE sample of the given size.
+// Packaging cost (tenths of CZK) of ONE sample of the given size. Materials used
+// once per order (boxes …) are left out; see orderPackagingCost.
 export const packagingCost = (materials, size) =>
   materials
-    .filter((material) => material.sizes.includes(size))
+    .filter((material) => material.unit !== "order" && material.sizes.includes(size))
+    .reduce((sum, material) => sum + material.unitCost * material.perSample, 0);
+
+// Packaging cost (tenths of CZK) added once to every order, whatever is in it.
+export const orderPackagingCost = (materials) =>
+  materials
+    .filter((material) => material.unit === "order")
     .reduce((sum, material) => sum + material.unitCost * material.perSample, 0);
 
 // Smallest price ending in 9 (9, 19, 29, ... 99, 109 ...) that reaches the target

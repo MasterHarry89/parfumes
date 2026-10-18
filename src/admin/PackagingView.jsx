@@ -2,16 +2,37 @@ import { useState } from "react";
 import { FiInfo, FiPlus, FiTrash2 } from "react-icons/fi";
 
 import { supabase } from "../lib/supabase";
-import { money, parseNumber, sampleVolumes, toStored } from "../lib/catalog";
+import { money, orderPackagingCost, parseNumber, sampleVolumes, toStored } from "../lib/catalog";
 import { recordExpense } from "./expenses";
 import NumberCell from "./NumberCell";
 
 const SIZES = sampleVolumes.map((volume) => volume.value);
 
-const saveError = (error) =>
-  error.code === "42P01" || /packaging_materials/.test(error.message)
+// Same choice as for labour: a vial goes into every sample, a box into every order.
+const units = [
+  { key: "sample", label: "na 1 vzorek" },
+  { key: "order", label: "na 1 objednávku" },
+];
+
+const saveError = (error) => {
+  if (/unit/.test(error.message ?? "") && /column|schema cache/.test(error.message ?? ""))
+    return "Materiál na objednávku zatím nejde uložit. Spusťte supabase/packaging-per-order.sql.";
+  return error.code === "42P01" || /packaging_materials/.test(error.message)
     ? "Tabulka materiálu ještě neexistuje. Spusťte supabase/pricing.sql."
     : `Uložení se nepovedlo: ${error.message}`;
+};
+
+function UnitSelect({ value, onChange, label, className }) {
+  return (
+    <select className={className} value={value} aria-label={label} onChange={(event) => onChange(event.target.value)}>
+      {units.map((unit) => (
+        <option key={unit.key} value={unit.key}>
+          {unit.label}
+        </option>
+      ))}
+    </select>
+  );
+}
 
 function SizeChips({ value, onChange, label }) {
   const toggle = (size) =>
@@ -41,6 +62,7 @@ function RestockForm({ materials, onReload }) {
   const [qty, setQty] = useState("");
   const [total, setTotal] = useState("");
   const [perSample, setPerSample] = useState("1");
+  const [unit, setUnit] = useState("sample");
   const [sizes, setSizes] = useState(SIZES);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState(null); // { type: "ok" | "error", text }
@@ -50,7 +72,8 @@ function RestockForm({ materials, onReload }) {
   );
   const quantity = parseNumber(qty);
   const totalKc = parseNumber(total);
-  const unitKc = quantity > 0 && totalKc >= 0 ? totalKc / quantity : null;
+  const unitKc = quantity > 0 && total.trim() !== "" && totalKc >= 0 ? totalKc / quantity : null;
+  const perOrder = unit === "order";
 
   const changeName = (value) => {
     setName(value);
@@ -59,6 +82,7 @@ function RestockForm({ materials, onReload }) {
     );
     if (match) {
       setPerSample(String(match.perSample));
+      setUnit(match.unit);
       setSizes(match.sizes);
     }
   };
@@ -68,8 +92,11 @@ function RestockForm({ materials, onReload }) {
     const usage = parseNumber(perSample);
     if (!name.trim()) return setMessage({ type: "error", text: "Zadejte název materiálu." });
     if (!(quantity > 0)) return setMessage({ type: "error", text: "Zadejte počet kusů větší než 0." });
-    if (!(totalKc >= 0)) return setMessage({ type: "error", text: "Zadejte celkovou cenu nákupu." });
-    if (!(usage >= 0)) return setMessage({ type: "error", text: "Spotřeba na vzorek musí být číslo od 0." });
+    if (total.trim() === "" || !(totalKc >= 0))
+      return setMessage({ type: "error", text: "Zadejte celkovou cenu nákupu." });
+    if (!(usage >= 0)) return setMessage({ type: "error", text: "Spotřeba musí být číslo od 0." });
+    // Only send `unit` when it matters, so per-sample materials keep working before the migration.
+    const unitPatch = perOrder || existing?.unit === "order" ? { unit } : {};
 
     setBusy(true);
     setMessage(null);
@@ -81,7 +108,7 @@ function RestockForm({ materials, onReload }) {
       const unitCost = (existing.stockQty * existing.unitCost + purchaseCost) / newQty;
       ({ error } = await supabase
         .from("packaging_materials")
-        .update({ stock_qty: newQty, unit_cost: unitCost, per_sample: usage, sizes })
+        .update({ stock_qty: newQty, unit_cost: unitCost, per_sample: usage, sizes, ...unitPatch })
         .eq("id", existing.id));
     } else {
       ({ error } = await supabase.from("packaging_materials").insert({
@@ -90,6 +117,7 @@ function RestockForm({ materials, onReload }) {
         unit_cost: purchaseCost / quantity,
         per_sample: usage,
         sizes,
+        ...unitPatch,
       }));
     }
     setBusy(false);
@@ -114,6 +142,7 @@ function RestockForm({ materials, onReload }) {
     setQty("");
     setTotal("");
     setPerSample("1");
+    setUnit("sample");
     setSizes(SIZES);
   };
 
@@ -160,14 +189,27 @@ function RestockForm({ materials, onReload }) {
           )}
         </label>
         <label className="pf-field">
-          <span className="pf-label">Spotřeba na 1 vzorek (ks)</span>
+          <span className="pf-label">Spotřeba (ks)</span>
           <input inputMode="decimal" value={perSample} onChange={(event) => setPerSample(event.target.value)} />
-          <small className="pf-hint">Třeba 1 lahvička, 1 krabička, 0,1 ks trávy.</small>
+          <small className="pf-hint">
+            {perOrder ? "Třeba 1 krabička nebo 0,2 ks trávy na objednávku." : "Třeba 1 lahvička nebo 1 nálepka na vzorek."}
+          </small>
         </label>
-        <div className="pf-field">
-          <span className="pf-label">Používá se u velikostí</span>
-          <SizeChips value={sizes} onChange={setSizes} label="Velikosti vzorku" />
-        </div>
+        <label className="pf-field">
+          <span className="pf-label">Počítá se</span>
+          <UnitSelect value={unit} onChange={setUnit} label="Počítá se" />
+          <small className="pf-hint">
+            {perOrder
+              ? "Jednou za objednávku, ať je v ní vzorků kolik chce. Do ceny vzorku se nepočítá."
+              : "U každého vzorku, přičte se k jeho ceně v cenotvorbě."}
+          </small>
+        </label>
+        {!perOrder && (
+          <div className="pf-field">
+            <span className="pf-label">Používá se u velikostí</span>
+            <SizeChips value={sizes} onChange={setSizes} label="Velikosti vzorku" />
+          </div>
+        )}
       </div>
       {message && (
         <p className={message.type === "ok" ? "adm-ok" : "adm-alert"} role={message.type === "ok" ? "status" : "alert"}>
@@ -217,8 +259,9 @@ export default function PackagingView({ materials, ready, packaging, onReload })
       <div className="adm-note">
         <FiInfo aria-hidden="true" />
         <p>
-          <strong>Jak se počítá obal:</strong> cena za kus × spotřeba na vzorek, sečteno přes všechny
-          materiály použité u dané velikosti. Výsledek se ukáže v cenotvorbě u každého nového produktu.
+          <strong>Jak se počítá obal:</strong> cena za kus × spotřeba. Materiál „na 1 vzorek“ (lahvička, nálepka) se
+          sečte pro každou velikost a ukáže se v cenotvorbě u produktu. Materiál „na 1 objednávku“ (krabička, výplň)
+          se počítá jednou za objednávku a do ceny vzorku se nepřičítá.
         </p>
       </div>
 
@@ -226,16 +269,20 @@ export default function PackagingView({ materials, ready, packaging, onReload })
         <header className="adm-card-head">
           <div>
             <span className="adm-eyebrow">Náklad na obal</span>
-            <h2>Jeden vzorek stojí na obalu</h2>
+            <h2>Kolik stojí obal</h2>
           </div>
         </header>
         <ul className="adm-cost-tiles">
           {sampleVolumes.map((volume) => (
             <li key={volume.value}>
-              <span>{volume.label}</span>
+              <span>Vzorek {volume.label}</span>
               <strong>{money(packaging[volume.value] ?? 0)}</strong>
             </li>
           ))}
+          <li>
+            <span>Na 1 objednávku</span>
+            <strong>{money(orderPackagingCost(materials))}</strong>
+          </li>
         </ul>
       </section>
 
@@ -264,9 +311,10 @@ export default function PackagingView({ materials, ready, packaging, onReload })
                     <th>Materiál</th>
                     <th>Na skladě</th>
                     <th>Cena / ks</th>
-                    <th>Spotřeba na vzorek</th>
+                    <th>Spotřeba</th>
+                    <th>Počítá se</th>
                     <th>Velikosti</th>
-                    <th className="adm-right">Náklad na vzorek</th>
+                    <th className="adm-right">Náklad</th>
                     <th />
                   </tr>
                 </thead>
@@ -291,19 +339,35 @@ export default function PackagingView({ materials, ready, packaging, onReload })
                           key={`use-${material.perSample}`}
                           value={material.perSample}
                           unit="ks"
-                          label={`Spotřeba ${material.name} na vzorek`}
+                          label={`Spotřeba ${material.name}`}
                           onSave={(next) => update(material.id, { per_sample: next })}
                         />
                       </td>
                       <td>
-                        <SizeChips
-                          value={material.sizes}
-                          label={`Velikosti pro ${material.name}`}
-                          onChange={(sizes) => update(material.id, { sizes })}
+                        <UnitSelect
+                          className="adm-select"
+                          value={material.unit}
+                          label={`Jak se počítá ${material.name}`}
+                          onChange={async (next) => {
+                            const updateError = await update(material.id, { unit: next });
+                            setError(updateError ?? "");
+                          }}
                         />
+                      </td>
+                      <td>
+                        {material.unit === "order" ? (
+                          <span className="adm-muted-text">každá objednávka</span>
+                        ) : (
+                          <SizeChips
+                            value={material.sizes}
+                            label={`Velikosti pro ${material.name}`}
+                            onChange={(sizes) => update(material.id, { sizes })}
+                          />
+                        )}
                       </td>
                       <td className="adm-right">
                         <strong>{money(material.unitCost * material.perSample)}</strong>
+                        <small className="adm-sub">{material.unit === "order" ? "na objednávku" : "na vzorek"}</small>
                       </td>
                       <td className="adm-right">
                         <button

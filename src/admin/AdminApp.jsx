@@ -96,7 +96,8 @@ const loadAll = async () => {
       name: material.name,
       stockQty: Number(material.stock_qty || 0),
       unitCost: Number(material.unit_cost || 0),
-      perSample: Number(material.per_sample ?? 1),
+      perSample: Number(material.per_sample ?? 1), // pieces per sample, or per order when unit = "order"
+      unit: material.unit === "order" ? "order" : "sample",
       sizes: toList(material.sizes).map(Number),
     })),
     inventory: (inventory.data ?? []).map((item) => ({
