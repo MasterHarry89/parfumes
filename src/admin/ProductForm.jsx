@@ -235,6 +235,7 @@ function ProductForm({
   existingIds,
   materials,
   labourPerSample,
+  labourPerOrder = 0,
   onSaved,
   onOpenProduct,
   onBack,
@@ -661,7 +662,8 @@ function ProductForm({
               rows={pricing}
               priceInputs={form.priceInputs}
               onChange={(priceInputs) => set({ priceInputs })}
-              materialCount={materials.length}
+              materials={materials}
+              labourPerOrder={labourPerOrder}
             />
           </Card>
           ) : (
@@ -737,7 +739,8 @@ function ProductForm({
               rows={pricing}
               priceInputs={form.priceInputs}
               onChange={(priceInputs) => set({ priceInputs })}
-              materialCount={materials.length}
+              materials={materials}
+              labourPerOrder={labourPerOrder}
             />
           </Card>
           )}

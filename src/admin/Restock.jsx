@@ -8,7 +8,7 @@ import PricingTable from "./PricingTable";
 
 // Restocking an existing scent: adds the new ml, averages the purchase cost per
 // ml with what is still on the shelf and lets you re-price every sample size.
-export default function RestockDialog({ item, materials, labourPerSample, onClose, onDone }) {
+export default function RestockDialog({ item, materials, labourPerSample, labourPerOrder = 0, onClose, onDone }) {
   const [bottle, setBottle] = useState("");
   const [ml, setMl] = useState("");
   const [total, setTotal] = useState("");
@@ -184,7 +184,7 @@ export default function RestockDialog({ item, materials, labourPerSample, onClos
           )}
         </div>
 
-        <PricingTable rows={rows} priceInputs={priceInputs} onChange={setPriceInputs} materialCount={materials.length} />
+        <PricingTable rows={rows} priceInputs={priceInputs} onChange={setPriceInputs} materials={materials} labourPerOrder={labourPerOrder} />
 
         {error && (
           <p className="adm-alert" role="alert">

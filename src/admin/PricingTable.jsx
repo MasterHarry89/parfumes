@@ -1,9 +1,11 @@
 import { money } from "../lib/catalog";
 import { navigate } from "../lib/navigate";
+import PriceBreakdown from "./PriceBreakdown";
 
 // Cost breakdown and editable selling price per sample size.
 // `rows` come from computePricing(); `priceInputs` are the prices typed over the suggestion.
-export default function PricingTable({ rows, priceInputs, onChange, materialCount }) {
+export default function PricingTable({ rows, priceInputs, onChange, materials, labourPerOrder = 0 }) {
+  const materialCount = materials.length;
   const showLabour = rows.some((row) => row.labour > 0);
 
   return (
@@ -92,6 +94,8 @@ export default function PricingTable({ rows, priceInputs, onChange, materialCoun
           )}
         </p>
       )}
+
+      <PriceBreakdown rows={rows} materials={materials} labourPerOrder={labourPerOrder} />
     </>
   );
 }

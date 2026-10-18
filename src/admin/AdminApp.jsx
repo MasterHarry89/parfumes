@@ -407,6 +407,7 @@ function AdminShell({ path, session, onCatalogChanged }) {
         existingIds={[]}
         materials={data.materials}
         labourPerSample={labour.perSample}
+        labourPerOrder={labour.perOrder}
         onSaved={async () => {
           await reload();
           await onCatalogChanged?.();
@@ -430,6 +431,7 @@ function AdminShell({ path, session, onCatalogChanged }) {
         existingIds={data.products.map((product) => product.id)}
         materials={data.materials}
         labourPerSample={labour.perSample}
+        labourPerOrder={labour.perOrder}
         onSaved={async () => {
           await reload();
           await onCatalogChanged?.();
@@ -542,6 +544,7 @@ function AdminShell({ path, session, onCatalogChanged }) {
             item={stock.find((item) => item.id === restocking.id) ?? restocking}
             materials={data.materials}
             labourPerSample={labour.perSample}
+            labourPerOrder={labour.perOrder}
             onClose={() => setRestocking(null)}
             onDone={async () => {
               await reload();

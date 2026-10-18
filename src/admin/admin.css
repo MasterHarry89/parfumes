@@ -500,3 +500,22 @@
 .adm-nowrap { white-space: nowrap; }
 .adm-icon-plain:hover { background: #f2f2f2; color: var(--ink); }
 .adm-order-sum .adm-discount dt, .adm-order-sum .adm-discount dd { color: #2f6b0f; }
+
+/* Price breakdown under the pricing table */
+.pb { margin-top: 20px; border-top: 1px solid #f0f0f0; padding-top: 16px; }
+.pb summary { cursor: pointer; font-size: 14px; font-weight: 600; }
+.pb > .pf-hint { margin-top: 12px; }
+.pb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-top: 14px; }
+.pb-card { padding: 16px; border: 1px solid #ececec; border-radius: 14px; background: #fafafa; }
+.pb-card h4 { margin: 0 0 10px; font-size: 14px; }
+.pb-card dl { display: grid; gap: 6px; margin: 0; }
+.pb-line { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 13px; }
+.pb-line dt { color: #4b4b4b; }
+.pb-line dt small { display: block; color: #8a8a8a; font-size: 11px; }
+.pb-line dd { margin: 0; font-weight: 600; white-space: nowrap; }
+.pb-sum { margin-top: 4px; padding-top: 8px; border-top: 1px solid #e5e5e5; }
+.pb-sum dt { color: var(--ink); font-weight: 600; }
+.pb-profit dd { color: #2f6b0f; }
+.pb-loss dd { color: #a32a17; }
+.pb-solo { margin-top: 14px; padding-top: 12px; border-top: 1px dashed #dcdcdc; }
+.pb-solo p { margin: 0 0 8px; color: #737373; font-size: 12px; font-weight: 600; }
