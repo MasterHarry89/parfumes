@@ -122,14 +122,14 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [x] Mnozstvi a tlacitko „Pridat do kosiku"
 - [ ] Buy now nebo rychly checkout, pokud ho podporuje platba
 - [ ] Upozorneni na vyprodani a moznost upozorneni na naskladneni
-- [ ] Popis vune, hlavni slozky, koncentrace a vydrz
+- [x] Popis vune, hlavni slozky, koncentrace a vydrz (koncentrace po spusteni `product-concentration.sql`)
 - [x] Informace o autenticite a zpusobu baleni
 - [x] Doprava, vraceni a podminky zobrazene blizko CTA
 - [ ] Recenze, hodnoceni a fotografie zakazniku
 - [x] FAQ accordion
 - [x] Doporučene a podobne produkty
-- [ ] Structured data `Product`, `Offer`, `AggregateRating`, pokud jsou data pravdiva
-- [ ] Open Graph a SEO metadata pro sdileni produktu
+- [x] Structured data `Product`, `Offer`, `AggregateRating`, pokud jsou data pravdiva
+- [x] Open Graph a SEO metadata pro sdileni produktu (edge funkce `product-meta.js`)
 
 ## 5. Kosik a checkout
 
@@ -225,8 +225,8 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 
 ## 10. SEO, vykon a analytika
 
-- [ ] Unikatni title, description, canonical a Open Graph pro kazdou indexovanou stranku
-- [ ] Sitemap, robots.txt a spravne 301 redirecty
+- [ ] Unikatni title, description, canonical a Open Graph pro kazdou indexovanou stranku (produkty kompletne, ostatni stranky jen title)
+- [ ] Sitemap, robots.txt a spravne 301 redirecty (sitemap a robots hotove; 301 az pri prechodu na vlastni domenu)
 - [ ] Schema.org pro produkty, breadcrumb, organizaci a recenze
 - [ ] SSR nebo prerendering pro SEO dulezite stranky, pokud to projekt vyzaduje
 - [ ] WebP/AVIF, responsive images, lazy loading a CDN
@@ -295,7 +295,9 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [ ] Zalozit testovaci zakaznicky ucet a vyzkouset jeho smazani
 - [x] Zrusit testovaci objednavky
 - [ ] Doplnit do zasad ochrany osobnich udaju: smazani uctu a jak dlouho uchovavame udaje z objednavek
-- [ ] Spustit `supabase/stock.sql` (sklad se od te chvile odecita sam pri objednavce; uz ho kvuli objednavkam nesnizovat rucne)
+- [x] Spustit `supabase/stock.sql` (sklad se od te chvile odecita sam pri objednavce; uz ho kvuli objednavkam nesnizovat rucne)
+- [x] Spustit `supabase/product-concentration.sql` (pak u vuni doplnit koncentraci v adminu)
+- [ ] Po nasazeni pridat web do Google Search Console a odeslat `/sitemap.xml` (znovu po prechodu na vlastni domenu)
 - [ ] Doplnit IČO a udaje provozovatele do pravnich stranek (v `src/Legal.jsx` je zatim zastupny text `[IČO]`)
 
 ### Pozdeji

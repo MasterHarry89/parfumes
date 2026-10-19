@@ -12,6 +12,7 @@ import LegalPage, { legalLinks, legalPages } from "./Legal";
 import {
   money,
   familyOptions,
+  concentrationLabel,
   genderLabel,
   genderOptions,
   occasionOptions,
@@ -110,6 +111,7 @@ const loadProducts = async () => {
     note: product.note || "Premium scent",
     tag: product.tag || "",
     gender: product.gender || "",
+    concentration: product.concentration || "",
     families: toList(product.families),
     notesTop: toList(product.notes_top),
     notesHeart: toList(product.notes_heart),
@@ -979,6 +981,12 @@ function ProductDetail({ product, products, onAdd, onOpen, onBack, onEdit }) {
                 <dd>{genderLabel[product.gender]}</dd>
               </div>
             )}
+            {concentrationLabel[product.concentration] && (
+              <div>
+                <dt>Koncentrace</dt>
+                <dd>{concentrationLabel[product.concentration]}</dd>
+              </div>
+            )}
             <div>
               <dt>Rodina vůně</dt>
               <dd>{product.family}</dd>
@@ -1126,7 +1134,10 @@ function ProductDetail({ product, products, onAdd, onOpen, onBack, onEdit }) {
             )}
           </div>
           <div className="pdp-info">
-            <span className="pdp-brand">{product.brand}</span>
+            <span className="pdp-brand">
+              {product.brand}
+              {concentrationLabel[product.concentration] && ` · ${concentrationLabel[product.concentration]}`}
+            </span>
             <h1>{product.name}</h1>
             <p className="pdp-lead">{product.description || product.note}</p>
 

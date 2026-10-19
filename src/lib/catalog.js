@@ -191,6 +191,18 @@ export const genderOptions = [
 ];
 export const genderLabel = Object.fromEntries(genderOptions.map((option) => [option.key, option.label]));
 
+// products.concentration (supabase/product-concentration.sql), strongest first.
+export const concentrationOptions = [
+  { key: "parfum", label: "Parfum", long: "Parfum (Extrait de Parfum)" },
+  { key: "edp", label: "EDP", long: "Eau de Parfum" },
+  { key: "edt", label: "EDT", long: "Eau de Toilette" },
+  { key: "edc", label: "EDC", long: "Eau de Cologne" },
+  { key: "oil", label: "Olej", long: "Parfémový olej" },
+];
+export const concentrationLabel = Object.fromEntries(
+  concentrationOptions.map((option) => [option.key, option.long]),
+);
+
 // Shop badges you can tick in the admin.
 export const tagOptions = ["Novinka", "Bestseller", "Akce"];
 

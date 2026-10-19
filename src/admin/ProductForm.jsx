@@ -5,6 +5,7 @@ import { supabase } from "../lib/supabase";
 import {
   familyOptions,
   computePricing,
+  concentrationOptions,
   genderOptions,
   money,
   occasionOptions,
@@ -29,6 +30,7 @@ const emptyForm = {
   description: "",
   tags: ["Novinka"],
   gender: "",
+  concentration: "",
   image: "",
   bottle: "",
   stock: "",
@@ -204,6 +206,7 @@ const formFromProduct = (product) => {
     description: product.description ?? "",
     tags: tagList(product.tag).filter((tag) => tagOptions.includes(tag)),
     gender: product.gender ?? "",
+    concentration: product.concentration ?? "",
     image: product.image ?? "",
     families: toList(product.families),
     seasons: toList(product.seasons),
@@ -366,6 +369,8 @@ function ProductForm({
       description: form.description.trim() || null,
       tag: [...form.tags, ...(editing ? extraTags(product) : [])].join(", ") || null,
       gender: form.gender,
+      // Sent only when used, so saving still works before product-concentration.sql is run.
+      ...(form.concentration || product?.concentration ? { concentration: form.concentration || null } : {}),
       active: form.active,
       notes_top: form.notesTop,
       notes_heart: form.notesHeart,
@@ -387,6 +392,8 @@ function ProductForm({
           ? "Zápis byl odmítnut. Chybí oprávnění pro přihlášeného uživatele (viz supabase/product-form.sql)."
           : productError.code === "23505"
             ? `Produkt s adresou „${id}“ už existuje.`
+            : /concentration/.test(productError.message)
+              ? "Databáze ještě nemá sloupec „Koncentrace“. Spusťte supabase/product-concentration.sql."
             : /gender/.test(productError.message)
               ? "Databáze ještě nemá sloupec „Pro koho“. Spusťte supabase/product-gender.sql."
             : /prices/.test(productError.message)
@@ -541,6 +548,27 @@ function ProductForm({
                     </button>
                   ))}
                 </div>
+              </div>
+              <div className="pf-field pf-wide">
+                <span className="pf-label">Koncentrace</span>
+                <div className="pf-segment" role="group" aria-label="Koncentrace vůně">
+                  {concentrationOptions.map((option) => (
+                    <button
+                      type="button"
+                      key={option.key}
+                      title={option.long}
+                      className={form.concentration === option.key ? "is-on" : ""}
+                      aria-pressed={form.concentration === option.key}
+                      // Clicking the chosen one again clears it (the field is optional).
+                      onClick={() =>
+                        set({ concentration: form.concentration === option.key ? "" : option.key })
+                      }
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+                <small className="pf-hint">Nepovinné. Zobrazí se na stránce produktu.</small>
               </div>
               <Field
                 label="Krátký popis"
