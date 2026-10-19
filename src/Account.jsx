@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "./lib/supabase";
 import { navigate } from "./lib/navigate";
 import { countsAsRevenue, money, orderPoints, orderStatusInfo, toList } from "./lib/catalog";
+import { forgetDetails } from "./lib/savedCheckout";
 
 const authErrorMessage = (error) => {
   const text = error.message ?? "";
@@ -13,7 +14,7 @@ const authErrorMessage = (error) => {
     return "E-mail ještě není potvrzený. Klikněte na odkaz, který jsme vám poslali.";
   if (/already registered/i.test(text)) return "Účet s tímto e-mailem už existuje. Přihlaste se.";
   if (/signups not allowed/i.test(text)) return "Registrace jsou momentálně vypnuté.";
-  if (/password/i.test(text)) return "Heslo musí mít alespoň 6 znaků.";
+  if (/password/i.test(text)) return "Heslo musí mít alespoň 8 znaků.";
   return text || "Něco se nepovedlo. Zkuste to znovu.";
 };
 
@@ -95,7 +96,8 @@ function AuthForm() {
           <input
             type="password"
             required
-            minLength={6}
+            // Only new passwords: older accounts may still have a 6-character one.
+            minLength={mode === "register" ? 8 : undefined}
             autoComplete={mode === "login" ? "current-password" : "new-password"}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
@@ -241,7 +243,56 @@ function AccountOverview({ session, products }) {
           </ul>
         </section>
       )}
+
+      <DeleteAccount />
     </>
+  );
+}
+
+// GDPR right to erasure. The server function deletes the login; orders stay for accounting.
+function DeleteAccount() {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  const remove = async () => {
+    if (
+      !window.confirm(
+        "Opravdu smazat účet? Přijdete o věrnostní body a přehled objednávek. " +
+          "Údaje z objednávek musíme ze zákona uchovat pro účetnictví. Tento krok nejde vrátit.",
+      )
+    )
+      return;
+    setBusy(true);
+    setError("");
+    const { data } = await supabase.auth.getSession();
+    try {
+      const response = await fetch("/.netlify/functions/account-delete", {
+        method: "POST",
+        headers: { authorization: `Bearer ${data.session?.access_token ?? ""}` },
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error ?? "Účet se nepodařilo smazat.");
+      forgetDetails();
+      await supabase.auth.signOut();
+      navigate("/");
+    } catch (deleteError) {
+      setError(deleteError.message);
+      setBusy(false);
+    }
+  };
+
+  return (
+    <section className="account-section account-danger">
+      <h2>Smazání účtu</h2>
+      <p className="account-muted">
+        Smaže přihlášení, body a propojení s objednávkami. Údaje z objednávek uchováváme jen po dobu, kterou
+        vyžaduje zákon.
+      </p>
+      {error && <p className="auth-error">{error}</p>}
+      <button className="account-delete" onClick={remove} disabled={busy}>
+        {busy ? "Mažu účet…" : "Smazat účet"}
+      </button>
+    </section>
   );
 }
 

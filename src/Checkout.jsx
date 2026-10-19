@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { supabase } from "./lib/supabase";
 import { navigate } from "./lib/navigate";
@@ -14,6 +14,7 @@ import {
   startCardPayment,
 } from "./lib/checkout";
 import { discountErrorMessage, discountValueLabel, isValidCode, normalizeCode } from "./lib/discounts";
+import { detailsFromOrder, forgetDetails, loadSavedDetails, saveDetails } from "./lib/savedCheckout";
 
 // Messages for the exceptions raised by public.place_order().
 const orderErrors = {
@@ -26,6 +27,8 @@ const orderErrors = {
   missing_address: "Vyplňte prosím doručovací adresu.",
   invalid_shipping: "Vyberte prosím způsob dopravy.",
   invalid_payment: "Vyberte prosím způsob platby.",
+  too_many_orders: "Z tohoto e-mailu přišlo za poslední hodinu příliš mnoho objednávek. Zkuste to prosím později.",
+  orders_input_size: "Některý údaj je příliš dlouhý. Zkraťte ho prosím.",
 };
 // A refused discount code arrives as "discount_<reason>", e.g. discount_used_up.
 const discountFailure = (error) => error.message?.match(/discount_([a-z_]+)/)?.[1] ?? null;
@@ -151,6 +154,7 @@ function PickupPoint({ point, onChange }) {
       <Field label="Výdejní místo Zásilkovny (název a adresa)" wide>
         <input
           required
+          maxLength={200}
           value={point?.name ?? ""}
           onChange={(event) => onChange(event.target.value ? { name: event.target.value } : null)}
           placeholder="např. Z-BOX Praha 4, Na Pankráci 12"
@@ -261,6 +265,51 @@ export default function Checkout({ cart, session, onPlaced }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [placed, setPlaced] = useState(null);
+  // Guests opt in to having their details kept in this browser (shared computers!).
+  const [remember, setRemember] = useState(() => loadSavedDetails() !== null);
+  const edited = useRef(false); // once the customer types, prefilled data never overwrites it
+  const userId = session?.user?.id ?? null;
+
+  // Prefill from the customer's latest order, or from this browser for a guest.
+  useEffect(() => {
+    let cancelled = false;
+    const apply = (details) => {
+      if (cancelled || !details || edited.current) return;
+      setContact((current) => ({
+        ...current,
+        name: current.name || details.name,
+        // A logged-in customer keeps the e-mail of their account.
+        email: current.email || details.email,
+        phone: current.phone || details.phone,
+      }));
+      if (details.shipping) setShipping(details.shipping);
+      if (details.payment) setPayment(details.payment);
+      if (details.point) setPoint(details.point);
+      if (details.address) setAddress(details.address);
+    };
+    if (!userId) {
+      apply(loadSavedDetails());
+      return () => {
+        cancelled = true;
+      };
+    }
+    supabase
+      .from("orders")
+      .select("customer_name, email, phone, shipping_method, payment_method, shipping_point, shipping_address")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .then(({ data }) => apply(data?.[0] ? detailsFromOrder(data[0]) : loadSavedDetails()));
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+
+  const toggleRemember = (next) => {
+    setRemember(next);
+    // Unticking forgets right away, not only after the next order.
+    if (!next) forgetDetails();
+  };
 
   if (placed) return <Confirmation order={placed} />;
 
@@ -321,6 +370,17 @@ export default function Checkout({ cart, session, onPlaced }) {
       setError(orderErrorMessage(placeError));
       return;
     }
+    // Logged-in customers get their details from the last order; only guests who asked are kept locally.
+    if (!session && remember)
+      saveDetails({
+        name: contact.name,
+        email: contact.email,
+        phone: contact.phone,
+        shipping,
+        payment,
+        point: shipping === "packeta_point" ? point : null,
+        address: shipping === "packeta_home" ? address : null,
+      });
     setPlaced({ ...data, email: contact.email, payment });
     onPlaced();
     window.scrollTo({ top: 0 });
@@ -332,7 +392,13 @@ export default function Checkout({ cart, session, onPlaced }) {
         ← Zpět do košíku
       </button>
       <h1>Pokladna</h1>
-      <form className="checkout-grid" onSubmit={submit}>
+      <form
+        className="checkout-grid"
+        onSubmit={submit}
+        onChange={() => {
+          edited.current = true;
+        }}
+      >
         <div className="checkout-steps">
           <section className="checkout-step">
             <h2>
@@ -340,12 +406,13 @@ export default function Checkout({ cart, session, onPlaced }) {
             </h2>
             <div className="checkout-fields">
               <Field label="Jméno a příjmení" wide>
-                <input required autoComplete="name" value={contact.name} onChange={setContactField("name")} />
+                <input required maxLength={120} autoComplete="name" value={contact.name} onChange={setContactField("name")} />
               </Field>
               <Field label="E-mail">
                 <input
                   required
                   type="email"
+                  maxLength={254}
                   autoComplete="email"
                   value={contact.email}
                   onChange={setContactField("email")}
@@ -355,6 +422,7 @@ export default function Checkout({ cart, session, onPlaced }) {
                 <input
                   required
                   type="tel"
+                  maxLength={40}
                   autoComplete="tel"
                   value={contact.phone}
                   onChange={setContactField("phone")}
@@ -370,6 +438,15 @@ export default function Checkout({ cart, session, onPlaced }) {
                 </button>{" "}
                 a za nákup získáte body.
               </p>
+            )}
+            {!session && (
+              <label className="checkout-remember">
+                <input type="checkbox" checked={remember} onChange={(event) => toggleRemember(event.target.checked)} />
+                <span>
+                  Zapamatovat mé údaje na tomto zařízení
+                  <small>Nezaškrtávejte na sdíleném nebo cizím počítači.</small>
+                </span>
+              </label>
             )}
           </section>
 
@@ -393,6 +470,7 @@ export default function Checkout({ cart, session, onPlaced }) {
                 <Field label="Ulice a číslo popisné" wide>
                   <input
                     required
+                    maxLength={120}
                     autoComplete="street-address"
                     value={address.street}
                     onChange={setAddressField("street")}
@@ -401,6 +479,7 @@ export default function Checkout({ cart, session, onPlaced }) {
                 <Field label="Město">
                   <input
                     required
+                    maxLength={80}
                     autoComplete="address-level2"
                     value={address.city}
                     onChange={setAddressField("city")}
@@ -409,6 +488,7 @@ export default function Checkout({ cart, session, onPlaced }) {
                 <Field label="PSČ">
                   <input
                     required
+                    maxLength={10}
                     autoComplete="postal-code"
                     inputMode="numeric"
                     value={address.zip}
@@ -439,7 +519,7 @@ export default function Checkout({ cart, session, onPlaced }) {
 
           <section className="checkout-step">
             <Field label="Poznámka k objednávce (nepovinné)" wide>
-              <textarea rows={3} value={contact.note} onChange={setContactField("note")} />
+              <textarea rows={3} maxLength={1000} value={contact.note} onChange={setContactField("note")} />
             </Field>
           </section>
         </div>

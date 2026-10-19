@@ -51,8 +51,8 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [x] Detail produktu `/produkt/:slug`
 - [ ] Vyhledavani `/search?q=...`
 - [x] Kosik `/kosik`
-- [ ] Checkout nebo presmerovani do checkoutu
-- [ ] Prihlaseni, registrace a ucet zakaznika
+- [x] Checkout nebo presmerovani do checkoutu
+- [x] Prihlaseni, registrace a ucet zakaznika
 - [ ] Sledovani objednavky
 - [ ] Kontakt a zakaznicka podpora
 - [ ] Doprava, platby, vraceni a obchodni podminky
@@ -134,18 +134,18 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 ## 5. Kosik a checkout
 
 - [ ] Mini cart po pridani produktu
-- [ ] Editace varianty a mnozstvi v kosiku
-- [ ] Odstraneni produktu
-- [ ] Vypocet mezisouctu, slevy, dopravy a celkove castky
-- [ ] Promo kod s validaci a zobrazenim duvodu zamitnuti
-- [ ] Progress bar nebo informace o hranici dopravy zdarma
+- [ ] Editace varianty a mnozstvi v kosiku (mnozstvi hotove, zmena varianty ne)
+- [x] Odstraneni produktu
+- [x] Vypocet mezisouctu, slevy, dopravy a celkove castky
+- [x] Promo kod s validaci a zobrazenim duvodu zamitnuti
+- [x] Progress bar nebo informace o hranici dopravy zdarma
 - [ ] Cross-sell, ale bez blokovani checkoutu
-- [ ] Ulozeni kosiku pri refreshi a navratu uzivatele
+- [x] Ulozeni kosiku pri refreshi a navratu uzivatele
 - [ ] Checkout bez zbytecneho rozptylovani
 - [ ] Validace adresy, kontaktu a doruceni
 - [ ] Platba kartou a dalsi relevantni metody
-- [ ] Souhlas s podminkami a ochrana osobnich udaju
-- [ ] Potvrzeni objednavky s cislem, shrnutim a dalsim postupem
+- [x] Souhlas s podminkami a ochrana osobnich udaju
+- [x] Potvrzeni objednavky s cislem, shrnutim a dalsim postupem
 - [ ] E-mailove udalosti: potvrzeni, platba, expedice, doruceni, storno
 - [ ] Osetrit chybu platby, vyprsenou cenu a vyprodani varianty
 
@@ -171,8 +171,8 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [ ] Navrhnout schema produktu, variant, cen, skladu, kategorii, znacek a obrazku
 - [ ] Rozlisit produkt, variantu a skladovou polozku
 - [ ] Ulozit SEO slugy a kanonicke URL
-- [ ] Resit ceny, dane, slevy a zaokrouhlovani na backendu
-- [ ] Nikdy neverit cenam a dostupnosti pouze z klienta
+- [x] Resit ceny, dane, slevy a zaokrouhlovani na backendu
+- [x] Nikdy neverit cenam a dostupnosti pouze z klienta
 - [ ] API pro seznam, detail, filtry, vyhledavani a souvisejici produkty
 - [ ] API pro kosik, checkout, objednavky a sledovani objednavky
 - [ ] Webhooky pro platbu, expedici a zmenu skladu
@@ -208,7 +208,7 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [ ] Pridat audit log, kdo a kdy zmenil sklad, cenu nebo naklad
 - [ ] Rozlisit trzby, variabilni naklady, dopravu, platebni poplatky, marketing a cisty zisk
 - [ ] Umoznit export objednavek a financnich reportu do CSV
-- [ ] Omezit admin prihlasenim a rolemi; nikdy nenechat admin data pouze na klientovi
+- [x] Omezit admin prihlasenim a rolemi; nikdy nenechat admin data pouze na klientovi
 
 ## 9. UX, pristupnost a responzivita
 
@@ -266,6 +266,45 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [ ] Ovladať hlavni tok pouze klavesnici a cteckou obrazovky
 - [ ] Otestovat dlouhe nazvy, chybejici obrazek a pomale pripojeni
 - [ ] Otestovat consent banner a odmitnuti marketingovych cookies
+
+## 12A. Bezpecnost a ochrana dat (audit 2026-10-19)
+
+### Hotovo v kodu
+
+- [x] Ceny, slevy a doprava se pocitaji jen v databazi (`place_order`), prohlizec je jen zobrazuje
+- [x] Tajne klice (Zasilkovna API heslo, Supabase service role) jen v Netlify funkcich, nikdy v gitu
+- [x] Netlify funkce Zasilkovny overuji admina; smazani uctu overuje prihlaseni na serveru
+- [x] Pravidla pristupu: zakaznik vidi jen sve objednavky; naklady, sklad, finance a slevy jen admin
+- [x] Bezpecnostni hlavicky a Content-Security-Policy (`public/_headers`), otestovano vcetne mapy Zasilkovny
+- [x] Limity delky poli v pokladne; v databazi limity velikosti a max. 5 objednavek z e-mailu za hodinu
+- [x] Ulozeni udaju hosta v prohlizeci jen se souhlasem (zaskrtavatko), odskrtnuti je hned smaze
+- [x] Dvoufazove prihlaseni (MFA) pro admin: Admin → Zabezpeceni
+- [x] Zakaznik si muze smazat ucet (Muj ucet → Smazat ucet); objednavky zustavaji pro ucetnictvi
+- [x] Registrace vyzaduje heslo min. 8 znaku
+- [x] Varovani u snadno uhodnutelnych slevovych kodu s vysokou hodnotou
+- [x] Pred odeslanim nezaplacenych dobirek do Zasilkovny musi admin potvrdit jejich seznam
+
+### Udelat ted (po nasazeni)
+
+- [ ] Spustit v Supabase SQL editoru v tomto poradi: `discounts.sql`, `packaging-per-order.sql`, `security-hardening.sql`
+- [ ] Spustit `supabase/security-check.sql` a vysledek poslat Claudovi (krome radku „admin“ ma byt prazdny; admin = jen vlastni e-mail)
+- [ ] Zapnout dvoufazove prihlaseni: Admin → Zabezpeceni (az po `security-hardening.sql`)
+- [ ] Supabase → Authentication → Passwords: minimalni delka hesla 8
+- [ ] Netlify → Environment variables: overit, ze `SUPABASE_SERVICE_ROLE_KEY` je nastaveny (potrebuje ho i mazani uctu) a ze `VITE_PACKETA_API_KEY` je API klic, ne API heslo
+- [ ] Na zivem webu projit nakup vcetne mapy Zasilkovny a v DevTools konzoli zkontrolovat, ze nejsou chyby „Content Security Policy“
+- [ ] Zalozit testovaci zakaznicky ucet a vyzkouset jeho smazani
+- [ ] Zrusit testovaci objednavky
+- [ ] Doplnit do zasad ochrany osobnich udaju: smazani uctu a jak dlouho uchovavame udaje z objednavek
+
+### Pozdeji
+
+- [ ] Vlastni domena + Resend → v Supabase zapnout potvrzovani e-mailu („Confirm email“)
+- [ ] Az bude potvrzovani zapnute: pripojit drivejsi objednavky hosta k uctu podle overeneho e-mailu
+- [ ] CAPTCHA (Cloudflare Turnstile): registrace (Supabase → Auth → Bot protection) a odeslani objednavky (overeni na serveru); limit 5 objednavek/hod jde obejit stridanim e-mailu
+- [ ] Omezit zkouseni slevovych kodu (spolu s Turnstile / serverovou funkci)
+- [ ] Overit zalohy databaze v Supabase (tarif, Point-in-Time Recovery nebo pravidelny export)
+- [ ] Pri pridani platebni brany nebo analytiky doplnit jejich domeny do `public/_headers` (jinak je prohlizec zablokuje)
+- [ ] Pravidelne: `npm audit` a `security-check.sql` po kazde zmene SQL
 
 ## 13. MVP poradi implementace
 

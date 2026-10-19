@@ -57,6 +57,13 @@ function DiscountForm({ draft, setDraft, onSaved, formRef }) {
   const [message, setMessage] = useState("");
   const set = (patch) => setDraft({ ...draft, ...patch });
   const editing = draft.id !== null;
+  // Codes can be tried out at the checkout, so valuable ones should not be guessable.
+  const draftValue = parseNumber(draft.value);
+  const guessable =
+    normalizeCode(draft.code).length < 9 &&
+    (draft.kind === "percent" ? draftValue >= 20 : draftValue >= 200) &&
+    !draft.oncePerCustomer &&
+    !draft.maxUses;
 
   const submit = async (event) => {
     event.preventDefault();
@@ -113,7 +120,14 @@ function DiscountForm({ draft, setDraft, onSaved, formRef }) {
             placeholder="např. PODZIM10"
             autoComplete="off"
           />
-          <small className="pf-hint">Zákazník ho může psát malými i velkými písmeny.</small>
+          {guessable ? (
+            <small className="pf-hint pf-warn">
+              Vysoká sleva s krátkým kódem: kódy jako SLEVA50 se dají uhodnout. Přidejte náhodnou část, např.{" "}
+              {normalizeCode(draft.code) || "SLEVA"}-7KQ2.
+            </small>
+          ) : (
+            <small className="pf-hint">Zákazník ho může psát malými i velkými písmeny.</small>
+          )}
         </label>
         <label className="pf-field">
           <span className="pf-label">Typ slevy</span>

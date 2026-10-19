@@ -398,8 +398,21 @@ export function OrdersView({ orders, onReload }) {
     setBusy(null);
   };
 
-  const sendToPacketa = () =>
-    run("create", async () => {
+  const sendToPacketa = () => {
+    // Unpaid cash-on-delivery orders are the cheapest way to make us pay for fake
+    // parcels, so they need a conscious check before going out.
+    const unpaidCod = readyToShip.filter((order) => String(order.status).toLowerCase() === "pending");
+    if (
+      unpaidCod.length > 0 &&
+      !window.confirm(
+        `Mezi objednávkami je ${unpaidCod.length} nezaplacených dobírek. Zkontrolujte, že vypadají skutečně ` +
+          `(jméno, telefon, adresa):\n\n${unpaidCod
+            .map((order) => `${orderLabel(order)} · ${order.customer} · ${order.phone || "bez telefonu"}`)
+            .join("\n")}\n\nOdeslat všechny do Zásilkovny?`,
+      )
+    )
+      return;
+    return run("create", async () => {
       const { results } = await createPackets(readyToShip.map((order) => order.id));
       const failed = results.filter((result) => !result.ok);
       const byId = new Map(orders.map((order) => [order.id, order]));
@@ -413,6 +426,7 @@ export function OrdersView({ orders, onReload }) {
       });
       await onReload();
     });
+  };
 
   const printLabels = () =>
     run("labels", () => downloadLabels(awaitingLabel.map((order) => order.id)));

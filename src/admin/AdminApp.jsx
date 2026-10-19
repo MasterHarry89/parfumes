@@ -7,6 +7,7 @@ import {
   FiHome,
   FiLogOut,
   FiPackage,
+  FiShield,
   FiShoppingBag,
   FiTag,
   FiTrendingUp,
@@ -15,7 +16,7 @@ import {
 import "./admin.css";
 import { supabase } from "../lib/supabase";
 import { navigate } from "../lib/navigate";
-import { useAdminAccess, useSession } from "../lib/auth";
+import { useAdminAccess, useSecondFactor, useSession } from "../lib/auth";
 import { packagingCost, priceFor, sampleVolumes, toList } from "../lib/catalog";
 import DiscountsView from "./DiscountsView";
 import FinanceView from "./FinanceView";
@@ -23,6 +24,7 @@ import LaborView from "./LaborView";
 import PackagingView from "./PackagingView";
 import ProductForm from "./ProductForm";
 import ProductsView from "./ProductsView";
+import SecurityView, { MfaChallenge } from "./SecurityView";
 import RestockDialog from "./Restock";
 import OrderDetail from "./OrderDetail";
 import { DashboardView, InventoryView, OrdersView, orderLabel } from "./views";
@@ -38,6 +40,7 @@ const pages = [
   { path: "/admin/slevy", key: "slevy", title: "Slevy", icon: FiTag },
   { path: "/admin/prace", key: "prace", title: "Práce a čas", icon: FiClock },
   { path: "/admin/finance", key: "finance", title: "Finance", icon: FiTrendingUp },
+  { path: "/admin/zabezpeceni", key: "zabezpeceni", title: "Zabezpečení", icon: FiShield },
 ];
 
 const loadAll = async () => {
@@ -475,6 +478,8 @@ function AdminShell({ path, session, onCatalogChanged }) {
         onReload={reload}
       />
     );
+  } else if (page.key === "zabezpeceni") {
+    content = <SecurityView />;
   } else if (page.key === "prace") {
     content = (
       <LaborView
@@ -560,9 +565,16 @@ function AdminShell({ path, session, onCatalogChanged }) {
 export default function AdminApp({ path, onCatalogChanged }) {
   const session = useSession();
   const access = useAdminAccess(session);
+  const secondFactor = useSecondFactor(session);
 
   if (session === undefined) return <Screen><p className="adm-lead">Načítám…</p></Screen>;
   if (!session) return <AdminLogin />;
+  if (secondFactor === "needs-code")
+    return (
+      <Screen>
+        <MfaChallenge onSignOut={() => supabase.auth.signOut()} />
+      </Screen>
+    );
   if (access.status === "checking") return <Screen><p className="adm-lead">Ověřuji přístup…</p></Screen>;
   if (access.status !== "ok") return <AccessProblem access={access} session={session} />;
   return <AdminShell path={path} session={session} onCatalogChanged={onCatalogChanged} />;

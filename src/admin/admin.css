@@ -519,3 +519,15 @@
 .pb-loss dd { color: #a32a17; }
 .pb-solo { margin-top: 14px; padding-top: 12px; border-top: 1px dashed #dcdcdc; }
 .pb-solo p { margin: 0 0 8px; color: #737373; font-size: 12px; font-weight: 600; }
+.pf-warn { color: #8a5a00; }
+
+/* Two-factor login */
+.adm-mfa { display: grid; justify-items: start; gap: 12px; }
+.adm-mfa p { margin: 0; color: #4b4b4b; font-size: 14px; }
+.adm-mfa ol { margin: 0; padding-left: 18px; color: #4b4b4b; font-size: 14px; line-height: 1.7; }
+.adm-mfa code { font-size: 12px; word-break: break-all; }
+.adm-qr { width: 180px; height: 180px; padding: 8px; border: 1px solid #ececec; border-radius: 12px; background: #fff; }
+.adm-code-input { width: 180px; height: 48px; padding: 0 14px; border: 1px solid #e5e5e5; border-radius: 12px; font-size: 22px; letter-spacing: .3em; text-align: center; font-variant-numeric: tabular-nums; }
+.adm-code-input:focus { outline: 2px solid #171717; outline-offset: -1px; }
+.adm-login .adm-code-input { width: 100%; }
+.adm-login-icon { width: 28px; height: 28px; }

@@ -1075,6 +1075,11 @@ footer p { margin-bottom: 22px; }
 .points-card strong { font: 600 54px 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.04em; line-height: 1; }
 .points-card small { color: rgba(255, 255, 255, .7); font-size: 12px; }
 .account-section { margin-bottom: 44px; }
+.account-danger { padding-top: 24px; border-top: 1px solid var(--line); }
+.account-danger p { max-width: 520px; }
+.account-delete { margin-top: 12px; border: 1px solid #b3261e; color: #b3261e; padding: 10px 16px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; background: #fff; }
+.account-delete:hover:not(:disabled) { background: #b3261e; color: #fff; }
+.account-delete:disabled { opacity: .6; cursor: wait; }
 .account-section h2 { font: 600 24px 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.02em; margin: 0 0 16px; }
 .account-empty { border: 1px dashed var(--line); padding: 28px; display: grid; justify-items: start; gap: 14px; }
 .account-empty p { margin: 0; color: var(--muted); font-size: 13px; }
@@ -1223,6 +1228,9 @@ footer p { margin-bottom: 22px; }
 .checkout-summary .primary-button:disabled { opacity: .6; transform: none; }
 .checkout-terms { color: var(--muted); font-size: 11px; text-align: center; }
 .checkout-error { color: #b3261e; font-size: 13px; margin: 0; }
+.checkout-remember { display: flex; align-items: flex-start; gap: 10px; margin-top: 14px; font-size: 13px; cursor: pointer; }
+.checkout-remember input { margin-top: 3px; accent-color: var(--ink); }
+.checkout-remember small { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
 .discount-toggle { justify-self: start; color: var(--ink); font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 .discount-field { display: grid; gap: 8px; }
 .discount-row { display: flex; gap: 8px; }
