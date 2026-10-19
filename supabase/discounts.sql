@@ -1,6 +1,8 @@
 -- Discount codes: the codes table, the discount stored on orders, the code check
 -- for the checkout preview and place_order() with discounts.
 -- Run once in the Supabase SQL editor, after checkout.sql.
+-- NOTE: stock.sql replaces place_order() with a version that also checks stock.
+-- If you ever re-run this file, run stock.sql again afterwards.
 --
 -- Rules (keep in sync with src/lib/discounts.js, which only formats messages):
 --   * the discount applies to the goods only, never to shipping or the COD fee;

@@ -85,7 +85,7 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [x] Argumenty duvery: autenticita, rychle odeslani, doprava, podpora
 - [ ] Recenze zakazniku s hodnocenim a overenim
 - [x] FAQ blok pro velikost vzorku, vydrz a autenticitu
-- [ ] Newsletter s jasnym benefitem (pole v paticce zatim nic neuklada)
+- [ ] Newsletter s jasnym benefitem (pole z paticky docasne odebrane; vratit az s e-maily z vlastni domeny a souhlasem)
 - [ ] Responzivni galerie nebo editorialni blok s vlastnimi fotografiemi
 - [ ] Lazy loading obrazku a rezervovane rozmery proti layout shiftu
 
@@ -100,7 +100,7 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [ ] Filtr podle ceny
 - [x] Filtr dostupnosti a akce
 - [ ] Mobilni filter drawer s moznosti vymazat filtry
-- [ ] URL query params pro sdilitelne a obnovitelne filtrovani
+- [x] URL query params pro sdilitelne a obnovitelne filtrovani
 - [ ] Pagination nebo infinite scroll s pristupnym ovladanim
 - [x] Empty state pri nulovem vysledku
 - [ ] Loading skeleton pro grid a filtry
@@ -116,7 +116,7 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [ ] Galerie fotografii produktu s mobilnim swipe
 - [x] Nazev, znacka, typ vune a cilova skupina
 - [x] Cena za vybranou variantu
-- [ ] Dostupnost a odhad odeslani (zatim natvrdo „Skladem“, neodviji se od skutecneho skladu ml)
+- [x] Dostupnost a odhad odeslani (Skladem / Posledni kusy / Vyprodano podle ml ve skladu; plati po spusteni `stock.sql`)
 - [x] Volba objemu a typu baleni jako varianty
 - [x] Jednoznacne oznaceni varianty, jednotek a ceny
 - [x] Mnozstvi a tlacitko „Pridat do kosiku"
@@ -163,7 +163,7 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [ ] Definovat typy `Product`, `Variant`, `Brand`, `Collection`, `CartItem`, `Order`
 - [ ] Centralizovat API klienta, chyby a loading stavy
 - [ ] Implementovat persistenci kosiku a preferenci souhlasu
-- [ ] Osetrit 404, globalni chyby a offline stav
+- [ ] Osetrit 404, globalni chyby a offline stav (404 a globalni chyby hotove, offline ne)
 - [x] Lazy-load rout a tezkych komponent
 
 ## 7. Data a backend
@@ -199,10 +199,10 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [x] Admin objednavky se stavy K vyrobe, Zaplaceno, Odeslano a Dokonceno
 - [x] Admin finance s trzby, naklady, ziskem a marzi po jednotlivych vunich
 - [x] U kazde vune evidovat nakupni cenu za 1 ml, obal, rozprašovac, etiketu a praci
-- [ ] Pocitat dostupnost podle zvolene varianty: `floor(stockMl / requestedMl)`
-- [ ] Pri vytvoreni objednavky pouze rezervovat objem; pri potvrzene platbe ho atomicky odepsat
-- [ ] Pri storno nebo refundaci vratit rezervovany objem podle realneho stavu vyroby
-- [ ] Zablokovat objednavku, pokud neni dostatek ml nebo se mezitim zmenila cena
+- [x] Pocitat dostupnost podle zvolene varianty: `floor(stockMl / requestedMl)`
+- [x] Pri vytvoreni objednavky pouze rezervovat objem; pri potvrzene platbe ho atomicky odepsat (reseno odectenim pri objednavce, zruseni ml vrati)
+- [x] Pri storno nebo refundaci vratit rezervovany objem podle realneho stavu vyroby
+- [x] Zablokovat objednavku, pokud neni dostatek ml nebo se mezitim zmenila cena
 - [ ] V objednavce evidovat konkretni spotrebu: vune, ml, obal, etiketa a stav vyroby
 - [ ] Evidovat pohyby skladu: naskladneni, rezervace, spotreba, vraceni, korekce a duvod
 - [ ] Pridat audit log, kdo a kdy zmenil sklad, cenu nebo naklad
@@ -253,7 +253,7 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 
 - [x] Navstivit homepage na mobilu a desktopu
 - [ ] Najit produkt pres menu, kolekci i vyhledavani
-- [ ] Filtrovat kolekci a obnovit stranku
+- [x] Filtrovat kolekci a obnovit stranku
 - [ ] Otevrit quick view a zvolit variantu
 - [x] Otevrit produkt, zmenit variantu, pridat mnozstvi a pridat do kosiku
 - [x] Obnovit stranku s naplnenym kosikem
@@ -262,7 +262,7 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [x] Dokoncit uspesnou objednavku v testovacim prostredi
 - [ ] Otestovat zamitnutou platbu a navrat do kosiku
 - [ ] Otestovat vyprodanou variantu
-- [ ] Otestovat 404 a API chybu
+- [ ] Otestovat 404 a API chybu (404 otestovana)
 - [ ] Ovladať hlavni tok pouze klavesnici a cteckou obrazovky
 - [ ] Otestovat dlouhe nazvy, chybejici obrazek a pomale pripojeni
 - [ ] Otestovat consent banner a odmitnuti marketingovych cookies
@@ -295,6 +295,7 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [ ] Zalozit testovaci zakaznicky ucet a vyzkouset jeho smazani
 - [x] Zrusit testovaci objednavky
 - [ ] Doplnit do zasad ochrany osobnich udaju: smazani uctu a jak dlouho uchovavame udaje z objednavek
+- [ ] Spustit `supabase/stock.sql` (sklad se od te chvile odecita sam pri objednavce; uz ho kvuli objednavkam nesnizovat rucne)
 - [ ] Doplnit IČO a udaje provozovatele do pravnich stranek (v `src/Legal.jsx` je zatim zastupny text `[IČO]`)
 
 ### Pozdeji

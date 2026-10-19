@@ -32,8 +32,13 @@ const orderErrors = {
 };
 // A refused discount code arrives as "discount_<reason>", e.g. discount_used_up.
 const discountFailure = (error) => error.message?.match(/discount_([a-z_]+)/)?.[1] ?? null;
+// "out_of_stock <name>": someone bought the last ml meanwhile.
+const stockFailure = (error) => error.message?.match(/out_of_stock\s*(.*)$/)?.[1]?.trim() ?? null;
 const orderErrorMessage = (error) =>
   (discountFailure(error) && discountErrorMessage({ error: discountFailure(error) })) ??
+  (stockFailure(error) !== null
+    ? `Vůni ${stockFailure(error) || ""} už nemáme skladem v požadovaném množství. Upravte prosím košík.`.replace("  ", " ")
+    : null) ??
   orderErrors[Object.keys(orderErrors).find((code) => error.message?.includes(code))] ??
   "Objednávku se nepodařilo odeslat. Zkuste to prosím znovu.";
 

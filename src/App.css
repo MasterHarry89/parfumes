@@ -251,7 +251,7 @@ em { color: var(--bronze); font-style: italic; }
 .brand-row { padding-top: 56px; padding-bottom: 70px; }
 .brand-row > div { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding: 33px 0 20px; font: 600 22px 'Cormorant Garamond', serif; }
 footer { background: var(--ink); color: #f7f3ed; padding: 64px 5vw 25px; }
-.footer-top { max-width: 1240px; margin: auto; display: grid; grid-template-columns: 1.4fr .8fr .8fr 1fr 1.2fr; gap: 40px; padding-bottom: 70px; }
+.footer-top { max-width: 1240px; margin: auto; display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 70px; }
 footer .wordmark { color: #fff; display: block; margin-bottom: 20px; }
 footer .eyebrow { color: var(--gold); margin-bottom: 19px; }
 footer button { color: #aaa59b; display: block; padding: 5px 0; font-size: 12px; }
@@ -1273,3 +1273,9 @@ footer p { margin-bottom: 22px; }
 .crash-page { display: grid; justify-items: center; gap: 14px; text-align: center; padding-top: 80px; padding-bottom: 80px; }
 .crash-page p { color: var(--muted); max-width: 420px; margin: 0; }
 .crash-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 8px; }
+.empty-cart h1 { font: 600 34px 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.03em; margin: 12px 0 8px; }
+.empty-cart p { color: var(--muted); margin: 0 0 24px; }
+.stock-status.is-low i { background: #e0a100; box-shadow: 0 0 0 4px rgba(224, 161, 0, .18); }
+.stock-status.is-out i { background: #b3261e; box-shadow: 0 0 0 4px rgba(179, 38, 30, .15); }
+.product-tag.tag-sold-out { background: #2b241f !important; color: #fff !important; border-color: transparent !important; }
+.product-card.is-sold-out .product-image img { opacity: .55; }

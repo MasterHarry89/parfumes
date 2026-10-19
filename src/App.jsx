@@ -81,19 +81,23 @@ const catalogTagOptions = [
 const shopGenderOptions = genderOptions.filter((option) => option.key !== "women");
 
 const loadProducts = async () => {
-  const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .eq("active", true);
+  const [{ data, error }, availability] = await Promise.all([
+    supabase.from("products").select("*").eq("active", true),
+    // ml left per product (capped, never costs); fails harmlessly before stock.sql is run.
+    supabase.rpc("product_availability"),
+  ]);
 
   if (error) {
     console.error("loadProducts error:", error);
     return [];
   }
+  const mlLeft = new Map((availability.data ?? []).map((row) => [row.product_id, row.ml_left]));
 
   return (data ?? []).map((product) => ({
     ...product,
     id: product.id,
+    // null = stock not tracked (always available)
+    mlLeft: mlLeft.get(String(product.id)) ?? null,
     name: product.name,
     brand: product.brand || "Presence",
     family: product.family || "Dřevitá",
@@ -115,6 +119,14 @@ const loadProducts = async () => {
     occasions: toList(product.occasions),
   }));
 };
+
+// Stock: a size is sold out when fewer ml are left than it needs.
+const soldOut = (product, ml = 1) => product.mlLeft !== null && product.mlLeft !== undefined && product.mlLeft < ml;
+// ml of one product already in the cart, all sizes together (optionally without one line).
+const mlInCart = (items, productId, exceptKey) =>
+  items
+    .filter((item) => item.id === productId && item.key !== exceptKey)
+    .reduce((sum, item) => sum + parseInt(item.volume, 10) * item.quantity, 0);
 
 // The admin lives in its own chunk so shoppers never download it.
 const AdminApp = lazy(() => import("./admin/AdminApp"));
@@ -171,7 +183,11 @@ function App() {
     }
   }, [cart]);
 
-  const refreshProducts = async () => setProducts(await loadProducts());
+  const [productsLoaded, setProductsLoaded] = useState(false);
+  const refreshProducts = async () => {
+    setProducts(await loadProducts());
+    setProductsLoaded(true);
+  };
 
   useEffect(() => {
     refreshProducts();
@@ -196,7 +212,26 @@ function App() {
     setTagFilter(params.get("tag") ?? "");
     setSeasonFilter(params.getAll("season"));
     setOccasionFilter(params.getAll("occasion"));
+    setSortOrder(params.get("razeni") ?? "recommended");
   }, [queryString]);
+
+  // ...and every change made in the filter panel goes back into the address, so a
+  // refresh keeps the selection and it can be shared as a link. replaceState does
+  // not fire popstate, so this never loops back into the effect above.
+  useEffect(() => {
+    if (path !== "/kolekce") return;
+    const params = new URLSearchParams();
+    if (tagFilter) params.set("tag", tagFilter);
+    genderFilter.forEach((value) => params.append("gender", value));
+    familyFilter.forEach((value) => params.append("family", value));
+    seasonFilter.forEach((value) => params.append("season", value));
+    occasionFilter.forEach((value) => params.append("occasion", value));
+    if (sortOrder !== "recommended") params.set("razeni", sortOrder);
+    const query = params.toString();
+    const next = query ? `/kolekce?${query}` : "/kolekce";
+    if (next !== window.location.pathname + window.location.search)
+      window.history.replaceState(window.history.state, "", next);
+  }, [path, tagFilter, genderFilter, familyFilter, seasonFilter, occasionFilter, sortOrder]);
 
   const toggleGender = (key) =>
     setGenderFilter((current) =>
@@ -236,11 +271,16 @@ function App() {
     // One line per product + volume; adding the same combination again only
     // bumps its quantity so the cart can be edited line by line.
     const key = `${product.id}-${volume.label}`;
-    setCart((items) =>
-      items.some((item) => item.key === key)
-        ? items.map((item) =>
-            item.key === key ? { ...item, quantity: item.quantity + quantity } : item,
-          )
+    const left = (products.find((item) => item.id === product.id) ?? product).mlLeft ?? null;
+    setCart((items) => {
+      // Never more in the cart than is in stock (the order checks it again).
+      const count =
+        left === null
+          ? quantity
+          : Math.min(quantity, Math.floor((left - mlInCart(items, product.id)) / volume.value));
+      if (count <= 0) return items;
+      return items.some((item) => item.key === key)
+        ? items.map((item) => (item.key === key ? { ...item, quantity: item.quantity + count } : item))
         : [
             ...items,
             {
@@ -248,10 +288,15 @@ function App() {
               key,
               volume: volume.label,
               price: priceFor(product, volume),
-              quantity,
+              quantity: count,
             },
-          ],
-    );
+          ];
+    });
+  };
+  // Room for one more piece of this cart line, given the stock.
+  const canAddOne = (item) => {
+    const left = products.find((product) => product.id === item.id)?.mlLeft ?? null;
+    return left === null || mlInCart(cart, item.id) + parseInt(item.volume, 10) <= left;
   };
   const changeQuantity = (key, delta) =>
     setCart((items) =>
@@ -302,7 +347,27 @@ function App() {
     ...occasionOptions.filter((option) => occasionFilter.includes(option.key)).map((option) => option.label),
   ];
   const catalogTitle = activeLabels.length === 1 ? activeLabels[0] : "Vzorky parfémů";
-  const currentProduct = products.find((product) => path.includes(product.id));
+  // Exact match: "/produkt/marwa" must not open "marwa-2" (or the other way round).
+  const productSlug = path.startsWith("/produkt/")
+    ? decodeURIComponent(path.slice("/produkt/".length).replace(/\/$/, ""))
+    : null;
+  const currentProduct = productSlug ? products.find((product) => product.id === productSlug) : null;
+
+  // Tab title per page (also what search engines and shared links show).
+  const pageTitle = path.startsWith("/admin")
+    ? "Administrace"
+    : currentProduct
+      ? `${currentProduct.brand} ${currentProduct.name} – vzorek`
+      : path === "/kolekce" || path === "/znacky"
+        ? catalogTitle
+        : { "/kosik": "Košík", "/pokladna": "Pokladna", "/ucet": "Můj účet" }[path] ??
+          legalPages[path.slice(1)]?.title ??
+          (path === "/" ? null : productSlug && !productsLoaded ? null : "Stránka nenalezena");
+  useEffect(() => {
+    document.title = pageTitle
+      ? `${pageTitle} | Éparfumes`
+      : "Éparfumes – vzorky originálních parfémů";
+  }, [pageTitle]);
   if (path.startsWith("/admin"))
     return (
       <Suspense fallback={null}>
@@ -404,12 +469,6 @@ function App() {
               {option.label}
             </label>
           ))}
-          <h3>Velikost</h3>
-          <div className="size-pills">
-            {volumes.slice(0, 3).map((volume) => (
-              <button key={volume.value}>{volume.label}</button>
-            ))}
-          </div>
         </aside>
         {filtered.length === 0 ? (
           <div className="catalog-empty">
@@ -441,8 +500,10 @@ function App() {
         onBack={() => navigate("/kolekce")}
         onEdit={isAdmin ? () => navigate(`/admin/produkty/${currentProduct.id}`) : null}
       />
+    ) : productsLoaded ? (
+      <NotFound text="Tuto vůni jsme nenašli. Možná už není v nabídce." />
     ) : (
-      renderCatalog()
+      <main className="page-shell" aria-busy="true" />
     );
   const renderCart = () => (
     <main className="page-shell cart-page">
@@ -468,6 +529,8 @@ function App() {
                     <span>{item.quantity}</span>
                     <button
                       onClick={() => changeQuantity(item.key, 1)}
+                      disabled={!canAddOne(item)}
+                      title={canAddOne(item) ? undefined : "Víc už nemáme skladem"}
                       aria-label={`Přidat ${item.name}`}
                     >
                       +
@@ -517,7 +580,14 @@ function App() {
     path === "/kosik" ? (
       renderCart()
     ) : path === "/pokladna" ? (
-      <Checkout cart={cart} session={session} onPlaced={() => setCart([])} />
+      <Checkout
+        cart={cart}
+        session={session}
+        onPlaced={() => {
+          setCart([]);
+          refreshProducts(); // the order took ml off the stock
+        }}
+      />
     ) : path === "/ucet" ? (
       <Account session={session} products={products} />
     ) : path === "/kolekce" || path === "/znacky" ? (
@@ -526,13 +596,15 @@ function App() {
       renderProduct()
     ) : legalPages[path.slice(1)] ? (
       <LegalPage slug={path.slice(1)} />
-    ) : (
+    ) : path === "/" ? (
       <Home
         products={products}
         onOpen={(id) => navigate(`/produkt/${id}`)}
         onAdd={addToCart}
         onShop={() => navigate("/kolekce")}
       />
+    ) : (
+      <NotFound />
     );
   return (
     <div className="app home-app">
@@ -638,7 +710,8 @@ function App() {
           <div>
             <span className="eyebrow">Nakupovat</span>
             <button onClick={() => navigate("/kolekce")}>Všechny vzorky</button>
-            <button onClick={() => navigate("/kolekce")}>Bestsellery</button>
+            <button onClick={() => navigate("/kolekce?tag=Bestseller")}>Bestsellery</button>
+            <button onClick={() => navigate("/kolekce?tag=Novinka")}>Novinky</button>
             <button onClick={() => navigate("/znacky")}>Značky</button>
           </div>
           <div>
@@ -656,23 +729,13 @@ function App() {
               </button>
             ))}
           </div>
-          <div>
-            <span className="eyebrow">Buďte u toho</span>
-            <p>
-              Novinky, tipy a vůně
-              <br />
-              přímo do schránky.
-            </p>
-            <label className="newsletter">
-              <input placeholder="Váš e-mail" />
-              <button>→</button>
-            </label>
-          </div>
+          {/* Newsletter sign-up comes back once e-mails are sent from our own domain
+              (with consent and a place to store the addresses). */}
         </div>
         <div className="footer-bottom">
           <span>© 2026 Éparfumes</span>
           <span>Česká republika · CZK</span>
-          <span>Instagram &nbsp; TikTok</span>
+          {/* Instagram / TikTok links go here once the profiles exist. */}
         </div>
       </footer>
     </div>
@@ -696,31 +759,52 @@ const badgeTone = (text) => {
   return "";
 };
 
-function ProductCard({ product, onOpen, onAdd, tag }) {
-  const badges = (tag ? [tag] : tagList(product.tag)).filter((badge) => !isHiddenBadge(badge));
+// Unknown address (or a product that is no longer sold) instead of silently showing the home page.
+function NotFound({ text = "Tahle stránka neexistuje nebo se přesunula." }) {
   return (
-    <article className="product-card">
+    <main className="page-shell">
+      <div className="empty-cart">
+        <span className="empty-mark">✦</span>
+        <h1>Stránka nenalezena</h1>
+        <p>{text}</p>
+        <button className="primary-button" onClick={() => navigate("/kolekce")}>
+          Prozkoumat vzorky <span>→</span>
+        </button>
+      </div>
+    </main>
+  );
+}
+
+function ProductCard({ product, onOpen, onAdd, tag }) {
+  const empty = soldOut(product);
+  const badges = empty
+    ? ["Vyprodáno"]
+    : (tag ? [tag] : tagList(product.tag)).filter((badge) => !isHiddenBadge(badge));
+  return (
+    <article className={`product-card ${empty ? "is-sold-out" : ""}`}>
       <div className="product-image" onClick={onOpen}>
         <img src={product.image} alt={`${product.brand} ${product.name}`} />
         {badges.length > 0 && (
           <div className="product-tags">
             {badges.map((badge) => (
-              <span key={badge} className={`product-tag ${badgeTone(badge)}`}>
+              <span key={badge} className={`product-tag ${empty ? "tag-sold-out" : badgeTone(badge)}`}>
                 {badge}
               </span>
             ))}
           </div>
         )}
-        <button
-          className="quick-add"
-          onClick={(event) => {
-            event.stopPropagation();
-            onAdd();
-          }}
-          aria-label={`Přidat ${product.name} do košíku`}
-        >
-          +
-        </button>
+        {!empty && (
+          <button
+            className="quick-add"
+            onClick={(event) => {
+              event.stopPropagation();
+              onAdd();
+            }}
+            aria-label={`Přidat ${product.name} do košíku`}
+          >
+            +
+          </button>
+        )}
       </div>
       <div className="product-info">
         <h3 className="product-title" onClick={onOpen}>
@@ -823,12 +907,27 @@ function FaqBand() {
 }
 
 function ProductDetail({ product, products, onAdd, onOpen, onBack, onEdit }) {
-  const [selected, setSelected] = useState(volumes[0]);
+  // Start on the first size that is on sale and in stock.
+  const [selected, setSelected] = useState(
+    () => volumes.find((volume) => !volume.future && !soldOut(product, volume.value)) ?? volumes[0],
+  );
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const [showBar, setShowBar] = useState(false);
   const ctaRef = useRef(null);
   const total = priceFor(product, selected) * quantity;
+  const tracked = product.mlLeft !== null && product.mlLeft !== undefined;
+  const unavailable = selected.future || soldOut(product, selected.value);
+  const maxQuantity = tracked ? Math.max(1, Math.min(10, Math.floor(product.mlLeft / selected.value))) : 10;
+  const stockLabel = soldOut(product)
+    ? "Vyprodáno"
+    : tracked && product.mlLeft < 10
+      ? "Poslední kusy"
+      : "Skladem";
+  const pickSize = (volume) => {
+    setSelected(volume);
+    if (tracked) setQuantity((q) => Math.max(1, Math.min(q, Math.floor(product.mlLeft / volume.value))));
+  };
   const bestsellers = pickBestsellers(products, product.id);
 
   useEffect(() => {
@@ -1041,12 +1140,14 @@ function ProductDetail({ product, products, onAdd, onOpen, onBack, onEdit }) {
                     role="radio"
                     aria-checked={selected.value === volume.value}
                     className={`size-card ${selected.value === volume.value ? "selected" : ""}`}
-                    disabled={volume.future}
-                    onClick={() => setSelected(volume)}
+                    disabled={volume.future || soldOut(product, volume.value)}
+                    onClick={() => pickSize(volume)}
                   >
                     <strong>{volume.label}</strong>
                     {volume.future ? (
                       <small>brzy</small>
+                    ) : soldOut(product, volume.value) ? (
+                      <small>vyprodáno</small>
                     ) : (
                       <>
                         <span>{money(price)}</span>
@@ -1060,10 +1161,10 @@ function ProductDetail({ product, products, onAdd, onOpen, onBack, onEdit }) {
 
             <div className="buy-panel">
               <div className="stock-row">
-                <span className="stock-status">
-                  <i aria-hidden="true" /> Skladem
+                <span className={`stock-status ${soldOut(product) ? "is-out" : stockLabel === "Poslední kusy" ? "is-low" : ""}`}>
+                  <i aria-hidden="true" /> {stockLabel}
                 </span>
-                <span>Expedujeme do 24 hodin</span>
+                {!soldOut(product) && <span>Expedujeme do 24 hodin</span>}
               </div>
               <div className="ship-note">
                 <FiTruck aria-hidden="true" />
@@ -1090,8 +1191,8 @@ function ProductDetail({ product, products, onAdd, onOpen, onBack, onEdit }) {
                   </button>
                   <span aria-live="polite">{quantity}</span>
                   <button
-                    onClick={() => setQuantity((q) => Math.min(10, q + 1))}
-                    disabled={quantity >= 10}
+                    onClick={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
+                    disabled={quantity >= maxQuantity}
                     aria-label="Přidat kus"
                   >
                     <FiPlus />
@@ -1100,7 +1201,7 @@ function ProductDetail({ product, products, onAdd, onOpen, onBack, onEdit }) {
                 <button
                   className="pdp-cta"
                   onClick={addSelected}
-                  disabled={selected.future}
+                  disabled={unavailable}
                 >
                   {added ? <FiCheck /> : <FiShoppingBag />}
                   {added ? "Přidáno do košíku" : "Přidat do košíku"}
@@ -1159,7 +1260,7 @@ function ProductDetail({ product, products, onAdd, onOpen, onBack, onEdit }) {
         <button
           className="pdp-cta"
           onClick={addSelected}
-          disabled={selected.future}
+          disabled={unavailable}
           tabIndex={showBar ? 0 : -1}
         >
           {added ? <FiCheck /> : <FiShoppingBag />}
