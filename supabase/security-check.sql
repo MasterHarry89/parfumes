@@ -40,7 +40,8 @@ from pg_proc p
 join pg_namespace n on n.oid = p.pronamespace
 where n.nspname = 'public'
   and p.prosecdef
-  and p.prorettype <> 'trigger'::regtype
+  -- Trigger and event-trigger functions (e.g. Supabase's own rls_auto_enable) cannot be called through the API.
+  and p.prorettype not in ('trigger'::regtype, 'event_trigger'::regtype)
   and has_function_privilege('anon', p.oid, 'execute')
   and p.proname not in ('place_order', 'check_discount')
 

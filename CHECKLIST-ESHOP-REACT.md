@@ -8,8 +8,8 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [x] MVP nabidka: vzorky parfemu; darkove sady a plna baleni zatim neprodavame
 - [x] Aktivni varianty: 1 ml, 2 ml a 3 ml
 - [ ] Budouci varianty: 5 ml a 10 ml pripravit v datech, administraci, cenach a UI jako uzamcene varianty
-- [ ] Zvolit zdroj produktovych dat: vlastni API, headless CMS, Shopify Storefront API, nebo mock data pro MVP
-- [ ] Zvolit platby a dopravu
+- [x] Zvolit zdroj produktovych dat: vlastni API, headless CMS, Shopify Storefront API, nebo mock data pro MVP
+- [x] Zvolit platby a dopravu
 - [ ] Definovat pravidla skladu, dostupnosti, vratek a reklamaci
 - [ ] Overit pravni podminky pro prodej a prebalovani parfemu v cilovych zemich
 - [x] Vizuální smer MVP: hravy, moderni a luxusni; teply papir, koralova, salvejova a zluta
@@ -19,7 +19,7 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 
 - [ ] Pouzit Stripe Checkout pro prvni produkcni verzi, protoze Stripe bezpecne zpracuje platbu a u nas zustane jednodussi frontend
 - [ ] Platbu vytvaret pouze na backendu pres Stripe Checkout Session
-- [ ] Neposilat secret key do React aplikace
+- [x] Neposilat secret key do React aplikace
 - [ ] Po uspesne platbe zpracovat Stripe webhook a teprve pak vytvorit objednavku / odepsat sklad
 - [ ] Overit podporu plateb v CR: karty, Apple Pay / Google Pay a pripadne bankovni prevod
 - [ ] Nastavit testovaci a produkcni Stripe klice pres environment variables
@@ -28,24 +28,24 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 ### Co znamena zdroj produktovych dat
 
 - [x] Pro prototyp pouzit lokalni mock data v Reactu, aby byly stranky ihned proklikatelne
-- [ ] Pro produkci rozhodnout, kde se budou spravovat nazev, znacka, popis, ceny, varianty 1/2/3/5/10 ml, sklad a obrazky
-- [ ] Preferovana dalsi etapa: vlastni backend / CMS s API, ze ktereho React data nacita
-- [ ] Nedrzet produkcni ceny a dostupnost pouze v klientskem JavaScriptu
+- [x] Pro produkci rozhodnout, kde se budou spravovat nazev, znacka, popis, ceny, varianty 1/2/3/5/10 ml, sklad a obrazky
+- [x] Preferovana dalsi etapa: vlastni backend / CMS s API, ze ktereho React data nacita
+- [x] Nedrzet produkcni ceny a dostupnost pouze v klientskem JavaScriptu
 
 ## 1. Informační architektura
 
 ### Hlavni stranky
 
-- [ ] Domovska stranka `/`
+- [x] Domovska stranka `/`
 - [x] Kolekce vzorku `/kolekce`
-- [ ] Kategorie pro zeny `/kolekce?pro=zeny`
-- [ ] Kategorie pro muze `/kolekce?pro=muzi`
+- [ ] Kategorie pro zeny (zatim zamerne neprodavame; filtr je pripraveny, jen skryty)
+- [x] Kategorie pro muze (resene jako `/kolekce?gender=men`)
 - [ ] Unisex kategorie `/collections/unisex`
-- [ ] Bestsellery `/collections/best-sellers`
-- [ ] Novinky `/collections/new-arrivals`
+- [x] Bestsellery (resene jako `/kolekce?tag=Bestseller`)
+- [x] Novinky (resene jako `/kolekce?tag=Novinka`)
 - [ ] Darkove sady `/collections/gift-sets`
 - [ ] Cestovni spreje `/collections/travel-sprays`
-- [ ] Vyprodej a akce `/collections/sale`
+- [x] Vyprodej a akce (resene jako `/kolekce?tag=Akce`)
 - [x] Katalog znacek `/znacky` jako pripravena routa MVP
 - [ ] Detail znacky `/brands/:slug`
 - [x] Detail produktu `/produkt/:slug`
@@ -54,20 +54,20 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [x] Checkout nebo presmerovani do checkoutu
 - [x] Prihlaseni, registrace a ucet zakaznika
 - [ ] Sledovani objednavky
-- [ ] Kontakt a zakaznicka podpora
-- [ ] Doprava, platby, vraceni a obchodni podminky
+- [x] Kontakt a zakaznicka podpora
+- [x] Doprava, platby, vraceni a obchodni podminky
 - [ ] O nas, recenze, blog a FAQ
 
 ### Navigace
 
-- [ ] Promo lista s kratkou aktualni nabidkou
-- [ ] Hlavicka s logem, vyhledavanim, uctem a kosikem
+- [x] Promo lista s kratkou aktualni nabidkou
+- [x] Hlavicka s logem, vyhledavanim, uctem a kosikem
 - [ ] Hlavni menu: Zeny, Muzi, Unisex, Znacky, Bestsellery, Novinky, Darky
 - [ ] Mega menu nebo rozbalovaci navigace pro seznam kategorii a znacek
-- [ ] Mobilni menu s jasnou hierarchii
+- [x] Mobilni menu s jasnou hierarchii
 - [ ] Breadcrumbs na kategoriich a detailech produktu
 - [ ] Footer rozdeleny na Nakup, Podpora, Ucet, O nas a socialni site
-- [ ] Sticky header podle vysledku testovani na mobilu
+- [x] Sticky header podle vysledku testovani na mobilu
 
 ## 2. Domovska stranka
 
@@ -82,27 +82,27 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [ ] Bannery pro sezoni kampane a vyprodej
 - [x] Parfemove rodiny: citrusove, drevite, kvetinove, sladke, korenite a ciste
 - [ ] Sekce vybranych znacek
-- [ ] Argumenty duvery: autenticita, rychle odeslani, doprava, podpora
+- [x] Argumenty duvery: autenticita, rychle odeslani, doprava, podpora
 - [ ] Recenze zakazniku s hodnocenim a overenim
 - [x] FAQ blok pro velikost vzorku, vydrz a autenticitu
-- [ ] Newsletter s jasnym benefitem
+- [ ] Newsletter s jasnym benefitem (pole v paticce zatim nic neuklada)
 - [ ] Responzivni galerie nebo editorialni blok s vlastnimi fotografiemi
 - [ ] Lazy loading obrazku a rezervovane rozmery proti layout shiftu
 
 ## 3. Katalog a kolekce
 
-- [ ] Grid produktu s responzivnim poctem sloupcu
-- [ ] Pocet nalezenych produktu
+- [x] Grid produktu s responzivnim poctem sloupcu
+- [x] Pocet nalezenych produktu
 - [ ] Razeni: doporucene, nejprodavanejsi, novinky, cena vzestupne/sestupne
-- [ ] Filtr podle pohlavi nebo cilove skupiny
+- [x] Filtr podle pohlavi nebo cilove skupiny
 - [ ] Filtr podle znacky
 - [ ] Filtr podle typu vune, koncentrace a objemu
 - [ ] Filtr podle ceny
-- [ ] Filtr dostupnosti a akce
+- [x] Filtr dostupnosti a akce
 - [ ] Mobilni filter drawer s moznosti vymazat filtry
 - [ ] URL query params pro sdilitelne a obnovitelne filtrovani
 - [ ] Pagination nebo infinite scroll s pristupnym ovladanim
-- [ ] Empty state pri nulovem vysledku
+- [x] Empty state pri nulovem vysledku
 - [ ] Loading skeleton pro grid a filtry
 - [ ] Error state s moznosti opakovat nacitani
 - [ ] Produktova karta s fotkou, badge, nazvem, znackou, publikem a cenou
@@ -114,20 +114,20 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 ## 4. Produktovy detail
 
 - [ ] Galerie fotografii produktu s mobilnim swipe
-- [ ] Nazev, znacka, typ vune a cilova skupina
-- [ ] Cena za vybranou variantu
-- [ ] Dostupnost a odhad odeslani
-- [ ] Volba objemu a typu baleni jako varianty
-- [ ] Jednoznacne oznaceni varianty, jednotek a ceny
-- [ ] Mnozstvi a tlacitko „Pridat do kosiku"
+- [x] Nazev, znacka, typ vune a cilova skupina
+- [x] Cena za vybranou variantu
+- [ ] Dostupnost a odhad odeslani (zatim natvrdo „Skladem“, neodviji se od skutecneho skladu ml)
+- [x] Volba objemu a typu baleni jako varianty
+- [x] Jednoznacne oznaceni varianty, jednotek a ceny
+- [x] Mnozstvi a tlacitko „Pridat do kosiku"
 - [ ] Buy now nebo rychly checkout, pokud ho podporuje platba
 - [ ] Upozorneni na vyprodani a moznost upozorneni na naskladneni
 - [ ] Popis vune, hlavni slozky, koncentrace a vydrz
-- [ ] Informace o autenticite a zpusobu baleni
-- [ ] Doprava, vraceni a podminky zobrazene blizko CTA
+- [x] Informace o autenticite a zpusobu baleni
+- [x] Doprava, vraceni a podminky zobrazene blizko CTA
 - [ ] Recenze, hodnoceni a fotografie zakazniku
-- [ ] FAQ accordion
-- [ ] Doporučene a podobne produkty
+- [x] FAQ accordion
+- [x] Doporučene a podobne produkty
 - [ ] Structured data `Product`, `Offer`, `AggregateRating`, pokud jsou data pravdiva
 - [ ] Open Graph a SEO metadata pro sdileni produktu
 
@@ -141,8 +141,8 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [x] Progress bar nebo informace o hranici dopravy zdarma
 - [ ] Cross-sell, ale bez blokovani checkoutu
 - [x] Ulozeni kosiku pri refreshi a navratu uzivatele
-- [ ] Checkout bez zbytecneho rozptylovani
-- [ ] Validace adresy, kontaktu a doruceni
+- [x] Checkout bez zbytecneho rozptylovani
+- [x] Validace adresy, kontaktu a doruceni
 - [ ] Platba kartou a dalsi relevantni metody
 - [x] Souhlas s podminkami a ochrana osobnich udaju
 - [x] Potvrzeni objednavky s cislem, shrnutim a dalsim postupem
@@ -164,11 +164,11 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [ ] Centralizovat API klienta, chyby a loading stavy
 - [ ] Implementovat persistenci kosiku a preferenci souhlasu
 - [ ] Osetrit 404, globalni chyby a offline stav
-- [ ] Lazy-load rout a tezkych komponent
+- [x] Lazy-load rout a tezkych komponent
 
 ## 7. Data a backend
 
-- [ ] Navrhnout schema produktu, variant, cen, skladu, kategorii, znacek a obrazku
+- [x] Navrhnout schema produktu, variant, cen, skladu, kategorii, znacek a obrazku
 - [ ] Rozlisit produkt, variantu a skladovou polozku
 - [ ] Ulozit SEO slugy a kanonicke URL
 - [x] Resit ceny, dane, slevy a zaokrouhlovani na backendu
@@ -198,7 +198,7 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [x] Admin sklad s nakladem za 1 ml, prodejnimi cenami a orientacni marzi
 - [x] Admin objednavky se stavy K vyrobe, Zaplaceno, Odeslano a Dokonceno
 - [x] Admin finance s trzby, naklady, ziskem a marzi po jednotlivych vunich
-- [ ] U kazde vune evidovat nakupni cenu za 1 ml, obal, rozprašovac, etiketu a praci
+- [x] U kazde vune evidovat nakupni cenu za 1 ml, obal, rozprašovac, etiketu a praci
 - [ ] Pocitat dostupnost podle zvolene varianty: `floor(stockMl / requestedMl)`
 - [ ] Pri vytvoreni objednavky pouze rezervovat objem; pri potvrzene platbe ho atomicky odepsat
 - [ ] Pri storno nebo refundaci vratit rezervovany objem podle realneho stavu vyroby
@@ -216,7 +216,7 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [ ] Viditelny focus a ovladani klavesnici
 - [ ] Spravne labely, landmarky, heading hierarchy a ARIA jen tam, kde je potreba
 - [ ] Dostatecny kontrast a velikost klikacich ploch
-- [ ] Alt text pro produktove a obsahove obrazky
+- [x] Alt text pro produktove a obsahove obrazky
 - [ ] Dialogy a drawers s focus trapem a Escape zavrenim
 - [ ] Loading, success, error a empty states pro kazdy hlavni tok
 - [ ] Toast notifikace nesmi zakryt CTA nebo obsah
@@ -241,8 +241,8 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 - [ ] Vlastni fotografie produktů a konzistentni pozadi
 - [ ] Jasne informace o autenticite a puvodu produktu
 - [ ] Transparentni informace o baleni, objemu a tom, co zakaznik obdrzi
-- [ ] Viditelne dodaci lhuty, cena dopravy a pravidla vraceni
-- [ ] FAQ pro nejcastejsi otazky pred nakupem
+- [x] Viditelne dodaci lhuty, cena dopravy a pravidla vraceni
+- [x] FAQ pro nejcastejsi otazky pred nakupem
 - [ ] Recenze s rozumnou ochranou proti spamu
 - [ ] Kontaktni kanal a realna doba odpovedi
 - [ ] O nas a informace o provozovateli
@@ -251,15 +251,15 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 
 ## 12. Testovaci scenare
 
-- [ ] Navstivit homepage na mobilu a desktopu
+- [x] Navstivit homepage na mobilu a desktopu
 - [ ] Najit produkt pres menu, kolekci i vyhledavani
 - [ ] Filtrovat kolekci a obnovit stranku
 - [ ] Otevrit quick view a zvolit variantu
-- [ ] Otevrit produkt, zmenit variantu, pridat mnozstvi a pridat do kosiku
-- [ ] Obnovit stranku s naplnenym kosikem
+- [x] Otevrit produkt, zmenit variantu, pridat mnozstvi a pridat do kosiku
+- [x] Obnovit stranku s naplnenym kosikem
 - [ ] Aplikovat platny i neplatny promo kod
 - [ ] Otestovat hranici dopravy zdarma
-- [ ] Dokoncit uspesnou objednavku v testovacim prostredi
+- [x] Dokoncit uspesnou objednavku v testovacim prostredi
 - [ ] Otestovat zamitnutou platbu a navrat do kosiku
 - [ ] Otestovat vyprodanou variantu
 - [ ] Otestovat 404 a API chybu
@@ -286,15 +286,16 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 
 ### Udelat ted (po nasazeni)
 
-- [ ] Spustit v Supabase SQL editoru v tomto poradi: `discounts.sql`, `packaging-per-order.sql`, `security-hardening.sql`
-- [ ] Spustit `supabase/security-check.sql` a vysledek poslat Claudovi (krome radku „admin“ ma byt prazdny; admin = jen vlastni e-mail)
-- [ ] Zapnout dvoufazove prihlaseni: Admin → Zabezpeceni (az po `security-hardening.sql`)
+- [x] Spustit v Supabase SQL editoru v tomto poradi: `discounts.sql`, `packaging-per-order.sql`, `security-hardening.sql`
+- [x] Spustit `supabase/security-check.sql` a vysledek poslat Claudovi (krome radku „admin“ ma byt prazdny; admin = jen vlastni e-mail)
+- [x] Zapnout dvoufazove prihlaseni: Admin → Zabezpeceni (az po `security-hardening.sql`)
 - [ ] Supabase → Authentication → Passwords: minimalni delka hesla 8
-- [ ] Netlify → Environment variables: overit, ze `SUPABASE_SERVICE_ROLE_KEY` je nastaveny (potrebuje ho i mazani uctu) a ze `VITE_PACKETA_API_KEY` je API klic, ne API heslo
-- [ ] Na zivem webu projit nakup vcetne mapy Zasilkovny a v DevTools konzoli zkontrolovat, ze nejsou chyby „Content Security Policy“
+- [x] Netlify → Environment variables: overit, ze `SUPABASE_SERVICE_ROLE_KEY` je nastaveny (potrebuje ho i mazani uctu) a ze `VITE_PACKETA_API_KEY` je API klic, ne API heslo
+- [x] Na zivem webu projit nakup vcetne mapy Zasilkovny a v DevTools konzoli zkontrolovat, ze nejsou chyby „Content Security Policy“
 - [ ] Zalozit testovaci zakaznicky ucet a vyzkouset jeho smazani
-- [ ] Zrusit testovaci objednavky
+- [x] Zrusit testovaci objednavky
 - [ ] Doplnit do zasad ochrany osobnich udaju: smazani uctu a jak dlouho uchovavame udaje z objednavek
+- [ ] Doplnit IČO a udaje provozovatele do pravnich stranek (v `src/Legal.jsx` je zatim zastupny text `[IČO]`)
 
 ### Pozdeji
 
@@ -311,29 +312,29 @@ Tento dokument slouzi jako pracovni checklist pro e-shop inspirovany informacni 
 ### Faze 1: Zaklad
 
 - [ ] React + TypeScript + Vite
-- [ ] Design system a layout
-- [ ] Homepage, header, footer a routing
-- [ ] Mock data produktu a znacek
+- [x] Design system a layout
+- [x] Homepage, header, footer a routing
+- [x] Mock data produktu a znacek
 
 ### Faze 2: Nakupni katalog
 
-- [ ] Kolekce s gridem
+- [x] Kolekce s gridem
 - [ ] Filtry, razeni a URL query params
-- [ ] Produktova karta a detail produktu
-- [ ] Varianty a cenove zobrazeni
+- [x] Produktova karta a detail produktu
+- [x] Varianty a cenove zobrazeni
 
 ### Faze 3: Kosik
 
-- [ ] Stav kosiku a persistovani
+- [x] Stav kosiku a persistovani
 - [ ] Mini cart a stranka kosiku
-- [ ] Promo kod a doprava
-- [ ] Zakladni checkout nebo napojeni na poskytovatele
+- [x] Promo kod a doprava
+- [x] Zakladni checkout nebo napojeni na poskytovatele
 
 ### Faze 4: Provozni minimum
 
-- [ ] API nebo headless commerce backend
+- [x] API nebo headless commerce backend
 - [ ] Objednavky, platby a e-maily
-- [ ] Admin a sklad
+- [x] Admin a sklad
 - [ ] SEO, analytika, consent a monitoring
 
 ### Faze 5: Optimalizace
@@ -390,10 +391,10 @@ src/
 
 - [ ] Zakaznik najde produkt do 30 sekund z homepage
 - [ ] Zakaznik rozumi rozdilu mezi variantami a objemy
-- [ ] Cena, dostupnost, doprava a vraceni jsou viditelne pred platbou
-- [ ] Produkt lze vlozit do kosiku z kolekce i detailu
+- [x] Cena, dostupnost, doprava a vraceni jsou viditelne pred platbou
+- [x] Produkt lze vlozit do kosiku z kolekce i detailu
 - [ ] Kosik prezije refresh a spravne pocita varianty, slevy a dopravu
-- [ ] Checkout uspesne vytvori objednavku a zobrazi potvrzeni
+- [x] Checkout uspesne vytvori objednavku a zobrazi potvrzeni
 - [ ] Hlavni tok funguje na mobilu, desktopu, klavesnici a pri chybe API
 - [ ] Produktove stranky maji zakladni SEO metadata a structured data
-- [ ] Nejsou pouzity cizi texty, fotografie, logo ani identita MicroPerfumes
+- [x] Nejsou pouzity cizi texty, fotografie, logo ani identita MicroPerfumes
