@@ -59,7 +59,6 @@
 .site-header { height: 82px; max-width: 1440px; margin: auto; padding: 0 5vw; position: sticky; top: 0; z-index: 15; display: flex; align-items: center; gap: 42px; border-bottom: 1px solid rgba(23, 21, 19, .12); background: rgba(247, 243, 238, .96); backdrop-filter: blur(8px); transition: transform .28s ease, box-shadow .28s ease; }
 .site-header.header-hidden { transform: translateY(-100%); box-shadow: none; }
 .wordmark { font: 700 20px/1 'Cormorant Garamond', serif; letter-spacing: .06em; white-space: nowrap; }
-.wordmark span { font: 700 9px 'Manrope', sans-serif; vertical-align: top; margin-left: 3px; }
 .site-header nav { display: flex; gap: 27px; align-items: center; flex: 1; }
 .site-header nav button, .header-actions button { font-size: 12px; letter-spacing: .02em; font-family: 'Manrope', sans-serif; }
 .site-header nav button:hover, footer button:hover, .section-heading button:hover { color: var(--bronze); }
@@ -1302,9 +1301,11 @@ footer p { margin-bottom: 22px; }
 .product-card.is-sold-out .product-image img { opacity: .55; }
 
 /* Brand wordmark "čuchni" (src/Logo.jsx). The háček carries the accent colour. */
-.logo { display: inline-flex; align-items: baseline; font: 700 1.35em/1 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.045em; text-transform: none; color: inherit; }
+.logo { display: inline-flex; align-items: baseline; font: 700 26px/1 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.06em; text-transform: none; color: inherit; }
 .logo-c { position: relative; display: inline-block; }
 .logo-hacek { position: absolute; left: 50%; top: .07em; width: .44em; height: .26em; transform: translateX(-52%); overflow: visible; }
 .logo-hacek path { fill: none; stroke: var(--logo-accent, #587300); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
-.wordmark { padding-top: .2em; }
-footer .wordmark { --logo-accent: var(--gold); }
+.wordmark { padding-top: .25em; letter-spacing: normal; }
+footer .wordmark { --logo-accent: #c8ff00; }
+footer .wordmark .logo { font-size: 34px; }
+@media (max-width: 760px) { .site-header .logo { font-size: 22px; } }
