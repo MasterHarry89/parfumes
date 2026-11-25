@@ -9,6 +9,7 @@ import { useAdminAccess, useSession } from "./lib/auth";
 import Account from "./Account";
 import Checkout from "./Checkout";
 import LegalPage, { legalLinks, legalPages } from "./Legal";
+import ProcessPage from "./Process";
 import {
   money,
   familyOptions,
@@ -362,7 +363,12 @@ function App() {
       ? `${currentProduct.brand} ${currentProduct.name} – vzorek`
       : path === "/kolekce" || path === "/znacky"
         ? catalogTitle
-        : { "/kosik": "Košík", "/pokladna": "Pokladna", "/ucet": "Můj účet" }[path] ??
+        : {
+            "/kosik": "Košík",
+            "/pokladna": "Pokladna",
+            "/ucet": "Můj účet",
+            "/jak-pripravujeme": "Jak připravujeme objednávku",
+          }[path] ??
           legalPages[path.slice(1)]?.title ??
           (path === "/" ? null : productSlug && !productsLoaded ? null : "Stránka nenalezena");
   useEffect(() => {
@@ -596,6 +602,8 @@ function App() {
       renderCatalog()
     ) : path.startsWith("/produkt/") ? (
       renderProduct()
+    ) : path === "/jak-pripravujeme" ? (
+      <ProcessPage />
     ) : legalPages[path.slice(1)] ? (
       <LegalPage slug={path.slice(1)} />
     ) : path === "/" ? (
@@ -719,6 +727,7 @@ function App() {
           <div>
             <span className="eyebrow">Pomoc</span>
             <button onClick={() => navigate("/o-projektu")}>O projektu</button>
+            <button onClick={() => navigate("/jak-pripravujeme")}>Jak připravujeme objednávku</button>
             <button onClick={() => navigate("/doprava-a-platba")}>Doprava a platba</button>
             <button onClick={() => navigate("/odstoupeni-od-smlouvy")}>Vrácení zboží</button>
             <button onClick={() => navigate("/kontakt")}>Kontakt</button>
@@ -1091,12 +1100,6 @@ function ProductDetail({ product, products, onAdd, onOpen, onBack, onEdit }) {
               <div>
                 <dt>Výrobce</dt>
                 <dd>{product.manufacturer}</dd>
-              </div>
-            )}
-            {product.pao_months > 0 && (
-              <div>
-                <dt>Po otevření</dt>
-                <dd>spotřebujte do {product.pao_months} měsíců</dd>
               </div>
             )}
             <div>

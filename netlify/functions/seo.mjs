@@ -6,6 +6,7 @@ const STATIC_PAGES = [
   "/",
   "/kolekce",
   "/o-projektu",
+  "/jak-pripravujeme",
   "/doprava-a-platba",
   "/kontakt",
   "/obchodni-podminky",

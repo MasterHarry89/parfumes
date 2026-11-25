@@ -1255,6 +1255,25 @@ footer p { margin-bottom: 22px; }
 }
 
 /* Legal pages (obchodní podmínky, GDPR, reklamační řád…): plain readable text column. */
+.process-page { max-width: 1080px; padding-bottom: 72px; }
+.process-hero { max-width: 720px; margin-bottom: 48px; }
+.process-hero h1 { font: 700 clamp(36px, 5vw, 56px) 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.05em; margin: 10px 0 18px; }
+.process-steps { display: grid; gap: 56px; margin: 0; padding: 0; list-style: none; }
+.process-step { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.process-step:nth-child(even) .process-photo { order: 2; }
+.process-photo { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--paper-strong); }
+.process-photo-empty { display: grid; place-items: center; padding: 16px; border: 1px dashed var(--line); color: var(--muted); font-size: 14px; text-align: center; }
+.process-number { font: 700 14px 'Space Grotesk', 'Manrope', sans-serif; color: var(--bronze); letter-spacing: .08em; }
+.process-text h2 { font: 700 clamp(24px, 3vw, 32px) 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.03em; margin: 8px 0 14px; }
+.process-text p { margin: 0; color: var(--ink); font-size: 16px; line-height: 1.7; }
+.process-cta { display: grid; justify-items: center; gap: 18px; margin-top: 72px; padding-top: 48px; border-top: 1px solid var(--line); text-align: center; }
+.process-cta h2 { font: 700 28px 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.03em; margin: 0; }
+@media (max-width: 760px) {
+  .process-step { grid-template-columns: 1fr; gap: 20px; }
+  .process-step:nth-child(even) .process-photo { order: 0; }
+  .process-steps { gap: 44px; }
+}
+
 .legal-page { max-width: 820px; }
 .legal-page h1 { font: 700 clamp(36px, 5vw, 56px) 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.05em; margin: 0 0 36px; }
 .legal-body { color: var(--ink); font-size: 15px; line-height: 1.7; }
