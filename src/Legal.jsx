@@ -6,21 +6,14 @@ import {
   shippingMethods,
 } from "./lib/checkout";
 
-// Seller identification used across every legal page. Values in [brackets] are
-// still missing and render highlighted so they cannot slip through unnoticed.
-const seller = {
-  name: "[Jméno a příjmení / název firmy]",
-  ico: "[IČO]",
-  address: "[Ulice a č. p., PSČ Město]",
-  register: "[Fyzická osoba podnikající dle živnostenského zákona, zapsaná v živnostenském rejstříku]",
-  vat: "[Není plátcem DPH]",
-  email: "[kontaktní e-mail]",
-  phone: "[telefon]",
-};
+import { isMissing, seller } from "./lib/seller";
+
+// Seller identification (src/lib/seller.js). Values in [brackets] are still
+// missing and render highlighted so they cannot slip through unnoticed.
 const EFFECTIVE_FROM = "[datum účinnosti]";
 
 const Field = ({ value }) =>
-  value.startsWith("[") ? <mark className="legal-todo">{value}</mark> : value;
+  isMissing(value) ? <mark className="legal-todo">{value}</mark> : value;
 const S = Object.fromEntries(
   Object.entries(seller).map(([key, value]) => [key, <Field value={value} />]),
 );

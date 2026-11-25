@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { FiArrowLeft, FiMail, FiMapPin, FiPhone } from "react-icons/fi";
+import { FiArrowLeft, FiFileText, FiMail, FiMapPin, FiPhone } from "react-icons/fi";
 
 import { money, orderPoints, orderStatusInfo } from "../lib/catalog";
 import { paymentMethods, shippingMethods } from "../lib/checkout";
 import { navigate } from "../lib/navigate";
+import { leafletProblems, printLeaflets } from "./leaflets";
 import { packetStatusLabel } from "./packetaApi";
 import { Panel, orderLabel } from "./views";
 
@@ -14,9 +15,19 @@ const statusSteps = ["pending", "paid", "shipped", "completed", "cancelled"];
 const methodLabel = (methods, key) =>
   methods.find((method) => method.key === key)?.label ?? key ?? "—";
 
-export default function OrderDetail({ order, onSaveStatus }) {
+export default function OrderDetail({ order, onSaveStatus, products = [], inventory = [], onReload }) {
   const [saving, setSaving] = useState(null);
   const [error, setError] = useState("");
+  const [printing, setPrinting] = useState(false);
+
+  const printLeaflet = async () => {
+    const problems = leafletProblems([order], products);
+    if (problems.length && !window.confirm(`${problems.join("\n")}\n\nPřesto vytisknout?`)) return;
+    setPrinting(true);
+    setError((await printLeaflets([order], { products, inventory })) ?? "");
+    await onReload?.();
+    setPrinting(false);
+  };
 
   const changeStatus = async (status) => {
     if (status === order.status) return;
@@ -149,6 +160,31 @@ export default function OrderDetail({ order, onSaveStatus }) {
           </dl>
         </Panel>
       </div>
+
+      <Panel title="Příbalový list">
+        <p className="adm-muted-text">
+          {order.leafletPrintedAt
+            ? `Vytištěno ${new Date(order.leafletPrintedAt).toLocaleString("cs-CZ")}.`
+            : "Zatím nevytištěno."}{" "}
+          Složení, šarže a upozornění ke vzorkům – vložte do balíčku.
+        </p>
+        {Object.keys(order.batches ?? {}).length > 0 && (
+          <dl className="adm-dl">
+            {order.items
+              .filter((item, index, all) => all.findIndex((other) => other.product_id === item.product_id) === index)
+              .map((item) => (
+                <div key={item.product_id}>
+                  <dt>{item.name}</dt>
+                  <dd>Šarže {order.batches[item.product_id] ?? "—"}</dd>
+                </div>
+              ))}
+          </dl>
+        )}
+        <button className="adm-button adm-button-light adm-spaced-top" disabled={printing} onClick={printLeaflet}>
+          <FiFileText aria-hidden="true" />
+          {printing ? "Připravuji…" : order.leafletPrintedAt ? "Vytisknout znovu" : "Vytisknout příbalový list"}
+        </button>
+      </Panel>
 
       <Panel title="Položky" flush>
         {order.items.length === 0 ? (

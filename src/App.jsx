@@ -1075,6 +1075,44 @@ function ProductDetail({ product, products, onAdd, onOpen, onBack, onEdit }) {
         ]
       : []),
     {
+      title: "Složení a bezpečnost",
+      content: (
+        <>
+          {product.ingredients ? (
+            <>
+              <span className="attr-label">Složení (INCI)</span>
+              <p className="ingredients">{product.ingredients}</p>
+            </>
+          ) : (
+            <p>Složení doplňujeme. Rádi vám ho pošleme e-mailem.</p>
+          )}
+          <dl className="spec-list">
+            {product.manufacturer && (
+              <div>
+                <dt>Výrobce</dt>
+                <dd>{product.manufacturer}</dd>
+              </div>
+            )}
+            {product.pao_months > 0 && (
+              <div>
+                <dt>Po otevření</dt>
+                <dd>spotřebujte do {product.pao_months} měsíců</dd>
+              </div>
+            )}
+            <div>
+              <dt>Balení</dt>
+              <dd>Vzorek plněný z originálního balení výrobce</dd>
+            </div>
+          </dl>
+          <p className="safety-note">
+            Pouze pro vnější použití. Hořlavé – uchovávejte mimo dosah tepla a
+            otevřeného ohně. Nestříkejte do očí ani na podrážděnou pokožku.
+            Uchovávejte mimo dosah dětí. Při podráždění přestaňte používat.
+          </p>
+        </>
+      ),
+    },
+    {
       title: "Proč zkoušet vzorek",
       content: (
         <p>

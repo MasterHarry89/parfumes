@@ -45,7 +45,23 @@ const emptyForm = {
   notesHeart: [],
   notesBase: [],
   longevity: null,
+  ingredients: "",
+  manufacturer: "",
+  pao: "",
+  batch: "",
   active: true,
+};
+
+// Columns from supabase/product-compliance.sql. Sent only when something is filled in,
+// so saving still works before that file is run.
+const complianceRow = (form, product) => {
+  const row = {
+    ingredients: form.ingredients.trim() || null,
+    manufacturer: form.manufacturer.trim() || null,
+    pao_months: parseInt(form.pao, 10) || null,
+  };
+  const used = Object.entries(row).some(([key, value]) => value !== null || product?.[key]);
+  return used ? row : {};
 };
 
 const IMAGE_BUCKET = "product-images";
@@ -215,6 +231,9 @@ const formFromProduct = (product) => {
     notesHeart: toList(product.notes_heart),
     notesBase: toList(product.notes_base),
     longevity: product.longevity ?? null,
+    ingredients: product.ingredients ?? "",
+    manufacturer: product.manufacturer ?? "",
+    pao: product.pao_months ? String(product.pao_months) : "",
     active: product.active !== false,
     priceInputs: Object.fromEntries(
       sampleVolumes.map((volume) => [volume.value, String(priceFor(priced, volume) / 10)]),
@@ -319,6 +338,8 @@ function ProductForm({
       if (form.purchase !== "" && !(purchaseKc >= 0))
         problems.push("Nákupní cena musí být číslo od 0.");
     }
+    if (form.pao.trim() && !(parseInt(form.pao, 10) >= 1 && parseInt(form.pao, 10) <= 120))
+      problems.push("Doba po otevření musí být počet měsíců (1–120).");
     pricing.forEach((row) => {
       if (row.price === null)
         problems.push(`Zadejte prodejní cenu pro ${row.volume.label} vyšší než 0 Kč.`);
@@ -378,6 +399,7 @@ function ProductForm({
       longevity: form.longevity,
       seasons: form.seasons,
       occasions: form.occasions,
+      ...complianceRow(form, product),
     };
     const { error: productError } = editing
       ? await supabase.from("products").update(productRow).eq("id", id)
@@ -392,6 +414,8 @@ function ProductForm({
           ? "Zápis byl odmítnut. Chybí oprávnění pro přihlášeného uživatele (viz supabase/product-form.sql)."
           : productError.code === "23505"
             ? `Produkt s adresou „${id}“ už existuje.`
+            : /ingredients|manufacturer|pao_months/.test(productError.message)
+              ? "Databáze ještě nemá sloupce pro složení. Spusťte supabase/product-compliance.sql."
             : /concentration/.test(productError.message)
               ? "Databáze ještě nemá sloupec „Koncentrace“. Spusťte supabase/product-concentration.sql."
             : /gender/.test(productError.message)
@@ -421,6 +445,7 @@ function ProductForm({
       product_id: id,
       stock_ml: stockMl,
       cost_per_ml: costPerMl === null ? 0 : Math.round(costPerMl),
+      ...(form.batch.trim() ? { batch_code: form.batch.trim() } : {}),
     });
 
     const warnings = [];
@@ -430,7 +455,7 @@ function ProductForm({
       // The whole purchase is the expense, even when only part of the bottle is stocked.
       const expenseError = await recordExpense({
         category: "perfume",
-        label: `${form.brand.trim()} ${form.name.trim()} (${costBasisMl} ml)`,
+        label: `${form.brand.trim()} ${form.name.trim()} (${costBasisMl} ml${form.batch.trim() ? `, šarže ${form.batch.trim()}` : ""})`,
         amount: toStored(purchaseKc),
         productId: id,
       });
@@ -735,6 +760,16 @@ function ProductForm({
                   placeholder={form.bottle || "75"}
                 />
               </Field>
+              <Field label="Šarže flakonu (LOT)" hint="Kód z krabičky nebo dna flakonu. Kvůli dohledatelnosti vzorků.">
+                <input
+                  value={form.batch}
+                  onChange={(event) => set({ batch: event.target.value })}
+                  placeholder="např. 3B01"
+                />
+              </Field>
+            </div>
+
+            <div className="pf-grid pf-grid-3 pf-spaced-block">
               <div className="pf-field pf-span-2">
                 <label className="pf-switch pf-switch-top">
                   <input
@@ -772,6 +807,45 @@ function ProductForm({
             />
           </Card>
           )}
+
+          <Card
+            title="Složení a údaje z krabičky"
+            description="Opište přesně z originální krabičky. Zobrazí se na stránce produktu v sekci Složení a bezpečnost."
+          >
+            <div className="pf-grid">
+              <Field
+                label="Složení (INCI)"
+                hint="Celý seznam včetně alergenů na konci (Linalool, Limonene, Coumarin …), oddělený čárkami."
+                wide
+              >
+                <textarea
+                  rows={4}
+                  value={form.ingredients}
+                  onChange={(event) => set({ ingredients: event.target.value })}
+                  placeholder="Alcohol Denat., Parfum (Fragrance), Aqua (Water), Limonene, Linalool, Coumarin…"
+                />
+              </Field>
+              <Field
+                label="Výrobce / odpovědná osoba"
+                hint="Název a adresa v EU, jak je uvedena na krabičce."
+                wide
+              >
+                <input
+                  value={form.manufacturer}
+                  onChange={(event) => set({ manufacturer: event.target.value })}
+                  placeholder="Název firmy, ulice, PSČ město, země"
+                />
+              </Field>
+              <Field label="Doba po otevření (měsíce)" hint="Symbol otevřené dózy, např. 36M → 36.">
+                <input
+                  inputMode="numeric"
+                  value={form.pao}
+                  onChange={(event) => set({ pao: event.target.value.replace(/\D/g, "") })}
+                  placeholder="36"
+                />
+              </Field>
+            </div>
+          </Card>
 
           <Card
             title="Parfémové rodiny"

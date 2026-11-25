@@ -12,6 +12,7 @@ export default function RestockDialog({ item, materials, labourPerSample, labour
   const [bottle, setBottle] = useState("");
   const [ml, setMl] = useState("");
   const [total, setTotal] = useState("");
+  const [batch, setBatch] = useState("");
   const [bookExpense, setBookExpense] = useState(true);
   const [margin, setMargin] = useState("60");
   // Starts on the prices currently in the shop, so nothing changes unless you want it to.
@@ -67,11 +68,20 @@ export default function RestockDialog({ item, materials, labourPerSample, labour
     setError("");
     const { error: stockError } = await supabase
       .from("inventory")
-      .update({ stock_ml: item.stockMl + addMl, cost_per_ml: Math.round(newAverage) })
+      .update({
+        stock_ml: item.stockMl + addMl,
+        cost_per_ml: Math.round(newAverage),
+        // Sent only when filled in, so restocking works before product-compliance.sql is run.
+        ...(batch.trim() ? { batch_code: batch.trim() } : {}),
+      })
       .eq("id", item.id);
     if (stockError) {
       setBusy(false);
-      return setError(`Sklad se nepodařilo uložit: ${stockError.message}`);
+      return setError(
+        /batch_code/.test(stockError.message)
+          ? "Databáze ještě nemá sloupec pro šarži. Spusťte supabase/product-compliance.sql."
+          : `Sklad se nepodařilo uložit: ${stockError.message}`,
+      );
     }
 
     const { error: priceError } = await supabase
@@ -86,7 +96,7 @@ export default function RestockDialog({ item, materials, labourPerSample, labour
     const expenseError = bookExpense
       ? await recordExpense({
           category: "perfume",
-          label: `${item.brand} ${item.name} (doskladnění, flakon ${costBasisMl} ml)`.trim(),
+          label: `${item.brand} ${item.name} (doskladnění, flakon ${costBasisMl} ml${batch.trim() ? `, šarže ${batch.trim()}` : ""})`.trim(),
           amount: toStored(totalKc),
           productId: item.productId,
         })
@@ -157,6 +167,15 @@ export default function RestockDialog({ item, materials, labourPerSample, labour
             <input inputMode="decimal" value={ml} onChange={(event) => setMl(event.target.value)} placeholder={bottle || "75"} />
             <small className="pf-hint">Prázdné pole = celý flakon. Zbytek nemusíte nikde evidovat.</small>
           </label>
+          <label className="pf-field">
+            <span className="pf-label">Šarže nového flakonu (LOT)</span>
+            <input value={batch} onChange={(event) => setBatch(event.target.value)} placeholder={item.batchCode || "např. 3B01"} />
+            <small className="pf-hint">
+              {item.batchCode ? `Dosud: ${item.batchCode}. ` : ""}Kód z krabičky nebo dna flakonu.
+            </small>
+          </label>
+        </div>
+        <div className="pf-grid pf-grid-3">
           <div className="pf-field pf-span-2">
             <label className="pf-switch pf-switch-top">
               <input type="checkbox" checked={bookExpense} onChange={(event) => setBookExpense(event.target.checked)} />

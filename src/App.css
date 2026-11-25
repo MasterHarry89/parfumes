@@ -841,6 +841,8 @@ footer p { margin-bottom: 22px; }
 .trust-grid svg { width: 26px; height: 26px; color: #587300; }
 
 .accordion { margin-top: 8px; }
+.ingredients { margin: 6px 0 16px; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.safety-note { margin-top: 14px; font-size: 13px; line-height: 1.55; color: var(--muted, #666); }
 .accordion-item { border-bottom: 1px solid var(--line); }
 .accordion-trigger { display: flex; justify-content: space-between; align-items: center; gap: 16px; width: 100%; padding: 20px 0; text-align: left; font-size: 20px; font-weight: 700; letter-spacing: -.04em; }
 .accordion-icon { position: relative; flex: none; width: 14px; height: 14px; }

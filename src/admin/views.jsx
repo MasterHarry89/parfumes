@@ -6,6 +6,7 @@ import {
   FiChevronRight,
   FiDollarSign,
   FiDownload,
+  FiFileText,
   FiInfo,
   FiPlus,
   FiPrinter,
@@ -17,6 +18,7 @@ import {
 import { countsAsRevenue, money, orderStatusInfo, volumes } from "../lib/catalog";
 import { navigate } from "../lib/navigate";
 import { buildPacketaCsv, downloadCsv, isReadyToShip } from "./packetaExport";
+import { leafletProblems, needsPacking, printLeaflets } from "./leaflets";
 import {
   createPackets,
   downloadLabels,
@@ -376,7 +378,7 @@ export function InventoryView({ stock, onSaveStock, onRestock }) {
   );
 }
 
-export function OrdersView({ orders, onReload }) {
+export function OrdersView({ orders, products = [], inventory = [], onReload }) {
   const [filter, setFilter] = useState("all");
   const statuses = [...new Set(orders.map((order) => order.status))];
   const visible =
@@ -431,6 +433,22 @@ export function OrdersView({ orders, onReload }) {
   const printLabels = () =>
     run("labels", () => downloadLabels(awaitingLabel.map((order) => order.id)));
 
+  // Leaflets for every order that still has to be packed and has none printed yet.
+  const leafletsDue = orders.filter((order) => needsPacking(order) && !order.leafletPrintedAt);
+  const printAllLeaflets = () => {
+    const problems = leafletProblems(leafletsDue, products);
+    if (problems.length && !window.confirm(`${problems.join("\n")}\n\nPřesto vytisknout?`)) return;
+    return run("leaflets", async () => {
+      const error = await printLeaflets(leafletsDue, { products, inventory });
+      setMessage(
+        error
+          ? { tone: "bad", text: error }
+          : { tone: "ok", text: `Příbalové listy připraveny: ${leafletsDue.length}. Šarže jsou uložené u objednávek.` },
+      );
+      await onReload();
+    });
+  };
+
   const refresh = () =>
     run("refresh", async () => {
       const { checked, changed, failed } = await refreshPacketStatuses();
@@ -476,6 +494,15 @@ export function OrdersView({ orders, onReload }) {
         >
           <FiPrinter aria-hidden="true" />
           {busy === "labels" ? "Připravuji…" : `Štítky (${awaitingLabel.length})`}
+        </button>
+        <button
+          className="adm-button adm-button-light"
+          disabled={leafletsDue.length === 0 || busy !== null}
+          onClick={printAllLeaflets}
+          title="Složení, šarže a upozornění ke vzorkům – vložte do balíčku"
+        >
+          <FiFileText aria-hidden="true" />
+          {busy === "leaflets" ? "Připravuji…" : `Příbalové listy (${leafletsDue.length})`}
         </button>
         <button className="adm-button adm-button-light" disabled={busy !== null} onClick={refresh}>
           <FiRefreshCw aria-hidden="true" />

@@ -108,6 +108,7 @@ const loadAll = async () => {
       productId: item.product_id,
       stockMl: Number(item.stock_ml || 0),
       costPerMl: Number(item.cost_per_ml || 0),
+      batchCode: item.batch_code ?? "",
     })),
     orders: (orders.data ?? []).map((order) => ({
       id: order.id,
@@ -135,6 +136,8 @@ const loadAll = async () => {
       barcode: order.packeta_barcode ?? null,
       packetStatus: order.packeta_status ?? null,
       packetStatusCode: order.packeta_status_code ?? null,
+      batches: order.batches && typeof order.batches === "object" ? order.batches : {},
+      leafletPrintedAt: order.leaflet_printed_at ?? null,
     })),
   };
 };
@@ -445,7 +448,13 @@ function AdminShell({ path, session, onCatalogChanged }) {
     );
   } else if (page.key === "objednavka") {
     content = openOrder ? (
-      <OrderDetail order={openOrder} onSaveStatus={saveOrderStatus} />
+      <OrderDetail
+        order={openOrder}
+        onSaveStatus={saveOrderStatus}
+        products={data.products}
+        inventory={data.inventory}
+        onReload={reload}
+      />
     ) : (
       <div className="adm-page">
         <p className="adm-alert" role="alert">
@@ -457,7 +466,9 @@ function AdminShell({ path, session, onCatalogChanged }) {
       </div>
     );
   } else if (page.key === "objednavky") {
-    content = <OrdersView orders={data.orders} onReload={reload} />;
+    content = (
+      <OrdersView orders={data.orders} products={data.products} inventory={data.inventory} onReload={reload} />
+    );
   } else if (page.key === "finance") {
     content = (
       <FinanceView
