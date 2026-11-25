@@ -1305,7 +1305,13 @@ footer p { margin-bottom: 22px; }
 .logo-c { position: relative; display: inline-block; }
 .logo-hacek { position: absolute; left: 50%; top: .07em; width: .44em; height: .26em; transform: translateX(-52%); overflow: visible; }
 .logo-hacek path { fill: none; stroke: var(--logo-accent, #587300); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
-.wordmark { padding-top: .25em; letter-spacing: normal; }
+.wordmark { letter-spacing: normal; }
+.logo-hacek-variant { padding-top: .25em; }
 footer .wordmark { --logo-accent: #c8ff00; }
 footer .wordmark .logo { font-size: 34px; }
-@media (max-width: 760px) { .site-header .logo { font-size: 22px; } }
+/* Variant A: black card with a lime .cz; lime card in the dark footer. */
+.logo-card { align-items: center; font-size: 22px; background: #151515; color: #fff; padding: .3em .45em .34em; border-radius: .3em; }
+.logo-card .logo-cz { color: #c8ff00; }
+footer .wordmark .logo-card { font-size: 28px; background: #c8ff00; color: #151515; }
+footer .wordmark .logo-card .logo-cz { color: #151515; opacity: .5; }
+@media (max-width: 760px) { .site-header .logo { font-size: 22px; } .site-header .logo-card { font-size: 18px; } }

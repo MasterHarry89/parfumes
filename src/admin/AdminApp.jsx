@@ -150,7 +150,7 @@ function Screen({ children }) {
 function Wordmark() {
   return (
     <span className="adm-wordmark">
-      <Logo />
+      <Logo variant="hacek" />
     </span>
   );
 }
