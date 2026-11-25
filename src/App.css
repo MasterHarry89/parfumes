@@ -1309,9 +1309,8 @@ footer p { margin-bottom: 22px; }
 .logo-hacek-variant { padding-top: .25em; }
 footer .wordmark { --logo-accent: #c8ff00; }
 footer .wordmark .logo { font-size: 34px; }
-/* Variant A: black card with a lime .cz; lime card in the dark footer. */
-.logo-card { align-items: center; font-size: 22px; background: #151515; color: #fff; padding: .3em .45em .34em; border-radius: .3em; }
+/* Plain wordmark: "čuchni" in the text colour, ".cz" in the signature lime. */
+.logo-card { align-items: baseline; font-size: 26px; color: #151515; }
 .logo-card .logo-cz { color: #c8ff00; }
-footer .wordmark .logo-card { font-size: 28px; background: #c8ff00; color: #151515; }
-footer .wordmark .logo-card .logo-cz { color: #151515; opacity: .5; }
-@media (max-width: 760px) { .site-header .logo { font-size: 22px; } .site-header .logo-card { font-size: 18px; } }
+footer .wordmark .logo-card { font-size: 34px; color: #fff; }
+@media (max-width: 760px) { .site-header .logo { font-size: 22px; } .site-header .logo-card { font-size: 22px; } }
