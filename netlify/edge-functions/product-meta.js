@@ -52,13 +52,13 @@ export default async (request, context) => {
 
   if (!product) {
     return new Response(
-      html.replace(/<title>[\s\S]*?<\/title>/, "<title>Stránka nenalezena | Éparfumes</title>"),
+      html.replace(/<title>[\s\S]*?<\/title>/, "<title>Stránka nenalezena | Čuchni</title>"),
       { status: 404, headers },
     );
   }
 
   const name = `${product.brand} ${product.name}`;
-  const title = `${name} – vzorek | Éparfumes`;
+  const title = `${name} – vzorek | Čuchni`;
   const fullDescription = (
     product.description ||
     product.note ||

@@ -1300,3 +1300,11 @@ footer p { margin-bottom: 22px; }
 .stock-status.is-out i { background: #b3261e; box-shadow: 0 0 0 4px rgba(179, 38, 30, .15); }
 .product-tag.tag-sold-out { background: #2b241f !important; color: #fff !important; border-color: transparent !important; }
 .product-card.is-sold-out .product-image img { opacity: .55; }
+
+/* Brand wordmark "čuchni" (src/Logo.jsx). The háček carries the accent colour. */
+.logo { display: inline-flex; align-items: baseline; font: 700 1.35em/1 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -.045em; text-transform: none; color: inherit; }
+.logo-c { position: relative; display: inline-block; }
+.logo-hacek { position: absolute; left: 50%; top: .07em; width: .44em; height: .26em; transform: translateX(-52%); overflow: visible; }
+.logo-hacek path { fill: none; stroke: var(--logo-accent, #587300); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.wordmark { padding-top: .2em; }
+footer .wordmark { --logo-accent: var(--gold); }

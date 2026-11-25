@@ -14,6 +14,7 @@ import {
 } from "react-icons/fi";
 
 import "./admin.css";
+import Logo from "../Logo";
 import { supabase } from "../lib/supabase";
 import { navigate } from "../lib/navigate";
 import { useAdminAccess, useSecondFactor, useSession } from "../lib/auth";
@@ -149,7 +150,7 @@ function Screen({ children }) {
 function Wordmark() {
   return (
     <span className="adm-wordmark">
-      ÉPARFUMES<sup>®</sup>
+      <Logo />
     </span>
   );
 }

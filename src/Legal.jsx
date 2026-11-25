@@ -54,7 +54,7 @@ export const legalPages = {
     content: (
       <>
         <p className="legal-lead">
-          Éparfumes vznikl z jednoduché myšlenky: podělit se o vůně, které mám
+          Čuchni vzniklo z jednoduché myšlenky: podělit se o vůně, které mám
           rád, s lidmi, kteří je mají rádi stejně.
         </p>
 
@@ -81,7 +81,7 @@ export const legalPages = {
 
         <h2>Komunita, ne velký byznys</h2>
         <p>
-          Cílem Éparfumes není obrovský výdělek. Ceny vzorků jsou nastavené
+          Cílem Čuchni není obrovský výdělek. Ceny vzorků jsou nastavené
           tak, aby pokryly samotnou vůni, flakonky, balení a dopravu. Jde mi
           hlavně o to, aby se drahé a zajímavé vůně dostaly k lidem, kteří je
           ocení, a aby si je mohli vyzkoušet bez zbytečného rizika.
@@ -121,7 +121,7 @@ export const legalPages = {
         <p>
           Tyto obchodní podmínky upravují vzájemná práva a povinnosti mezi
           prodávajícím a kupujícím při nákupu zboží v internetovém obchodě
-          Éparfumes (dále jen „e-shop“). Prodávajícím je:
+          Čuchni (dále jen „e-shop“). Prodávajícím je:
         </p>
         <SellerBlock />
         <p>

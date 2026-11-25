@@ -10,6 +10,7 @@ import Account from "./Account";
 import Checkout from "./Checkout";
 import LegalPage, { legalLinks, legalPages } from "./Legal";
 import ProcessPage from "./Process";
+import Logo from "./Logo";
 import {
   money,
   familyOptions,
@@ -373,8 +374,8 @@ function App() {
           (path === "/" ? null : productSlug && !productsLoaded ? null : "Stránka nenalezena");
   useEffect(() => {
     document.title = pageTitle
-      ? `${pageTitle} | Éparfumes`
-      : "Éparfumes – vzorky originálních parfémů";
+      ? `${pageTitle} | Čuchni`
+      : "Čuchni – vzorky originálních parfémů";
   }, [pageTitle]);
   if (path.startsWith("/admin"))
     return (
@@ -634,7 +635,7 @@ function App() {
           ☰
         </button>
         <button className="wordmark" onClick={() => navigate("/")}>
-          ÉPARFUMES<span>®</span>
+          <Logo />
         </button>
         <nav className={menuOpen ? "nav-open" : ""}>
           <button
@@ -709,7 +710,7 @@ function App() {
         <div className="footer-top">
           <div>
             <button className="wordmark" onClick={() => navigate("/")}>
-              ÉPARFUMES<span>®</span>
+              <Logo />
             </button>
             <p>
               Vůně, které si nejdříve
@@ -744,7 +745,7 @@ function App() {
               (with consent and a place to store the addresses). */}
         </div>
         <div className="footer-bottom">
-          <span>© 2026 Éparfumes</span>
+          <span>© 2026 Čuchni</span>
           <span>Česká republika · CZK</span>
           {/* Instagram / TikTok links go here once the profiles exist. */}
         </div>
